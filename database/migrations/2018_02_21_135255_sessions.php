@@ -17,7 +17,7 @@ class Sessions extends Migration
             $table->increments('id');
             $table->integer('student_id')->unsigned();
             $table->integer('tutor_id')->unsigned();
-            $table->integer('class_id')->unsigned();
+            $table->integer('programme_id')->unsigned();
             $table->integer('subject_id')->unsigned();
             $table->integer('subscription_id')->unsigned();
             $table->integer('meeting_type_id')->unsigned();

@@ -20,8 +20,8 @@ class Constrains extends Migration
         });
 
         Schema::table('subjects', function (Blueprint $table) {
-            $table->foreign('class_id')
-                ->references('id')->on('classes')
+            $table->foreign('programme_id')
+                ->references('id')->on('programmes')
                 ->onDelete('cascade');
         });
 
@@ -72,8 +72,8 @@ class Constrains extends Migration
                 ->references('id')->on('users')
                 ->onDelete('restrict');
 
-            $table->foreign('class_id')
-                ->references('id')->on('classes')
+            $table->foreign('programme_id')
+                ->references('id')->on('programmes')
                 ->onDelete('restrict');
 
             $table->foreign('subject_id')
@@ -102,7 +102,7 @@ class Constrains extends Migration
         });
 
         Schema::table('subjects', function (Blueprint $table) {
-            $table->dropForeign(['class_id']);
+            $table->dropForeign(['programme_id']);
         });
 
         Schema::table('profiles', function (Blueprint $table) {
@@ -130,7 +130,7 @@ class Constrains extends Migration
         Schema::table('sessions', function (Blueprint $table) {
             $table->dropForeign(['student_id']);
             $table->dropForeign(['tutor_id']);
-            $table->dropForeign(['class_id']);
+            $table->dropForeign(['programme_id']);
             $table->dropForeign(['subject_id']);
             $table->dropForeign(['subscription_id']);
             $table->dropForeign(['meeting_type_id']);

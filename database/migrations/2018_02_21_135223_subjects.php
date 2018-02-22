@@ -17,7 +17,7 @@ class Subjects extends Migration
             $table->increments('id');
             $table->string('name', 255);
             $table->boolean('status');
-            $table->integer('class_id')->unsigned();
+            $table->integer('programme_id')->unsigned();
             $table->timestamps();
             $table->softDeletes();
         });
