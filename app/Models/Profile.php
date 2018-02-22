@@ -13,4 +13,14 @@ class Profile extends Model
         'meeting_type_id',
         'user_id',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User');
+    }
+
+    public function meetingType()
+    {
+        return $this->belongsTo('App\Models\MeetingType');
+    }
 }

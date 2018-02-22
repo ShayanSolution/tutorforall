@@ -10,4 +10,14 @@ class MeetingType extends Model
         'name',
         'status',
     ];
+
+    public function subscription()
+    {
+        return $this->hasMany('App\Models\Subscription');
+    }
+
+    public function session()
+    {
+        return $this->hasMany('App\Models\Session');
+    }
 }

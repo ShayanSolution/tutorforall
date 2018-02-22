@@ -10,4 +10,9 @@ class Role extends Model
         'name',
         'status',
     ];
+
+    public function user()
+    {
+        return $this->hasMany('App\Models\User');
+    }
 }

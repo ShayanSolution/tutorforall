@@ -17,4 +17,14 @@ class Subscription extends Model
     protected $casts = [
       'group_costing' => 'array'
     ];
+
+    public function meetingType()
+    {
+        return $this->belongsTo('App\Models\MeetingType');
+    }
+
+    public function invoice()
+    {
+        return $this->hasMany('App\Models\Invoice');
+    }
 }

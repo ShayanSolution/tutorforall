@@ -65,4 +65,29 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return (isset($this->role) ? $this->role : self::BASIC_ROLE) == self::ADMIN_ROLE;
     }
+
+    public function profile()
+    {
+        return $this->hasOne('App\Models\Profile');
+    }
+
+    public function transaction()
+    {
+        return $this->hasMany('App\Models\Transaction');
+    }
+
+    public function student()
+    {
+        return $this->hasMany('App\Models\Sessions', 'student_id');
+    }
+
+    public function tutor()
+    {
+        return $this->hasMany('App\Models\Sessions', 'tutor_id');
+    }
+
+    public function role()
+    {
+        return $this->belongsTo('App\Models\Role');
+    }
 }

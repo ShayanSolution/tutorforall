@@ -13,4 +13,19 @@ class Invoice extends Model
         'subscription_id',
         'transaction_id',
     ];
+
+    public function session()
+    {
+        return $this->belongsTo('App\Models\Session');
+    }
+
+    public function subscription()
+    {
+        return $this->belongsTo('App\Models\Subscription');
+    }
+
+    public function transaction()
+    {
+        return $this->belongsTo('App\Models\Transaction');
+    }
 }

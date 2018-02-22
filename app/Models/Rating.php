@@ -11,4 +11,9 @@ class Rating extends Model
         'review',
         'session_id',
     ];
+
+    public function session()
+    {
+        return $this->belongsTo('App\Models\Session');
+    }
 }

@@ -10,4 +10,14 @@ class Programme extends Model
         'name',
         'status',
     ];
+
+    public function subject()
+    {
+        return $this->hasMany('App\Models\Subject');
+    }
+
+    public function session()
+    {
+        return $this->hasMany('App\Models\Session');
+    }
 }
