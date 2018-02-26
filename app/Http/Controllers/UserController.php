@@ -229,6 +229,7 @@ class UserController extends Controller
         $invoice = Invoice::all();
         $sessions = Session::all();
         return [
+            'users' => count($users),
             'students' => count($users->where('role_id', 3)),
             'tutors' => count($users->where('role_id', 3)),
             'sessions' => count($sessions),
