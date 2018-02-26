@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Invoice;
+use App\Models\Session;
 use App\Models\User;
 use App\Repositories\Contracts\UserRepository;
 use Illuminate\Http\Request;
@@ -220,5 +222,17 @@ class UserController extends Controller
         }
 
         return $rules;
+    }
+
+    public function getDashboardTotalOfPieCharts(){
+        $users = User::all();
+        $invoice = Invoice::all();
+        $sessions = Session::all();
+        return [
+            'students' => count($users->where('role_id', 3)),
+            'tutors' => count($users->where('role_id', 3)),
+            'sessions' => count($sessions),
+            'earning' => $invoice->sum('total_cost'),
+        ];
     }
 }

@@ -25,6 +25,12 @@ $router->get('appKey', function () {
 $router->post('login', 'AccessTokenController@createAccessToken');
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
+    //Dashboard Routes
+    $router->get('dashboard-pie-chart-totals',  [
+        'uses'       => 'UserController@getDashboardTotalOfPieCharts',
+        //'middleware' => "scope:admin"
+    ]);
+
     $router->post('users', [
         'uses'       => 'UserController@store',
         'middleware' => "scope:users,users:create"
