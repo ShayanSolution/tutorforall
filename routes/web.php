@@ -24,7 +24,7 @@ $router->get('appKey', function () {
 // route for creating access_token
 $router->post('login', 'AccessTokenController@createAccessToken');
 
-$router->post('phone-verification-code', 'VerificationController@getPhoneVerificationCode');
+$router->get('phone-verification-code', 'VerificationController@getPhoneVerificationCode');
 
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
@@ -32,6 +32,17 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     $router->get('dashboard-pie-chart-totals',  [
         'uses'       => 'UserController@getDashboardTotalOfPieCharts',
         //'middleware' => "scope:admin"
+    ]);
+
+
+    $router->get('get-students', [
+        'uses'       => 'UserController@getStudents',
+        //'middleware' => "scope:users,users:create"
+    ]);
+
+    $router->get('get-tutors', [
+        'uses'       => 'UserController@getTutors',
+        //'middleware' => "scope:users,users:create"
     ]);
 
     $router->post('users', [

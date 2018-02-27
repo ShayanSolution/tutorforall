@@ -236,4 +236,12 @@ class UserController extends Controller
             'earning' => $invoice->sum('total_cost'),
         ];
     }
+
+    public function getStudents(){
+        return User::where('role_id', 2)->get();
+    }
+
+    public function getTutors(){
+        return User::where('role_id', 3)->get();
+    }
 }
