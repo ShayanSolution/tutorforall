@@ -24,6 +24,9 @@ $router->get('appKey', function () {
 // route for creating access_token
 $router->post('login', 'AccessTokenController@createAccessToken');
 
+$router->post('phone-verification-code', 'VerificationController@getPhoneVerificationCode');
+
+
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
     //Dashboard Routes
     $router->get('dashboard-pie-chart-totals',  [
