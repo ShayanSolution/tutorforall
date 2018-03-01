@@ -40,6 +40,8 @@ $app = new Laravel\Lumen\Application(
 |
 */
 
+$app->configure('swagger-lume');
+
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     App\Exceptions\Handler::class
@@ -101,6 +103,7 @@ $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
 $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+$app->register(\SwaggerLume\ServiceProvider::class);
 
 LumenPassport::routes($app);
 
