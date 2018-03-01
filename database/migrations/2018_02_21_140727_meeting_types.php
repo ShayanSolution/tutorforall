@@ -14,6 +14,7 @@ class MeetingTypes extends Migration
     public function up()
     {
         Schema::create('meeting_types', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('name', 255);
             $table->boolean('status');

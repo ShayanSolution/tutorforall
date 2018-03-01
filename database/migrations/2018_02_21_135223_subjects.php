@@ -14,6 +14,7 @@ class Subjects extends Migration
     public function up()
     {
         Schema::create('subjects', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('name', 255);
             $table->boolean('status');

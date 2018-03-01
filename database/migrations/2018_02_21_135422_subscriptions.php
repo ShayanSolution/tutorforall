@@ -14,6 +14,7 @@ class Subscriptions extends Migration
     public function up()
     {
         Schema::create('subscriptions', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('name', 255);
             $table->decimal('cost_hourly');

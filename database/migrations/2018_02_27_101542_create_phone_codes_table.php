@@ -14,6 +14,7 @@ class CreatePhoneCodesTable extends Migration
     public function up()
     {
         Schema::create('phone_codes', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('phone', 20);
             $table->string('code', 4);

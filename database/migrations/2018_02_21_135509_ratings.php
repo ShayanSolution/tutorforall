@@ -14,6 +14,7 @@ class Ratings extends Migration
     public function up()
     {
         Schema::create('ratings', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
             $table->float('rating');
             $table->text('review')->nullable();

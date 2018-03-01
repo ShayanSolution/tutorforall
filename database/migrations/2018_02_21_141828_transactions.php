@@ -14,6 +14,7 @@ class Transactions extends Migration
     public function up()
     {
         Schema::create('transactions', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
             $table->decimal('amount');
             $table->integer('user_id')->unsigned();

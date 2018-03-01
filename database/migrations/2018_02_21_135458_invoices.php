@@ -14,6 +14,7 @@ class Invoices extends Migration
     public function up()
     {
         Schema::create('invoices', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
             $table->decimal('total_cost');
             $table->integer('session_id')->unsigned();

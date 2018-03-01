@@ -14,6 +14,7 @@ class Profiles extends Migration
     public function up()
     {
         Schema::create('profiles', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
             $table->boolean('is_mentor');
             $table->boolean('is_deserving');
