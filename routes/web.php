@@ -24,7 +24,9 @@ $router->get('appKey', function () {
 // route for creating access_token
 $router->post('login', 'AccessTokenController@createAccessToken');
 
-$router->get('phone-verification-code', 'VerificationController@getPhoneVerificationCode');
+$router->get('get-phone-code', 'AuthenticationController@getPhoneVerificationCode');
+$router->post('verify-phone-code', 'AuthenticationController@postPhoneVerificationCode');
+$router->post('register-student', 'AuthenticationController@postRegisterStudent');
 
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {

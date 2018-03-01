@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Support\Facades\Request;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -89,5 +90,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function role()
     {
         return $this->belongsTo('App\Models\Role');
+    }
+
+    public function findForPassport($username) {
+        if(Request::input('role') === 'admin'){
+            return self::where('email', $username)->first();
+        }else{
+            return self::where('phone', $username)->first();
+        }
     }
 }
