@@ -10,6 +10,29 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthenticationController extends Controller
 {
+    /**
+     * @SWG\Get(
+     *     path="/get-phone-code",
+     *     summary="Get a phone verification pin code",
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *         description="Phone number to generate code",
+     *         in="query",
+     *         name="phone",
+     *         required=true,
+     *         type="integer",
+     *         format="int64",
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @SWG\Response(
+     *         response="422",
+     *         description="Invalid phone value",
+     *     )
+     * )
+     */
     public function getPhoneVerificationCode(Request $request){
         $this->validate($request,[
             'phone' => 'required|digits_between:11,20'
@@ -42,6 +65,36 @@ class AuthenticationController extends Controller
         return rand(pow(10, $digits-1), pow(10, $digits)-1);
     }
 
+    /**
+     * @SWG\Post(
+     *     path="/verify-phone-code",
+     *     operationId="addPet",
+     *     summary="Add a new pet to the store",
+     *     description="",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *         name="phone",
+     *         in="body",
+     *         description="Phone to be verified against code",
+     *         required=true,
+     *     ),
+     *     @SWG\Parameter(
+     *         name="code",
+     *         in="body",
+     *         description="Code to be verified against phone",
+     *         required=true,
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="Phone code has been verified",
+     *     ),
+     *     @SWG\Response(
+     *         response=422,
+     *         description="Invalid or expired phone code",
+     *     ),
+     * )
+     */
     public function postPhoneVerificationCode(Request $request){
         $this->validate($request,[
             'phone' => 'required|digits_between:11,20',

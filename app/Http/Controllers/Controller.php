@@ -6,6 +6,28 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
+
+/**
+ * @SWG\Swagger(
+ *     schemes={"http","https"},
+ *     host="tutor4all-api.shayansolutions.com",
+ *     basePath="/",
+ *     @SWG\Info(
+ *         version="1.0.0",
+ *         title="Tutor4all API",
+ *         description="This is tutor4all api",
+ *         termsOfService="",
+ *         @SWG\Contact(
+ *             email="marslanali@gmail.com"
+ *         ),
+ *         @SWG\License(
+ *             name="Private License",
+ *             url="#"
+ *         )
+ *     )
+ * )
+ */
+
 class Controller extends BaseController
 {
     use ResponseTrait;

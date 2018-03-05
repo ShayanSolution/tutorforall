@@ -35,8 +35,7 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
         'uses'       => 'UserController@getDashboardTotalOfPieCharts',
         //'middleware' => "scope:admin"
     ]);
-
-
+    
     $router->get('get-students', [
         'uses'       => 'UserController@getStudents',
         //'middleware' => "scope:users,users:create"
