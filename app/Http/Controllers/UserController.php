@@ -237,6 +237,33 @@ class UserController extends Controller
         ];
     }
 
+    /**
+     * @SWG\get(
+     *     path="/get-students",
+     *     operationId="getUser",
+     *     summary="Get user",
+     *     description="",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *      @SWG\Parameter(
+     *         description="Roleid",
+     *         in="query",
+     *         name="role_id",
+     *         required=true,
+     *         type="integer",
+     *         format="int64",
+     *     ),
+     *
+     *    @SWG\Response(
+     *         response=200,
+     *         description="User's List",
+     *     ),
+     *     @SWG\Response(
+     *         response=422,
+     *         description="Un Processable Entry",
+     *     ),
+     * )
+     */
     public function getStudents(){
         return User::where('role_id', 2)->get();
     }

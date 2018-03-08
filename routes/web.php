@@ -28,7 +28,6 @@ $router->get('get-phone-code', 'AuthenticationController@getPhoneVerificationCod
 $router->post('verify-phone-code', 'AuthenticationController@postPhoneVerificationCode');
 $router->post('register-student', 'AuthenticationController@postRegisterStudent');
 
-
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
     //Dashboard Routes
     $router->get('dashboard-pie-chart-totals',  [

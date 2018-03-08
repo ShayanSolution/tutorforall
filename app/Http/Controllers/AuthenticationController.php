@@ -68,24 +68,29 @@ class AuthenticationController extends Controller
     /**
      * @SWG\Post(
      *     path="/verify-phone-code",
-     *     operationId="addPet",
-     *     summary="Add a new pet to the store",
+     *     summary="Save phone verification code",
      *     description="",
      *     consumes={"application/json"},
      *     produces={"application/json"},
-     *     @SWG\Parameter(
+     *      @SWG\Parameter(
+     *         description="Phone number to generate code",
+     *         in="query",
      *         name="phone",
-     *         in="body",
-     *         description="Phone to be verified against code",
      *         required=true,
+     *         type="integer",
+     *         format="int64",
      *     ),
+     *     
      *     @SWG\Parameter(
+     *         description="Code number",
+     *         in="query",
      *         name="code",
-     *         in="body",
-     *         description="Code to be verified against phone",
      *         required=true,
+     *         type="integer",
+     *         format="int64",
      *     ),
-     *     @SWG\Response(
+     *    
+     *    @SWG\Response(
      *         response=200,
      *         description="Phone code has been verified",
      *     ),
@@ -97,12 +102,17 @@ class AuthenticationController extends Controller
      */
     public function postPhoneVerificationCode(Request $request){
         $this->validate($request,[
-            'phone' => 'required|digits_between:11,20',
-            'code' => 'required|digits:4',
+            'phone' => 'required_without:|digits_between:11,20',
+            'code' => 'required_without:|digits:4',
         ]);
-
-        $phone = $request->phone;
-        $code = $request->code;
+        $request = $request->all();
+        if(is_array($request)){
+            $phone = $request['phone'];
+            $code = $request['code'];
+        }else{
+            $phone = $request->phone;
+            $code = $request->code;
+        }
 
         $code = PhoneCode::where('phone', $phone)
             ->where('code', $code)
@@ -128,6 +138,48 @@ class AuthenticationController extends Controller
         }
     }
 
+    /**
+     * @SWG\post(
+     *     path="/register-student",
+     *     operationId="addPet",
+     *     summary="Register student",
+     *     description="",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *      @SWG\Parameter(
+     *         description="Email address",
+     *         in="query",
+     *         name="email",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *         description="Phone number",
+     *         in="query",
+     *         name="phone",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *         description="Phone code",
+     *         in="query",
+     *         name="code",
+     *         required=true,
+     *         type="integer",
+     *     ),
+     *
+     *    @SWG\Response(
+     *         response=200,
+     *         description="Phone code has been verified",
+     *     ),
+     *     @SWG\Response(
+     *         response=422,
+     *         description="Invalid or expired phone code",
+     *     ),
+     * )
+     */
     public function postRegisterStudent(Request $request){
         $this->validate($request,[
             'email' => 'required|email|unique:users',
@@ -152,6 +204,7 @@ class AuthenticationController extends Controller
                 'email' => $email,
                 'phone' => $phone,
                 'password' => Hash::make($code),
+                'uid' => md5(microtime()),
                 'role_id' => 2
             ])->id;
 
