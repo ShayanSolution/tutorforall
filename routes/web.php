@@ -27,6 +27,14 @@ $router->post('login', 'AccessTokenController@createAccessToken');
 $router->get('get-phone-code', 'AuthenticationController@getPhoneVerificationCode');
 $router->post('verify-phone-code', 'AuthenticationController@postPhoneVerificationCode');
 $router->post('register-student', 'AuthenticationController@postRegisterStudent');
+$router->get('get-all-classes', 'ProgrammeSubjectController@getAllProgrammes');
+$router->get('get-class-name', 'ProgrammeSubjectController@getProgramme');
+$router->get('get-all-subjects', 'ProgrammeSubjectController@getAllSubjects');
+$router->get('get-programme-subjects', 'ProgrammeSubjectController@getProgrammeSubjects');
+$router->get('get-subjectby-id', 'ProgrammeSubjectController@getSubjectById');
+$router->post('save-programme', 'ProgrammeSubjectController@postSaveProgramme');
+$router->post('save-programme-subject', 'ProgrammeSubjectController@postSaveProgrammeSubject');
+
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
     //Dashboard Routes
