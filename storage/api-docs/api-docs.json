@@ -84,6 +84,7 @@
                 }
             }
         },
+
         "/register-student": {
             "post": {
                 "summary": "Register student",
