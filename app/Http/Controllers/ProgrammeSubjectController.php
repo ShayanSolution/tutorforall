@@ -122,7 +122,9 @@ class ProgrammeSubjectController extends Controller
             'class' => 'required',
         ]);
         $programme_id = $request['class'];
-        $subjects = Subject::where('programme_id', $programme_id)->get();
+        $subjects = Subject::where('programme_id', $programme_id)
+                    ->where('status',1)
+                    ->get();
         if($subjects){
             return response()->json(
                 [
