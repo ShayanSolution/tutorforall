@@ -12,6 +12,21 @@ use App\Models\Subject;
 
 class ProgrammeSubjectController extends Controller
 {
+    /**
+     * @SWG\Get(
+     *     path="/get-classes",
+     *     summary="Get Classes",
+     *     produces={"application/json"},     *
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @SWG\Response(
+     *         response="422",
+     *         description="Class not found",
+     *     )
+     * )
+     */
     public function getAllProgrammes() {
 
         $programmes = Programme::where('status', 1)->get();
@@ -32,29 +47,7 @@ class ProgrammeSubjectController extends Controller
         }
     }
 
-    /**
-     * @SWG\Get(
-     *     path="/get-class-name",
-     *     summary="Get Class data",
-     *     produces={"application/json"},
-     *     @SWG\Parameter(
-     *         description="Programme Id",
-     *         in="query",
-     *         name="programme",
-     *         required=true,
-     *         type="integer",
-     *         format="int64",
-     *     ),
-     *     @SWG\Response(
-     *         response=200,
-     *         description="successful operation",
-     *     ),
-     *     @SWG\Response(
-     *         response="422",
-     *         description="Invalid programme value",
-     *     )
-     * )
-     */
+
     public function getProgramme(Request $request) {
         $this->validate($request,[
             'programme' => 'required',
@@ -103,13 +96,13 @@ class ProgrammeSubjectController extends Controller
 
     /**
      * @SWG\Get(
-     *     path="/get-programme-subjects",
-     *     summary="Get Programme subjects",
+     *     path="/get-class-subjects",
+     *     summary="Get Class subjects",
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *         description="Programme Id",
+     *         description="Class Id",
      *         in="query",
-     *         name="programme",
+     *         name="class",
      *         required=true,
      *         type="integer",
      *         format="int64",
@@ -126,9 +119,9 @@ class ProgrammeSubjectController extends Controller
      */
     public function getProgrammeSubjects(Request $request) {
         $this->validate($request,[
-            'programme' => 'required',
+            'class' => 'required',
         ]);
-        $programme_id = $request['programme'];
+        $programme_id = $request['class'];
         $subjects = Subject::where('programme_id', $programme_id)->get();
         if($subjects){
             return response()->json(
@@ -147,29 +140,7 @@ class ProgrammeSubjectController extends Controller
         }
     }
 
-    /**
-     * @SWG\Get(
-     *     path="/get-subjectby-id",
-     *     summary="Get subject By Id",
-     *     produces={"application/json"},
-     *     @SWG\Parameter(
-     *         description="Subject Id",
-     *         in="query",
-     *         name="subject",
-     *         required=true,
-     *         type="integer",
-     *         format="int64",
-     *     ),
-     *     @SWG\Response(
-     *         response=200,
-     *         description="successful operation",
-     *     ),
-     *     @SWG\Response(
-     *         response="422",
-     *         description="Invalid subject value",
-     *     )
-     * )
-     */
+
     public function getSubjectById(Request $request) {
         $this->validate($request,[
             'subject' => 'required',
@@ -193,28 +164,7 @@ class ProgrammeSubjectController extends Controller
         }
     }
 
-    /**
-     * @SWG\post(
-     *     path="/save-programme",
-     *     summary="Save Programme",
-     *     produces={"application/json"},
-     *     @SWG\Parameter(
-     *         description="Programme Name",
-     *         in="query",
-     *         name="name",
-     *         required=true,
-     *         type="string",
-     *     ),
-     *     @SWG\Response(
-     *         response=200,
-     *         description="successful operation",
-     *     ),
-     *     @SWG\Response(
-     *         response="422",
-     *         description="Invalid subject value",
-     *     )
-     * )
-     */
+
     public function postSaveProgramme(Request $request){
         $this->validate($request,[
             'name' => 'required',
@@ -247,36 +197,7 @@ class ProgrammeSubjectController extends Controller
         }
     }
 
-    /**
-     * @SWG\post(
-     *     path="/save-programme-subject",
-     *     summary="Save Programme Subject",
-     *     produces={"application/json"},
-     *     @SWG\Parameter(
-     *         description="Subject Name",
-     *         in="query",
-     *         name="name",
-     *         required=true,
-     *         type="string",
-     *     ),
-     *     @SWG\Parameter(
-     *         description="Programme Id",
-     *         in="query",
-     *         name="programme_id",
-     *         required=true,
-     *         type="integer",
-     *         format="int64",
-     *     ),
-     *     @SWG\Response(
-     *         response=200,
-     *         description="successful operation",
-     *     ),
-     *     @SWG\Response(
-     *         response="422",
-     *         description="Invalid subject value",
-     *     )
-     * )
-     */
+
     public function postSaveProgrammeSubject(Request $request){
 
         $this->validate($request,[

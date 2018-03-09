@@ -84,7 +84,6 @@
                 }
             }
         },
-
         "/register-student": {
             "post": {
                 "summary": "Register student",
@@ -129,17 +128,33 @@
                 }
             }
         },
-        "/get-class-name": {
+        "/get-classes": {
             "get": {
-                "summary": "Get Class data",
+                "summary": "Get Classes",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Class not found"
+                    }
+                }
+            }
+        },
+        "/get-class-subjects": {
+            "get": {
+                "summary": "Get Class subjects",
                 "produces": [
                     "application/json"
                 ],
                 "parameters": [
                     {
-                        "name": "programme",
+                        "name": "class",
                         "in": "query",
-                        "description": "Programme Id",
+                        "description": "Class Id",
                         "required": true,
                         "type": "integer",
                         "format": "int64"
@@ -151,116 +166,6 @@
                     },
                     "422": {
                         "description": "Invalid programme value"
-                    }
-                }
-            }
-        },
-        "/get-programme-subjects": {
-            "get": {
-                "summary": "Get Programme subjects",
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "programme",
-                        "in": "query",
-                        "description": "Programme Id",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation"
-                    },
-                    "422": {
-                        "description": "Invalid programme value"
-                    }
-                }
-            }
-        },
-        "/get-subjectby-id": {
-            "get": {
-                "summary": "Get subject By Id",
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "subject",
-                        "in": "query",
-                        "description": "Subject Id",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation"
-                    },
-                    "422": {
-                        "description": "Invalid subject value"
-                    }
-                }
-            }
-        },
-        "/save-programme": {
-            "post": {
-                "summary": "Save Programme",
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "name",
-                        "in": "query",
-                        "description": "Programme Name",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation"
-                    },
-                    "422": {
-                        "description": "Invalid subject value"
-                    }
-                }
-            }
-        },
-        "/save-programme-subject": {
-            "post": {
-                "summary": "Save Programme Subject",
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "name",
-                        "in": "query",
-                        "description": "Subject Name",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "programme_id",
-                        "in": "query",
-                        "description": "Programme Id",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation"
-                    },
-                    "422": {
-                        "description": "Invalid subject value"
                     }
                 }
             }
