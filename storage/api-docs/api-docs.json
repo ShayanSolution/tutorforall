@@ -1,0 +1,300 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Tutor4all API",
+        "description": "This is tutor4all api",
+        "termsOfService": "",
+        "contact": {
+            "email": "marslanali@gmail.com"
+        },
+        "license": {
+            "name": "Private License",
+            "url": "#"
+        },
+        "version": "1.0.0"
+    },
+    "host": "localhost:8000",
+    "basePath": "/",
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "paths": {
+        "/get-phone-code": {
+            "get": {
+                "summary": "Get a phone verification pin code",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "phone",
+                        "in": "query",
+                        "description": "Phone number to generate code",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid phone value"
+                    }
+                }
+            }
+        },
+        "/verify-phone-code": {
+            "post": {
+                "summary": "Save phone verification code",
+                "description": "",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "phone",
+                        "in": "query",
+                        "description": "Phone number to generate code",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "code",
+                        "in": "query",
+                        "description": "Code number",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Phone code has been verified"
+                    },
+                    "422": {
+                        "description": "Invalid or expired phone code"
+                    }
+                }
+            }
+        },
+        "/register-student": {
+            "post": {
+                "summary": "Register student",
+                "description": "",
+                "operationId": "addPet",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Email address",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "phone",
+                        "in": "query",
+                        "description": "Phone number",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "code",
+                        "in": "query",
+                        "description": "Phone code",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Phone code has been verified"
+                    },
+                    "422": {
+                        "description": "Invalid or expired phone code"
+                    }
+                }
+            }
+        },
+        "/get-class-name": {
+            "get": {
+                "summary": "Get Class data",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "programme",
+                        "in": "query",
+                        "description": "Programme Id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid programme value"
+                    }
+                }
+            }
+        },
+        "/get-programme-subjects": {
+            "get": {
+                "summary": "Get Programme subjects",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "programme",
+                        "in": "query",
+                        "description": "Programme Id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid programme value"
+                    }
+                }
+            }
+        },
+        "/get-subjectby-id": {
+            "get": {
+                "summary": "Get subject By Id",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "subject",
+                        "in": "query",
+                        "description": "Subject Id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid subject value"
+                    }
+                }
+            }
+        },
+        "/save-programme": {
+            "post": {
+                "summary": "Save Programme",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Programme Name",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid subject value"
+                    }
+                }
+            }
+        },
+        "/save-programme-subject": {
+            "post": {
+                "summary": "Save Programme Subject",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Subject Name",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "programme_id",
+                        "in": "query",
+                        "description": "Programme Id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid subject value"
+                    }
+                }
+            }
+        },
+        "/get-students": {
+            "get": {
+                "summary": "Get user",
+                "description": "",
+                "operationId": "getUser",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "role_id",
+                        "in": "query",
+                        "description": "Roleid",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User's List"
+                    },
+                    "422": {
+                        "description": "Un Processable Entry"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {}
+}
