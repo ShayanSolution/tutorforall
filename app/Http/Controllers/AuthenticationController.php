@@ -7,6 +7,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Location;
 
 class AuthenticationController extends Controller
 {
@@ -233,4 +234,37 @@ class AuthenticationController extends Controller
 
         }
     }
+
+
+
+    public function postRegisterLocation(Request $request){
+        $this->validate($request,[
+            'longitude' => 'required',
+            'latitude' => 'required',
+        ]);
+
+        $longitude = $request->longitude;
+        $latitude = $request->latitude;
+
+        $location = Location::create([
+            'longitude' => $longitude,
+            'latitude' => $latitude,
+        ])->id;
+
+        if($location){
+            return [
+                'status' => 'success',
+                'messages' => 'Location has been created'
+            ];
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to create location'
+                ], 422
+            );
+        }
+        
+    }
+
 }

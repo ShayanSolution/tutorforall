@@ -201,7 +201,139 @@
                     }
                 }
             }
+        },
+
+        "/location": {
+            "post": {
+                "summary": "Register Location",
+                "description": "",
+                "operationId": "addLocation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "longitude",
+                        "in": "query",
+                        "description": "Longitude",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "latitude",
+                        "in": "query",
+                        "description": "Latitude",
+                        "required": true,
+                        "type": "string"
+                    }
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Phone code has been verified"
+                    },
+                    "422": {
+                        "description": "Invalid or expired phone code"
+                    }
+                }
+            }
+        },
+
+        "/get-all-subjects": {
+            "get": {
+                "summary": "Get All subjects",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid programme value"
+                    }
+                }
+            }
+        },
+
+        "/oauth/token": {
+            "post": {
+                "summary": "Loggedin",
+                "description": "",
+                "operationId": "loggedin",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "securitySchemes": {
+                    "oAuthSample": {
+                        "type": "oauth2",
+                        "authorizationUrl": "tutor4all-api.shayansolutions.com",
+                        "flow": "implicit",
+                        "scopes": {}
+                    }
+                },
+                "parameters": [
+                {
+                    "name": "grant_type",
+                    "in": "body",
+                    "description": "Grant Type",
+                    "required": false,
+                    "type": "string",
+                    "schema":{
+                        "type":"object",
+                        "properties":{
+                            "grant_type":{
+                                "type":"string",
+                                "example":"password"
+                            },
+                            "client_id":{
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "client_secret":{
+                                "type":"string",
+                                "example":"GGVvl9PxUGmdrg9Bji5RWSbJBeIW5JAMsK07fC66"
+                            },
+                            "username":{
+                                "type":"string",
+                                "example":"1-740-482-0983 x5989"
+                            },
+                            "password":{
+                                "type":"string",
+                                "example":"123456"
+                            },
+                            "scope":{
+                                "type":"string",
+                                "example":"*"
+                            },
+                            "role":{
+                                "type":"string",
+                                "example":"user"
+                            }
+
+                        }
+                    }
+                }
+
+                ],
+
+                "responses": {
+                    "200": {
+                        "description": "Phone code has been verified"
+                    },
+                    "422": {
+                        "description": "Invalid or expired phone code"
+                    }
+                }
+            }
         }
+
     },
+
+
     "definitions": {}
 }

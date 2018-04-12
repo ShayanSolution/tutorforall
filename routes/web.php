@@ -1,6 +1,6 @@
 <?php
 use Laravel\Lumen\Routing\Router;
-
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -27,6 +27,7 @@ $router->post('login', 'AccessTokenController@createAccessToken');
 $router->get('get-phone-code', 'AuthenticationController@getPhoneVerificationCode');
 $router->post('verify-phone-code', 'AuthenticationController@postPhoneVerificationCode');
 $router->post('register-student', 'AuthenticationController@postRegisterStudent');
+$router->post('location', 'AuthenticationController@postRegisterLocation');
 $router->get('get-classes', 'ProgrammeSubjectController@getAllProgrammes');
 $router->get('get-class-name', 'ProgrammeSubjectController@getProgramme');
 $router->get('get-all-subjects', 'ProgrammeSubjectController@getAllSubjects');
