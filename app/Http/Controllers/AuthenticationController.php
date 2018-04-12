@@ -138,7 +138,6 @@ class AuthenticationController extends Controller
             );
         }
     }
-
     /**
      * @SWG\post(
      *     path="/register-student",
