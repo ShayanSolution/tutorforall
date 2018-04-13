@@ -236,30 +236,40 @@ class AuthenticationController extends Controller
 
 
 
-    public function postRegisterLocation(Request $request){
+    public function postUpdateLocation(Request $request){
+
         $this->validate($request,[
             'longitude' => 'required',
             'latitude' => 'required',
+            'user_id' => 'required',
         ]);
 
         $longitude = $request->longitude;
         $latitude = $request->latitude;
+        $user_id = $request->user_id;
 
-        $location = Location::create([
-            'longitude' => $longitude,
-            'latitude' => $latitude,
-        ])->id;
+        $user = User::where('id', '=', $user_id)->first();
+        if($user){
+            $location = User::where('id','=',$user_id)->update(['longitude'=>$longitude,'latitude'=>$latitude]);
+        }else{
 
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to update location'
+                ], 422
+            );
+        }
         if($location){
             return [
                 'status' => 'success',
-                'messages' => 'Location has been created'
+                'messages' => 'Location updated'
             ];
         }else{
             return response()->json(
                 [
                     'status' => 'error',
-                    'message' => 'Unable to create location'
+                    'message' => 'Unable to update location'
                 ], 422
             );
         }

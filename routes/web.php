@@ -27,7 +27,7 @@ $router->post('login', 'AccessTokenController@createAccessToken');
 $router->get('get-phone-code', 'AuthenticationController@getPhoneVerificationCode');
 $router->post('verify-phone-code', 'AuthenticationController@postPhoneVerificationCode');
 $router->post('register-student', 'AuthenticationController@postRegisterStudent');
-$router->post('location', 'AuthenticationController@postRegisterLocation');
+$router->post('update-location', 'AuthenticationController@postUpdateLocation');
 $router->get('get-classes', 'ProgrammeSubjectController@getAllProgrammes');
 $router->get('get-class-name', 'ProgrammeSubjectController@getProgramme');
 $router->get('get-all-subjects', 'ProgrammeSubjectController@getAllSubjects');
