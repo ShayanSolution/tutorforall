@@ -317,7 +317,7 @@ class UserController extends Controller
         $data = $request->all();
         $this->validate($request,[
             'subject_id' => 'required',
-            'programme_id' => 'required',
+            'class_id' => 'required',
             'is_home' => 'required',
             'is_group' => 'required',
         ]);
