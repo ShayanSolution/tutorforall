@@ -13,7 +13,7 @@
         },
         "version": "1.0.0"
     },
-    "host": "tutor4all-api.shayansolutions.com",
+    "host": "localhost:8000",
 
     "basePath": "/",
     "schemes": [
@@ -185,7 +185,7 @@
                 "parameters": [
                     {
                         "name": "role_id",
-                        "in": "query",
+                        "in": "header",
                         "description": "Roleid",
                         "required": true,
                         "type": "integer",
@@ -195,6 +195,38 @@
                 "responses": {
                     "200": {
                         "description": "User's List"
+                    },
+                    "422": {
+                        "description": "Un Processable Entry"
+                    }
+                }
+            }
+        },
+
+        "/get-profile": {
+            "get": {
+                "summary": "Get user profile",
+                "description": "",
+                "operationId": "getUserProfile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "User ID",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User's Profile"
                     },
                     "422": {
                         "description": "Un Processable Entry"

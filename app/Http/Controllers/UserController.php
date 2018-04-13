@@ -271,4 +271,45 @@ class UserController extends Controller
     public function getTutors(){
         return User::where('role_id', 3)->get();
     }
+
+    public function getUserProfile(Request $request){
+        $user_id = $request->all();
+        $this->validate($request,[
+            'user_id' => 'required'
+        ]);
+        $user_id = $user_id['user_id'];
+
+        $user = User::
+                select('users.*','programmes.name as p_name','subjects.name as s_name','genders.name as g_name','rating')
+                ->leftjoin('profiles','profiles.user_id','=','users.id')
+                ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
+                ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
+                ->leftjoin('genders','genders.id','=','users.gender_id')
+                ->leftjoin('ratings','ratings.user_id','=','users.id')
+                ->where('users.id', $user_id)
+                ->first();
+        if($user){
+            $profile = array(
+                'Full Name'=>$user->firstName.' '.$user->lastName,
+                'Email'=>$user->email,
+                'Phone Number'=>$user->phone,
+                'Father Name'=>$user->fatherName,
+                'Qualification'=>$user->p_name,
+                'Expert Subjects'=>$user->s_name,
+                'Gender'=>$user->g_name,
+                'Rating'=>$user->rating,
+                'Experience'=>$user->experience,
+            );
+            return $profile;
+        }
+        else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to find profile'
+                ], 422
+            );
+        }
+
+    }
 }
