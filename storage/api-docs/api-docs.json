@@ -282,6 +282,63 @@
             }
         },
 
+        "/get-tutors-profile": {
+            "post": {
+                "summary": "Get Tutors",
+                "description": "",
+                "operationId": "GetTutors",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "class_id",
+                        "in": "query",
+                        "description": "Class id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "subject_id",
+                        "in": "query",
+                        "description": "Subject id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "is_home",
+                        "in": "query",
+                        "description": "Home or Call i.e. 1 for Home",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "is_group",
+                        "in": "query",
+                        "description": "Individual or group",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Location updated"
+                    },
+                    "422": {
+                        "description": "Unable to update location"
+                    }
+                }
+            }
+        },
+
         "/get-all-subjects": {
             "get": {
                 "summary": "Get All subjects",

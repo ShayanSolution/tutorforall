@@ -32,6 +32,7 @@ $router->get('get-classes', 'ProgrammeSubjectController@getAllProgrammes');
 $router->get('get-class-name', 'ProgrammeSubjectController@getProgramme');
 $router->get('get-all-subjects', 'ProgrammeSubjectController@getAllSubjects');
 $router->get('get-profile', 'UserController@getUserProfile');
+$router->post('get-tutors-profile', 'UserController@postTutorProfile');
 $router->get('get-class-subjects', 'ProgrammeSubjectController@getProgrammeSubjects');
 $router->get('get-subjectby-id', 'ProgrammeSubjectController@getSubjectById');
 $router->post('save-programme', 'ProgrammeSubjectController@postSaveProgramme');

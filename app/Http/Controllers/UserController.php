@@ -312,4 +312,35 @@ class UserController extends Controller
         }
 
     }
+
+    public function postTutorProfile(Request $request){
+        $data = $request->all();
+        $this->validate($request,[
+            'subject_id' => 'required',
+            'programme_id' => 'required',
+            'is_home' => 'required',
+            'is_group' => 'required',
+        ]);
+
+        $users = User::select('users.*')
+                ->join('profiles','profiles.user_id','=','users.id')
+                ->where('profiles.programme_id','=',$data['class_id'])
+                ->where('profiles.subject_id','=',$data['subject_id'])
+                ->where('profiles.is_home','=',$data['is_home'])
+                ->where('profiles.is_group','=',$data['is_group'])
+                ->where('users.role_id','=',2)
+                ->get();
+
+        if($users){
+            return $users;
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to find tutor'
+                ], 422
+            );
+        }
+
+    }
 }
