@@ -347,7 +347,6 @@ class UserController extends Controller
     
     public function tutorSessionInfo(Request $request){
         $data = $request->all();
-        dd($data);
         $this->validate($request,[
             'student_id' => 'required',
             'tutor_id' => 'required',
@@ -363,6 +362,7 @@ class UserController extends Controller
                 ->where('users.role_id','=',3)
                 ->where('users.id','=',$data['student_id'])
                 ->first();
+        dd($users);
         if($users){
             PushNotification::app('appNameIOS')
                 ->to('7586cf31a8ee6680b6ea130bcf9da9cbe2c2df16a2fc81962a91eb66a7b7b166')
