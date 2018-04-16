@@ -282,6 +282,69 @@
             }
         },
 
+        "/tutor-notification": {
+            "post": {
+                "summary": "Notification",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "student_id",
+                        "in": "query",
+                        "description": "Student id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "tutor_id",
+                        "in": "query",
+                        "description": "Tutor id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "device_token",
+                        "in": "query",
+                        "description": "Device Token",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "subject_id",
+                        "in": "query",
+                        "description": "Subject id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "class_id",
+                        "in": "query",
+                        "description": "Class id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid programme value"
+                    }
+                }
+            }
+        },
+
         "/get-tutors-profile": {
             "post": {
                 "summary": "Get Tutors",

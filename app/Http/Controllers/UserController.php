@@ -365,8 +365,12 @@ class UserController extends Controller
         
         if($users){
             PushNotification::app('appNameIOS')
-                ->to('7586cf31a8ee6680b6ea130bcf9da9cbe2c2df16a2fc81962a91eb66a7b7b166')
+                ->to($data['device_token'])
                 ->send("Student Name: $users->firstName $users->lastName Class Name: $users->p_name Subject Name: $users->s_name");
+                return [
+                    'status' => 'success',
+                    'messages' => 'Notification sent successfully'
+                ];
         }else{
             return response()->json(
                 [
