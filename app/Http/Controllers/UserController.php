@@ -333,7 +333,7 @@ class UserController extends Controller
                 ->get();
 
         if($users){
-            return $users;
+            return response()->json(['data' => $users]);
         }else{
             return response()->json(
                 [
