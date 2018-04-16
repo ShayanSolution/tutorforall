@@ -355,7 +355,7 @@ class UserController extends Controller
             'class_id' => 'required',
         ]);
         $users = User::select('users.*')
-                ->select('Users.*','programmes.name as p_name','subjects.name as s_name')
+                ->select('users.*','programmes.name as p_name','subjects.name as s_name')
                 ->leftjoin('profiles','profiles.user_id','=','users.id')
                 ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
                 ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
