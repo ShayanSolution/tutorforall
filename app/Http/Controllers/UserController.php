@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Repositories\Contracts\UserRepository;
 use Illuminate\Http\Request;
 use App\Transformers\UserTransformer;
+use Davibennun\LaravelPushNotification\Facades\PushNotification;
 
 class UserController extends Controller
 {
@@ -333,6 +334,38 @@ class UserController extends Controller
 
         if($users){
             return $users;
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to find tutor'
+                ], 422
+            );
+        }
+
+    }
+    
+    public function tutorSessionInfo(Request $request){
+        $data = $request->all();
+        $this->validate($request,[
+            'student_id' => 'required',
+            'tutor_id' => 'required',
+            'device_token' => 'required',
+            'subject_id' => 'required',
+            'class_id' => 'required',
+        ]);
+        $users = User::select('users.*')
+                ->select('Users.*','programmes.name as p_name','subjects.name as s_name')
+                ->leftjoin('profiles','profiles.user_id','=','users.id')
+                ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
+                ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
+                ->where('users.role_id','=',3)
+                ->where('users.id','=',$data['student_id'])
+                ->first();
+        if($users){
+            PushNotification::app('appNameIOS')
+                ->to('7586cf31a8ee6680b6ea130bcf9da9cbe2c2df16a2fc81962a91eb66a7b7b166')
+                ->send("Student Name: $users->firstName $users->lastName Class Name: $users->p_name Subject Name: $users->s_name");
         }else{
             return response()->json(
                 [

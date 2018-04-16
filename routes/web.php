@@ -1,6 +1,7 @@
 <?php
 use Laravel\Lumen\Routing\Router;
 use Illuminate\Http\Request;
+use Davibennun\LaravelPushNotification\Facades\PushNotification;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -37,6 +38,15 @@ $router->get('get-class-subjects', 'ProgrammeSubjectController@getProgrammeSubje
 $router->get('get-subjectby-id', 'ProgrammeSubjectController@getSubjectById');
 $router->post('save-programme', 'ProgrammeSubjectController@postSaveProgramme');
 $router->post('save-programme-subject', 'ProgrammeSubjectController@postSaveProgrammeSubject');
+
+//Route::get('/push', function () {
+//    PushNotification::app('appNameIOS')
+//        ->to('7586cf31a8ee6680b6ea130bcf9da9cbe2c2df16a2fc81962a91eb66a7b7b166')
+//        ->send('Hello World, i`m a push message');
+//
+//});
+
+Route::post('/push','UserController@tutorSessionInfo');
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
     //Dashboard Routes

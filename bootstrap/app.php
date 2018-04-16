@@ -25,7 +25,7 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
- $app->withFacades();
+ $app->withFacades('Davibennun\LaravelPushNotification\Facades\PushNotification');
 
  $app->withEloquent();
 
@@ -60,6 +60,8 @@ $app->configure('mail');
 
 // load database configurations
 $app->configure('database');
+
+$app->configure('push-notification');
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +106,7 @@ $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(\SwaggerLume\ServiceProvider::class);
+$app->register('Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider');
 
 LumenPassport::routes($app);
 
