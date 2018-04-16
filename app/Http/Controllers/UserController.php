@@ -347,6 +347,7 @@ class UserController extends Controller
     
     public function tutorSessionInfo(Request $request){
         $data = $request->all();
+        dd($data);
         $this->validate($request,[
             'student_id' => 'required',
             'tutor_id' => 'required',
