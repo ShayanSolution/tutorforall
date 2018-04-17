@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
+use App\Models\Profile;
 use App\Models\Session;
 use App\Models\User;
 use App\Repositories\Contracts\UserRepository;
@@ -354,24 +355,31 @@ class UserController extends Controller
             'class_id' => 'required',
         ]);
         $tutor_id = $data['tutor_id'];
-        $device = User::where('id','=',$tutor_id)->select('device_token as token')->first();
+        $student_id = $data['student_id'];
+        $programme_id = $data['class_id'];
+        $subject_id = $data['subject_id'];
+
+        //update class and subjects for students
+        Profile::where('user_id',$student_id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id]);
         $users = User::select('users.*')
-                ->select('users.*','programmes.name as p_name','subjects.name as s_name')
+                ->select('users.*','programmes.name as p_name','subjects.name as s_name','programmes.id as p_id','subjects.id as s_id')
                 ->leftjoin('profiles','profiles.user_id','=','users.id')
                 ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
                 ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
                 ->where('users.role_id','=',3)
-                ->where('users.id','=',$data['student_id'])
+                ->where('users.id','=',$student_id)
                 ->first();
         
         if($users){
+            //get tutor device token
+            $device = User::where('id','=',$tutor_id)->select('device_token as token')->first();
+
             $message = PushNotification::Message(
                 $users->firstName.' '.$users->lastName.' wants a session with you '.
-                "Student Name: $users->firstName $users->lastName Class Name: $users->p_name Subject Name: $users->s_name",
+                "Student Name: $users->firstName $users->lastName Class Name: $users->p_name Subject Name: $users->s_name"." Class Id: ".$users->p_id." Subject Id: ".$users->s_id ,
                 array(
                 'badge' => 1,
                 'sound' => 'example.aiff',
-
                 'actionLocKey' => 'Action button title!',
                 'locKey' => 'localized key',
                 'locArgs' => array(
