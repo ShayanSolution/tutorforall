@@ -362,7 +362,7 @@ class UserController extends Controller
         //update class and subjects for students
         Profile::where('user_id',$student_id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id]);
         $users = User::select('users.*')
-                ->select('users.*','programmes.name as p_name','subjects.name as s_name','programmes.id as p_id','subjects.id as s_id')
+                ->select('users.*','programmes.name as p_name','subjects.name as s_name','programmes.id as p_id','subjects.id as s_id','profiles.is_group')
                 ->leftjoin('profiles','profiles.user_id','=','users.id')
                 ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
                 ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
@@ -392,6 +392,7 @@ class UserController extends Controller
                     'Subject_Name' => $users->s_name,
                     'Class_id' => $users->p_id,
                     'Subject_id' => $users->s_id,
+                    'is_group' => $users->is_group,
                 ))
             ));
             //send student info to tutor
