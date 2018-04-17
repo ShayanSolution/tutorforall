@@ -181,19 +181,20 @@ class AuthenticationController extends Controller
      * )
      */
     public function postRegisterStudent(Request $request){
-        print_r($request->all()); dd();
-        $this->validate($request,[
-            'email' => 'required|email|unique:users',
-            'phone' => 'required|digits_between:11,20|unique:users',
-            'code' => 'required|digits:4',
-            'device_token' => 'required',
-        ]);
+
+//        $this->validate($request,[
+//            'email' => 'required|email|unique:users',
+//            'phone' => 'required|digits_between:11,20|unique:users',
+//            'code' => 'required|digits:4',
+//            'device_token' => 'required',
+//        ]);
 
 
         $email = $request->email;
         $phone = $request->phone;
         $code = $request->code;
         $device_token = $request->device_token;
+        print_r($device_token); dd();
 
         $code = PhoneCode::where('phone', $phone)
             ->where('code', $code)
