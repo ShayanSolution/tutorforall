@@ -198,6 +198,7 @@ class AuthenticationController extends Controller
             ->orderBy('id')
             ->first();
 
+
         if($code){
 
             $user = User::create([
@@ -211,6 +212,7 @@ class AuthenticationController extends Controller
             if($user){
                 return [
                     'status' => 'success',
+                    'user_id' => $user,
                     'messages' => 'Student has been created'
                 ];
             }else{
