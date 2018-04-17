@@ -181,7 +181,7 @@ class AuthenticationController extends Controller
      * )
      */
     public function postRegisterStudent(Request $request){
-        print_r($request); dd();
+        print_r($request->all()); dd();
         $this->validate($request,[
             'email' => 'required|email|unique:users',
             'phone' => 'required|digits_between:11,20|unique:users',
