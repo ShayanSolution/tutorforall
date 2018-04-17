@@ -206,7 +206,7 @@ class AuthenticationController extends Controller
                 'phone' => $phone,
                 'password' => Hash::make($code),
                 'uid' => md5(microtime()),
-                'role_id' => 2
+                'role_id' => 3
             ])->id;
 
             if($user){
