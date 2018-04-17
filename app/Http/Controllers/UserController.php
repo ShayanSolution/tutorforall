@@ -365,10 +365,29 @@ class UserController extends Controller
                 ->first();
         
         if($users){
+            $message = PushNotification::Message(
+                $users->firstName.' '.$users->lastName.' wants a session with you '.
+                "Student Name: $users->firstName $users->lastName Class Name: $users->p_name Subject Name: $users->s_name",
+                array(
+                'badge' => 1,
+                'sound' => 'example.aiff',
+
+                'actionLocKey' => 'Action button title!',
+                'locKey' => 'localized key',
+                'locArgs' => array(
+                    'localized args',
+                    'localized args',
+                ),
+                'launchImage' => 'image.jpg',
+
+                'custom' => array('custom data' => array(
+                    'we' => 'want', 'send to app'
+                ))
+            ));
             //send student info to tutor
             PushNotification::app('appNameIOS')
                 ->to($device->token)
-                ->send("Student Name: $users->firstName $users->lastName Class Name: $users->p_name Subject Name: $users->s_name");
+                ->send($message);
                 return [
                     'status' => 'success',
                     'messages' => 'Notification sent successfully'
