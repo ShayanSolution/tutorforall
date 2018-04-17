@@ -187,6 +187,7 @@ class AuthenticationController extends Controller
             'code' => 'required|digits:4',
             'device_token' => 'required',
         ]);
+        print_r($request); dd();
 
         $email = $request->email;
         $phone = $request->phone;
