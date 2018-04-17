@@ -350,10 +350,11 @@ class UserController extends Controller
         $this->validate($request,[
             'student_id' => 'required',
             'tutor_id' => 'required',
-            'device_token' => 'required',
             'subject_id' => 'required',
             'class_id' => 'required',
         ]);
+        $tutor_id = $data['tutor_id'];
+        $device = User::where('id','=',$tutor_id)->select('device_token as token')->first();
         $users = User::select('users.*')
                 ->select('users.*','programmes.name as p_name','subjects.name as s_name')
                 ->leftjoin('profiles','profiles.user_id','=','users.id')
@@ -364,8 +365,9 @@ class UserController extends Controller
                 ->first();
         
         if($users){
+            //send student info to tutor
             PushNotification::app('appNameIOS')
-                ->to($data['device_token'])
+                ->to($device->token)
                 ->send("Student Name: $users->firstName $users->lastName Class Name: $users->p_name Subject Name: $users->s_name");
                 return [
                     'status' => 'success',

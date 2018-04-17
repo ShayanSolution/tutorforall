@@ -316,13 +316,6 @@
                         "format": "int64"
                     },
                     {
-                        "name": "device_token",
-                        "in": "query",
-                        "description": "Device Token",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
                         "name": "subject_id",
                         "in": "query",
                         "description": "Subject id",

@@ -97,7 +97,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         if(Request::input('role') === 'admin'){
             return self::where('email', $username)->first();
         }else{
-            return self::where('phone', $username)->first();
+            $request  = Request::all();
+            $user = self::where('phone', $username)->first();
+            if(isset($request['device_token']) && !empty($request['device_token'])){
+                self::where('id','=',$user->id)->update(['device_token'=>$request['device_token']]);
+            }
+            return $user;
         }
     }
 }
