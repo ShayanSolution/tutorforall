@@ -375,8 +375,7 @@ class UserController extends Controller
             $device = User::where('id','=',$tutor_id)->select('device_token as token')->first();
 
             $message = PushNotification::Message(
-                $users->firstName.' '.$users->lastName.' wants a session with you, '.
-                "Student Name: $users->firstName $users->lastName, Class Name: $users->p_name, Subject Name: $users->s_name,"." Class Id: ".$users->p_id.", Subject Id: ".$users->s_id ,
+                $users->firstName.' '.$users->lastName.' wants a session with you',
                 array(
                 'badge' => 1,
                 'sound' => 'example.aiff',
@@ -387,9 +386,12 @@ class UserController extends Controller
                     'localized args',
                 ),
                 'launchImage' => 'image.jpg',
-
-                'custom' => array('custom data' => array(
-                    'we' => 'want', 'send to app'
+                'custom' => array('custom_data' => array(
+                    'Student_Name' => $users->firstName." ".$users->lastName,
+                    'Class_Name' => $users->p_name,
+                    'Subject_Name' => $users->s_name,
+                    'Class_id' => $users->p_id,
+                    'Subject_id' => $users->s_id,
                 ))
             ));
             //send student info to tutor
@@ -409,5 +411,15 @@ class UserController extends Controller
             );
         }
 
+    }
+
+    public function bookedTutor(Request $request){
+        $data = $request->all();
+        $this->validate($request,[
+            'student_id' => 'required',
+            'tutor_id' => 'required',
+            'subject_id' => 'required',
+            'class_id' => 'required',
+        ]);
     }
 }
