@@ -375,8 +375,8 @@ class UserController extends Controller
             $device = User::where('id','=',$tutor_id)->select('device_token as token')->first();
 
             $message = PushNotification::Message(
-                $users->firstName.' '.$users->lastName.' wants a session with you '.
-                "Student Name: $users->firstName $users->lastName Class Name: $users->p_name Subject Name: $users->s_name"." Class Id: ".$users->p_id." Subject Id: ".$users->s_id ,
+                $users->firstName.' '.$users->lastName.' wants a session with you, '.
+                "Student Name: $users->firstName $users->lastName, Class Name: $users->p_name, Subject Name: $users->s_name,"." Class Id: ".$users->p_id.", Subject Id: ".$users->s_id ,
                 array(
                 'badge' => 1,
                 'sound' => 'example.aiff',
