@@ -117,6 +117,13 @@
                         "description": "Phone code",
                         "required": true,
                         "type": "integer"
+                    },
+                    {
+                        "name": "device_token",
+                        "in": "query",
+                        "description": "Device Token",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "responses": {

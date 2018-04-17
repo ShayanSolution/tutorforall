@@ -185,11 +185,13 @@ class AuthenticationController extends Controller
             'email' => 'required|email|unique:users',
             'phone' => 'required|digits_between:11,20|unique:users',
             'code' => 'required|digits:4',
+            'device_token' => 'required',
         ]);
 
         $email = $request->email;
         $phone = $request->phone;
         $code = $request->code;
+        $device_token = $request->device_token;
 
         $code = PhoneCode::where('phone', $phone)
             ->where('code', $code)
@@ -206,7 +208,8 @@ class AuthenticationController extends Controller
                 'phone' => $phone,
                 'password' => Hash::make($code),
                 'uid' => md5(microtime()),
-                'role_id' => 3
+                'role_id' => 3,
+                'device_token' => $device_token,
             ])->id;
 
             if($user){
