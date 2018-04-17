@@ -422,5 +422,79 @@ class UserController extends Controller
             'subject_id' => 'required',
             'class_id' => 'required',
         ]);
+
+        $tutor_id = $data['tutor_id'];
+        $student_id = $data['student_id'];
+        $programme_id = $data['class_id'];
+        $subject_id = $data['subject_id'];
+
+        $session = Session::where('tutor_id','=',$tutor_id)->where('student_id','=',$student_id)->first();
+        if($session){
+            //update session
+            Session::where('id',$session->id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id,'status'=>'booked']);
+        }else{
+            $session = new Session;
+            $session->tutor_id = $tutor_id;
+            $session->student_id = $student_id;
+            $session->programme_id = $programme_id;
+            $session->subject_id = $subject_id;
+            $session->status = 'booked';
+            $session->subscription_id = 1;
+            $session->meeting_type_id = 1;
+            $session->save();
+        }
+
+        if($session){
+            //get tutor profile
+            $users = User::select('users.*')
+                    ->select('users.*','programmes.name as p_name','subjects.name as s_name','programmes.id as p_id','subjects.id as s_id','profiles.is_group')
+                    ->leftjoin('profiles','profiles.user_id','=','users.id')
+                    ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
+                    ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
+                    ->where('users.role_id','=',2)
+                    ->where('users.id','=',$tutor_id)
+                    ->first();
+
+            //get tutor device token
+            $device = User::where('id','=',$student_id)->select('device_token as token')->first();
+
+            $message = PushNotification::Message(
+                $users->firstName.' '.$users->lastName.' accepted your request',
+                array(
+                    'badge' => 1,
+                    'sound' => 'example.aiff',
+                    'actionLocKey' => 'Action button title!',
+                    'locKey' => 'localized key',
+                    'locArgs' => array(
+                        'localized args',
+                        'localized args',
+                    ),
+                    'launchImage' => 'image.jpg',
+                    'custom' => array('custom_data' => array(
+                        'Student_Name' => $users->firstName." ".$users->lastName,
+                        'Class_Name' => $users->p_name,
+                        'Subject_Name' => $users->s_name,
+                        'Class_id' => $users->p_id,
+                        'Subject_id' => $users->s_id,
+                        'is_group' => $users->is_group,
+                    ))
+                ));
+            //send student info to tutor
+            PushNotification::app('appNameIOS')
+                ->to($device->token)
+                ->send($message);
+            return [
+                'status' => 'success',
+                'messages' => 'Notification sent successfully'
+            ];
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to find tutor'
+                ], 422
+            );
+        }
+
     }
 }
