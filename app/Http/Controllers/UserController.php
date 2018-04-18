@@ -441,7 +441,12 @@ class UserController extends Controller
         $programme_id = $data['class_id'];
         $subject_id = $data['subject_id'];
 
-        $session = Session::where('tutor_id','=',$tutor_id)->where('student_id','=',$student_id)->first();
+        $session = Session::where('tutor_id','=',$tutor_id)
+                            ->where('student_id','=',$student_id)
+                            ->where('student_id','=',$student_id)
+                            ->where('programme_id','=',$programme_id)
+                            ->where('subject_id','=',$subject_id)
+                            ->first();
         if($session){
             //update session
             Session::where('id',$session->id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id,'status'=>'booked']);
@@ -452,7 +457,7 @@ class UserController extends Controller
             $session->programme_id = $programme_id;
             $session->subject_id = $subject_id;
             $session->status = 'booked';
-            $session->subscription_id = 1;
+            $session->subscription_id = 3;
             $session->meeting_type_id = 1;
             $session->save();
         }
