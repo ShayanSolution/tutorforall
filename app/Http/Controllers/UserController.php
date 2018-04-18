@@ -469,7 +469,7 @@ class UserController extends Controller
             $session->programme_id = $programme_id;
             $session->subject_id = $subject_id;
             $session->status = 'booked';
-            $session->subscription_id = 1;
+            $session->subscription_id = 3;
             $session->meeting_type_id = 1;
             $session->save();
 
