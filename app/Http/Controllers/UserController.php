@@ -497,7 +497,7 @@ class UserController extends Controller
                     ),
                     'launchImage' => 'image.jpg',
                     'custom' => array('custom_data' => array(
-                        'Student_Name' => $users->firstName." ".$users->lastName,
+                        'Tutor_Name' => $users->firstName." ".$users->lastName,
                         'Class_Name' => $users->p_name,
                         'Subject_Name' => $users->s_name,
                         'Class_id' => $users->p_id,
