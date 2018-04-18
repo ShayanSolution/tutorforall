@@ -375,7 +375,7 @@ class UserController extends Controller
                 ->first();
 
         if($users){
-            $user_age = Carbon::parse($this->attributes['birthdate'])->age;
+            $user_age = Carbon::parse($users->dob)->age;
             for($j=0;$j<count($tutors_ids);$j++){
                 //get tutor device token to send notification
                 $device = User::where('id','=',$tutors_ids[$j])->select('device_token as token')->first();
