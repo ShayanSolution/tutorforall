@@ -375,7 +375,7 @@ class UserController extends Controller
                 ->first();
 
         if($users){
-
+            $user_age = Carbon::parse($this->attributes['birthdate'])->age;
             for($j=0;$j<count($tutors_ids);$j++){
                 //get tutor device token to send notification
                 $device = User::where('id','=',$tutors_ids[$j])->select('device_token as token')->first();
@@ -404,8 +404,9 @@ class UserController extends Controller
                                 'is_group' => $users->is_group,
                                 'longitude' => $users->longitude,
                                 'longitude' => $users->longitude,
-                                'datetime' => Carbon::now()->toDateTimeString()
-                ))
+                                'datetime' => Carbon::now()->toDateTimeString(),
+                                'datetime' => $user_age>0?$user_age:''
+                            ))
                         ));
 
                     //send student info to tutor
