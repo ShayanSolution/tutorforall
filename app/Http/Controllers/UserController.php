@@ -10,6 +10,9 @@ use App\Repositories\Contracts\UserRepository;
 use Illuminate\Http\Request;
 use App\Transformers\UserTransformer;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
+use Illuminate\Queue\Queue;
+use Carbon\Carbon;
+
 
 class UserController extends Controller
 {
@@ -370,13 +373,13 @@ class UserController extends Controller
                 ->where('users.role_id','=',3)
                 ->where('users.id','=',$student_id)
                 ->first();
-        //print_r(($tutors_ids)); die();
-        $count= 1;
+
         if($users){
+
             for($j=0;$j<count($tutors_ids);$j++){
                 //get tutor device token to send notification
                 $device = User::where('id','=',$tutors_ids[$j])->select('device_token as token')->first();
-                $count++;
+
                 if(!empty($device->token)){
                     $device_token_array[] = $device->token;
                     //notification message
@@ -399,7 +402,10 @@ class UserController extends Controller
                                 'Class_id' => $users->p_id,
                                 'Subject_id' => $users->s_id,
                                 'is_group' => $users->is_group,
-                            ))
+                                'longitude' => $users->longitude,
+                                'longitude' => $users->longitude,
+                                'datetime' => Carbon::now()->toDateTimeString()
+                ))
                         ));
 
                     //send student info to tutor
@@ -413,7 +419,7 @@ class UserController extends Controller
             return [
                 'status' => 'success',
                 'messages' => 'Notification sent successfully',
-                'device-tokens' => print_r($device_token_array)
+                //'device-tokens' => print_r($device_token_array)
             ];
 
         }else{
@@ -498,6 +504,9 @@ class UserController extends Controller
                     ))
                 ));
             //send student info to student
+//            Queue::push(PushNotification::app('appStudentIOS')
+//                ->to($device->token)
+//                ->send($message));
             PushNotification::app('appStudentIOS')
                             ->to($device->token)
                             ->send($message);
@@ -507,7 +516,7 @@ class UserController extends Controller
         if($session){
             return [
                 'status' => 'success',
-                'messages' => 'Notification sent successfully'
+                'messages' => 'Session Created successfully'
             ];
         }else{
             return response()->json(
