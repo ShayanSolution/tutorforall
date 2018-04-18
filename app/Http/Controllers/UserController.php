@@ -404,9 +404,9 @@ class UserController extends Controller
                                 'Subject_id' => $users->s_id,
                                 'IS_Group' => $users->is_group,
                                 'Longitude' => $users->longitude,
-                                'Longitude' => $users->longitude,
-                                //'Datetime' => Carbon::now()->toDateTimeString(),
-                                //'Age' => $user_age>0?$user_age:''
+                                'Latitude' => $users->longitude,
+                                'Datetime' => Carbon::now()->toDateTimeString(),
+                                'Age' => $user_age>0?$user_age:''
                             ))
                         ));
 
