@@ -469,7 +469,7 @@ class UserController extends Controller
                     ->leftjoin('profiles','profiles.user_id','=','users.id')
                     ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
                     ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
-                    ->where('users.role_id','=',3)
+                    ->where('users.role_id','=',2)
                     ->where('users.id','=',$tutor_id)
                     ->first();
             dd($tutor_id);
