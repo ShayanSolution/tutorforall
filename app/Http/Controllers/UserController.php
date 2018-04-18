@@ -435,21 +435,33 @@ class UserController extends Controller
             'subject_id' => 'required',
             'class_id' => 'required',
         ]);
-
         $tutor_id = $data['tutor_id'];
         $student_id = $data['student_id'];
         $programme_id = $data['class_id'];
         $subject_id = $data['subject_id'];
-
+        //get tutor profile
+        $users = User::select('users.*')
+                ->select('users.*','programmes.name as p_name','subjects.name as s_name','programmes.id as p_id','subjects.id as s_id','profiles.is_group')
+                ->leftjoin('profiles','profiles.user_id','=','users.id')
+                ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
+                ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
+                ->where('users.role_id','=',2)
+                ->where('users.id','=',$tutor_id)
+                ->first();
+        
         $session = Session::where('tutor_id','=',$tutor_id)
-                            ->where('student_id','=',$student_id)
                             ->where('student_id','=',$student_id)
                             ->where('programme_id','=',$programme_id)
                             ->where('subject_id','=',$subject_id)
+                            ->where('status','=','booked')
                             ->first();
+        
+        //if student session already exists.
         if($session){
-            //update session
-            Session::where('id',$session->id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id,'status'=>'booked']);
+            return [
+                'status' => 'fail',
+                'messages' => 'Session already booked!'
+            ];
         }else{
             $session = new Session;
             $session->tutor_id = $tutor_id;
@@ -457,22 +469,10 @@ class UserController extends Controller
             $session->programme_id = $programme_id;
             $session->subject_id = $subject_id;
             $session->status = 'booked';
-            $session->subscription_id = 3;
+            $session->subscription_id = 1;
             $session->meeting_type_id = 1;
             $session->save();
-        }
 
-        if($session){
-            //get tutor profile
-            $users = User::select('users.*')
-                    ->select('users.*','programmes.name as p_name','subjects.name as s_name','programmes.id as p_id','subjects.id as s_id','profiles.is_group')
-                    ->leftjoin('profiles','profiles.user_id','=','users.id')
-                    ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
-                    ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
-                    ->where('users.role_id','=',2)
-                    ->where('users.id','=',$tutor_id)
-                    ->first();
-            
             //get tutor device token
             $device = User::where('id','=',$student_id)->select('device_token as token')->first();
 
@@ -497,10 +497,14 @@ class UserController extends Controller
                         'is_group' => $users->is_group,
                     ))
                 ));
-            //send student info to tutor
-            PushNotification::app('appNameIOS')
-                ->to($device->token)
-                ->send($message);
+            //send student info to student
+            PushNotification::app('appStudentIOS')
+                            ->to($device->token)
+                            ->send($message);
+
+        }
+
+        if($session){
             return [
                 'status' => 'success',
                 'messages' => 'Notification sent successfully'
