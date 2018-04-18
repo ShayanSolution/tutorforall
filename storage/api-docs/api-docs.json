@@ -312,8 +312,7 @@
                         "in": "query",
                         "description": "Tutor id",
                         "required": true,
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string"
                     },
                     {
                         "name": "subject_id",

@@ -354,11 +354,12 @@ class UserController extends Controller
             'subject_id' => 'required',
             'class_id' => 'required',
         ]);
-        $tutor_id = $data['tutor_id'];
+
         $student_id = $data['student_id'];
         $programme_id = $data['class_id'];
         $subject_id = $data['subject_id'];
-
+        $tutors_ids = json_decode($data['tutor_id']);
+        $device_token_array = array();
         //update class and subjects for students
         Profile::where('user_id',$student_id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id]);
         $users = User::select('users.*')
@@ -369,40 +370,52 @@ class UserController extends Controller
                 ->where('users.role_id','=',3)
                 ->where('users.id','=',$student_id)
                 ->first();
-        
+        //print_r(($tutors_ids)); die();
+        $count= 1;
         if($users){
-            //get tutor device token
-            $device = User::where('id','=',$tutor_id)->select('device_token as token')->first();
+            for($j=0;$j<count($tutors_ids);$j++){
+                //get tutor device token to send notification
+                $device = User::where('id','=',$tutors_ids[$j])->select('device_token as token')->first();
+                $count++;
+                if(!empty($device->token)){
+                    $device_token_array[] = $device->token;
+                    //notification message
+                    $message = PushNotification::Message(
+                        $users->firstName.' '.$users->lastName.' wants a session with you',
+                        array(
+                            'badge' => 1,
+                            'sound' => 'example.aiff',
+                            'actionLocKey' => 'Action button title!',
+                            'locKey' => 'localized key',
+                            'locArgs' => array(
+                                'localized args',
+                                'localized args',
+                            ),
+                            'launchImage' => 'image.jpg',
+                            'custom' => array('custom_data' => array(
+                                'Student_Name' => $users->firstName." ".$users->lastName,
+                                'Class_Name' => $users->p_name,
+                                'Subject_Name' => $users->s_name,
+                                'Class_id' => $users->p_id,
+                                'Subject_id' => $users->s_id,
+                                'is_group' => $users->is_group,
+                            ))
+                        ));
 
-            $message = PushNotification::Message(
-                $users->firstName.' '.$users->lastName.' wants a session with you',
-                array(
-                'badge' => 1,
-                'sound' => 'example.aiff',
-                'actionLocKey' => 'Action button title!',
-                'locKey' => 'localized key',
-                'locArgs' => array(
-                    'localized args',
-                    'localized args',
-                ),
-                'launchImage' => 'image.jpg',
-                'custom' => array('custom_data' => array(
-                    'Student_Name' => $users->firstName." ".$users->lastName,
-                    'Class_Name' => $users->p_name,
-                    'Subject_Name' => $users->s_name,
-                    'Class_id' => $users->p_id,
-                    'Subject_id' => $users->s_id,
-                    'is_group' => $users->is_group,
-                ))
-            ));
-            //send student info to tutor
-            PushNotification::app('appNameIOS')
-                ->to($device->token)
-                ->send($message);
-                return [
-                    'status' => 'success',
-                    'messages' => 'Notification sent successfully'
-                ];
+                    //send student info to tutor
+                    PushNotification::app('appNameIOS')
+                        ->to($device->token)
+                        ->send($message);
+
+                }
+            }
+
+            return [
+                'status' => 'success',
+                'messages' => 'Notification sent successfully',
+                'device-tokens' => print_r($device_token_array)
+            ];
+
         }else{
             return response()->json(
                 [
