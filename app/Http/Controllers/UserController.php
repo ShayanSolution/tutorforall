@@ -472,7 +472,7 @@ class UserController extends Controller
                     ->where('users.role_id','=',3)
                     ->where('users.id','=',$tutor_id)
                     ->first();
-
+            dd($user);
             //get tutor device token
             $device = User::where('id','=',$student_id)->select('device_token as token')->first();
 
