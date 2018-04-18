@@ -397,15 +397,16 @@ class UserController extends Controller
                             'launchImage' => 'image.jpg',
                             'custom' => array('custom_data' => array(
                                 'Student_Name' => $users->firstName." ".$users->lastName,
+                                'Student_id' => $users->id,
                                 'Class_Name' => $users->p_name,
                                 'Subject_Name' => $users->s_name,
                                 'Class_id' => $users->p_id,
                                 'Subject_id' => $users->s_id,
-                                'is_group' => $users->is_group,
-                                'longitude' => $users->longitude,
-                                'longitude' => $users->longitude,
-                                'datetime' => Carbon::now()->toDateTimeString(),
-                                'datetime' => $user_age>0?$user_age:''
+                                'IS_Group' => $users->is_group,
+                                'Longitude' => $users->longitude,
+                                'Longitude' => $users->longitude,
+                                'Datetime' => Carbon::now()->toDateTimeString(),
+                                'Age' => $user_age>0?$user_age:''
                             ))
                         ));
 
