@@ -457,8 +457,8 @@ class UserController extends Controller
                 ->where('users.id','=',$tutor_id)
                 ->first();
         
-        $session = Session::where('tutor_id','=',$tutor_id)
-                            ->where('student_id','=',$student_id)
+        $session = Session::
+                            where('student_id','=',$student_id)
                             ->where('programme_id','=',$programme_id)
                             ->where('subject_id','=',$subject_id)
                             ->where('status','=','booked')
