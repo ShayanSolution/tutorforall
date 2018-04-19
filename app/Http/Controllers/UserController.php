@@ -544,6 +544,7 @@ class UserController extends Controller
             'mobile' => 'required',
             'student_id' => 'required',
             'middleName' => 'required',
+            'address' => 'required',
         ]);
         $firstName = $data['firstName'];
         $lastName = $data['lastName'];
@@ -552,6 +553,9 @@ class UserController extends Controller
         $mobile = $data['mobile'];
         $student_id = $data['student_id'];
         $middleName = $data['middleName'];
+        $gender_id = $data['gender_id'];
+        $address = $data['address'];
+
         $user = User::where('id','=',$student_id)->first();
         if($user){
             //upload file
@@ -561,13 +565,70 @@ class UserController extends Controller
                 $destinationPath = base_path().'/images';
                 $file->move($destinationPath,$file->getClientOriginalName());
             }
-            strtolower($data['gender_id']) == 'male'?$gender_id= 1:$gender_id= 2;
+            //strtolower($data['gender_id']) == 'male'?$gender_id= 1:$gender_id= 2;
 
             //update student profile
             User::where('id','=',$student_id)
                   ->where('role_id','=',3)
                   -> update(['firstName'=>$firstName,'lastName'=>$lastName,'fatherName'=>$fatherName,'email'=>$email,
-                  'gender_id'=>$gender_id,'mobile'=>$mobile,'middleName'=>$middleName,'profileImage'=>$file_name]);
+                  'gender_id'=>$gender_id,'mobile'=>$mobile,'middleName'=>$middleName,'profileImage'=>$file_name,'address'=>$address]);
+            return [
+                'status' => 'success',
+                'messages' => 'Student profile updated successfully!',
+            ];
+        }else{
+
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to update user'
+                ], 422
+            );
+        }
+    }
+
+
+    public function updateTutorProfile(Request $request){
+        $data = $request->all();
+        $this->validate($request,[
+            'firstName' => 'required',
+            'lastName' => 'required',
+            'email' => 'email|required',
+            'fatherName' => 'required',
+            'gender_id' => 'required',
+            'mobile' => 'required',
+            'tutor_id' => 'required',
+            'cnic_no' => 'required',
+            'experience' => 'required',
+            'qualification' => 'required',
+            'programme_id' => 'required',
+            'subject_id' => 'required',
+        ]);
+        dd($data);
+        $firstName = $data['firstName'];
+        $lastName = $data['lastName'];
+        $email = $data['email'];
+        $fatherName = $data['fatherName'];
+        $mobile = $data['mobile'];
+        $student_id = $data['student_id'];
+        $middleName = $data['middleName'];
+        $gender_id = $data['gender_id'];
+        $user = User::where('id','=',$student_id)->first();
+        if($user){
+            //upload file
+            if(isset($data['profileImage'])){
+                $file = $request->file('profileImage');
+                $file_name = $file->getClientOriginalName();
+                $destinationPath = base_path().'/images';
+                $file->move($destinationPath,$file->getClientOriginalName());
+            }
+            //strtolower($data['gender_id']) == 'male'?$gender_id= 1:$gender_id= 2;
+
+            //update student profile
+            User::where('id','=',$student_id)
+                ->where('role_id','=',3)
+                -> update(['firstName'=>$firstName,'lastName'=>$lastName,'fatherName'=>$fatherName,'email'=>$email,
+                    'gender_id'=>$gender_id,'mobile'=>$mobile,'middleName'=>$middleName,'profileImage'=>$file_name]);
             return [
                 'status' => 'success',
                 'messages' => 'Student profile updated successfully!',

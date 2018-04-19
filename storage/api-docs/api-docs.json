@@ -13,7 +13,7 @@
         },
         "version": "1.0.0"
     },
-    "host": "http://tutor4all-api.shayansolutions.com",
+    "host": "tutor4all-api.shayansolutions.com",
 
     "basePath": "/",
     "schemes": [
@@ -365,7 +365,14 @@
                         "required": true,
                         "type": "integer",
                         "format": "int64"
-                    }
+                    },
+                    {
+                        "name": "address",
+                        "in": "query",
+                        "description": "Address",
+                        "required": true,
+                        "type": "string"
+                    },
 
                 ],
                 "responses": {
