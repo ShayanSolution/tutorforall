@@ -48,6 +48,7 @@ $router->post('save-programme-subject', 'ProgrammeSubjectController@postSaveProg
 
 Route::post('/tutor-notification','UserController@tutorSessionInfo');
 Route::post('/booked','UserController@bookedTutor');
+Route::post('/update-student-profile','UserController@updateStudentProfile');
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
     //Dashboard Routes

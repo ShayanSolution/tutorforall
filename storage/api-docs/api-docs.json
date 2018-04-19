@@ -13,7 +13,7 @@
         },
         "version": "1.0.0"
     },
-    "host": "tutor4all-api.shayansolutions.com",
+    "host": "http://tutor4all-api.shayansolutions.com",
 
     "basePath": "/",
     "schemes": [
@@ -272,6 +272,96 @@
                         "name": "user_id",
                         "in": "query",
                         "description": "User ID",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Location updated"
+                    },
+                    "422": {
+                        "description": "Unable to update location"
+                    }
+                }
+            }
+        },
+
+        "/update-student-profile": {
+            "post": {
+                "summary": "Update Student Profile",
+                "description": "",
+                "operationId": "updateStudentProfile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "firstName",
+                        "in": "query",
+                        "description": "First Name",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "middleName",
+                        "in": "query",
+                        "description": "Middle Name",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "lastName",
+                        "in": "query",
+                        "description": "Last Name",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Email",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "fatherName",
+                        "in": "query",
+                        "description": "Father Name",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "gender_id",
+                        "in": "query",
+                        "description": "i.e. Male or Female",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "mobile",
+                        "in": "query",
+                        "description": "Mobile Number",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "profileImage",
+                        "in": "formData",
+                        "description": "Profile Image",
+                        "required": true,
+                        "type": "file"
+                    },
+                    {
+                        "name": "student_id",
+                        "in": "query",
+                        "description": "Student id",
                         "required": true,
                         "type": "integer",
                         "format": "int64"
