@@ -603,17 +603,25 @@ class UserController extends Controller
             'qualification' => 'required',
             'programme_id' => 'required',
             'subject_id' => 'required',
+            'address' => 'required',
         ]);
-        dd($data);
+
         $firstName = $data['firstName'];
         $lastName = $data['lastName'];
         $email = $data['email'];
         $fatherName = $data['fatherName'];
         $mobile = $data['mobile'];
-        $student_id = $data['student_id'];
-        $middleName = $data['middleName'];
+        $tutor_id = $data['tutor_id'];
         $gender_id = $data['gender_id'];
-        $user = User::where('id','=',$student_id)->first();
+        $address = $data['address'];
+        $cnic_no = $data['cnic_no'];
+        $experience = $data['experience'];
+        $qualification = $data['qualification'];
+        $programme_id = $data['programme_id'];
+        $subject_id = $data['subject_id'];
+
+
+        $user = User::where('id','=',$tutor_id)->first();
         if($user){
             //upload file
             if(isset($data['profileImage'])){
@@ -625,13 +633,24 @@ class UserController extends Controller
             //strtolower($data['gender_id']) == 'male'?$gender_id= 1:$gender_id= 2;
 
             //update student profile
-            User::where('id','=',$student_id)
-                ->where('role_id','=',3)
+            User::where('id','=',$tutor_id)
+                ->where('role_id','=',2)
                 -> update(['firstName'=>$firstName,'lastName'=>$lastName,'fatherName'=>$fatherName,'email'=>$email,
-                    'gender_id'=>$gender_id,'mobile'=>$mobile,'middleName'=>$middleName,'profileImage'=>$file_name]);
+                    'gender_id'=>$gender_id,'mobile'=>$mobile,'profileImage'=>$file_name,
+                    'address'=>$address,'cnic_no'=>$cnic_no,'experience'=>$experience,'qualification'=>$qualification]);
+            $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
+            if($tutor_profile){
+                Profile::where('user_id','=',$tutor_id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id]);
+            }else{
+                $tutor_profile = new Profile();
+                $tutor_profile->programme_id = $programme_id;
+                $tutor_profile->subject_id = $subject_id;
+                $tutor_profile->save();
+            }
+
             return [
                 'status' => 'success',
-                'messages' => 'Student profile updated successfully!',
+                'messages' => 'Tutor profile updated successfully!',
             ];
         }else{
 
