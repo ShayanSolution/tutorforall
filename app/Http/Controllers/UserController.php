@@ -509,7 +509,6 @@ class UserController extends Controller
                         'is_group' => $users->is_group,
                         'tutor_is_home' => $users->t_is_home,
                         'tutor_lat' => $users->latitude,
-                        'tutor_lat' => $users->latitude,
                         'tutor_long' => $users->longitude,
                         'student_lat' => $student->latitude,
                         'student_long' => $student->longitude,
