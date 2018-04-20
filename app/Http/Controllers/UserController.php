@@ -409,7 +409,7 @@ class UserController extends Controller
                                 'Latitude' => $users->latitude,
                                 'Datetime' => Carbon::now()->toDateTimeString(),
                                 'Age' => $user_age>0?$user_age:'',
-                                'Profile_Image' => !empty($users->profileImage)?base_path().'/images/'.$users->profileImage:'',
+                                'Profile_Image' => !empty($users->profileImage)?resource_path().'/images/'.$users->profileImage:'',
                             ))
                         ));
 
@@ -513,7 +513,7 @@ class UserController extends Controller
                         'tutor_long' => $users->longitude,
                         'student_lat' => $student->latitude,
                         'student_long' => $student->longitude,
-                        'Profile_Image' => !empty($users->profileImage)?base_path().'/images/'.$users->profileImage:'',
+                        'Profile_Image' => !empty($users->profileImage)?resource_path().'/images/'.$users->profileImage:'',
                     ))
                 ));
             //send student info to student
@@ -600,23 +600,6 @@ class UserController extends Controller
 
     public function updateTutorProfile(Request $request){
         $data = $request->all();
-//        $this->validate($request,[
-//            'firstName' => 'required',
-//            'lastName' => 'required',
-//            'email' => 'email|required',
-//            'fatherName' => 'required',
-//            'gender_id' => 'required',
-//            'mobile' => 'required',
-//            'tutor_id' => 'required',
-//            'cnic_no' => 'required',
-//            'experience' => 'required',
-//            'qualification' => 'required',
-//            'programme_id' => 'required',
-//            'subject_id' => 'required',
-//            'address' => 'required',
-//            'profileImage' => 'mimes:jpeg,bmp,png|max:500000',
-//        ]);
-
         $firstName = isset($data['firstName'])?$data['firstName']:'';
         $lastName = isset($data['lastName'])?$data['lastName']:'';
         $email = isset($data['email'])?$data['email']:'';
@@ -637,23 +620,19 @@ class UserController extends Controller
         if(!empty($email)){$update_array['email'] = $email;}
         if(!empty($fatherName)){$update_array['fatherName'] = $fatherName;}
         if(!empty($mobile)){$update_array['mobile'] = $mobile;}
-        //if(!empty($tutor_id)){$update_array['tutor_id'] = $tutor_id;}
         if(!empty($gender_id)){$update_array['gender_id'] = $gender_id;}
         if(!empty($address)){$update_array['address'] = $address;}
         if(!empty($cnic_no)){$update_array['cnic_no'] = $cnic_no;}
         if(!empty($experience)){$update_array['experience'] = $experience;}
         if(!empty($qualification)){$update_array['qualification'] = $qualification;}
-        //if(!empty($programme_id)){$update_array['programme_id'] = $programme_id;}
-        //if(!empty($subject_id)){$update_array['subject_id'] = $subject_id;}
-        $user = User::where('id','=',$tutor_id)->first();
+         $user = User::where('id','=',$tutor_id)->first();
         if($user){
             //upload file
             if(isset($data['profileImage'])){
                 $file = $request->file('profileImage');
                 $file_name = $file->getClientOriginalName();
                 $destinationPath = base_path().'/images';
-                $file->move($destinationPath,$file->getClientOriginalName());
-
+                $file->move($destinationPath,$file_name);
                 User::where('id','=',$tutor_id)
                     ->where('role_id','=',2)
                     -> update(['profileImage'=>$file_name]);

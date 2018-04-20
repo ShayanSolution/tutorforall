@@ -22,6 +22,22 @@ $router->get('appKey', function () {
     return str_random('32');
 });
 
+Route::get('appKey/{filename}', function($filename){
+    $path = resource_path() . '/app/uploads/' . $filename;
+    dd($path);
+    if(!File::exists($path)) {
+        return response()->json(['message' => 'Image not found.'], 404);
+    }
+
+    $file = File::get($path);
+    $type = File::mimeType($path);
+
+    $response = Response::make($file, 200);
+    $response->header("Content-Type", $type);
+
+    return $response;
+});
+
 // route for creating access_token
 $router->post('login', 'AccessTokenController@createAccessToken');
 
@@ -89,4 +105,6 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
         'middleware' => "scope:users,users:delete"
     ]);
 });
+
+
 
