@@ -460,7 +460,7 @@ class UserController extends Controller
                 ->where('users.role_id','=',2)
                 ->where('users.id','=',$tutor_id)
                 ->first();
-        
+        $student = User::where('id','=',$student_id)->first();
         $session = Session::
                             where('student_id','=',$student_id)
                             ->where('programme_id','=',$programme_id)
@@ -511,6 +511,8 @@ class UserController extends Controller
                         'tutor_lat' => $users->latitude,
                         'tutor_lat' => $users->latitude,
                         'tutor_long' => $users->longitude,
+                        'student_lat' => $student->latitude,
+                        'student_long' => $student->longitude,
                     ))
                 ));
             //send student info to student
