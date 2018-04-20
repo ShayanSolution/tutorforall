@@ -451,7 +451,9 @@ class UserController extends Controller
         $subject_id = $data['subject_id'];
         //get tutor profile
         $users = User::select('users.*')
-                ->select('users.*','programmes.name as p_name','subjects.name as s_name','programmes.id as p_id','subjects.id as s_id','profiles.is_group')
+                ->select('users.*','programmes.name as p_name','subjects.name as s_name'
+                    ,'programmes.id as p_id','subjects.id as s_id','profiles.is_group',
+                    'profiles.is_home as t_is_home')
                 ->leftjoin('profiles','profiles.user_id','=','users.id')
                 ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
                 ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
@@ -505,6 +507,10 @@ class UserController extends Controller
                         'Class_id' => $users->p_id,
                         'Subject_id' => $users->s_id,
                         'is_group' => $users->is_group,
+                        'tutor_is_home' => $users->t_is_home,
+                        'tutor_lat' => $users->latitude,
+                        'tutor_lat' => $users->latitude,
+                        'tutor_long' => $users->longitude,
                     ))
                 ));
             //send student info to student
