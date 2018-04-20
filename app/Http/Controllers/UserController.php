@@ -406,9 +406,10 @@ class UserController extends Controller
                                 'Subject_id' => $users->s_id,
                                 'IS_Group' => $users->is_group,
                                 'Longitude' => $users->longitude,
-                                'Latitude' => $users->longitude,
+                                'Latitude' => $users->latitude,
                                 'Datetime' => Carbon::now()->toDateTimeString(),
-                                'Age' => $user_age>0?$user_age:''
+                                'Age' => $user_age>0?$user_age:'',
+                                'Profile_Image' => !empty($users->profileImage)?base_path().'/images/'.$users->profileImage:'',
                             ))
                         ));
 
@@ -512,6 +513,7 @@ class UserController extends Controller
                         'tutor_long' => $users->longitude,
                         'student_lat' => $student->latitude,
                         'student_long' => $student->longitude,
+                        'Profile_Image' => !empty($users->profileImage)?base_path().'/images/'.$users->profileImage:'',
                     ))
                 ));
             //send student info to student
