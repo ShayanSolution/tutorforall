@@ -544,27 +544,38 @@ class UserController extends Controller
 
     public function updateStudentProfile(Request $request){
         $data = $request->all();
-        $this->validate($request,[
-            'firstName' => 'required',
-            'lastName' => 'required',
-            'email' => 'email|required',
-            'fatherName' => 'required',
-            'gender_id' => 'required',
-            'mobile' => 'required',
-            'student_id' => 'required',
-            'middleName' => 'required',
-            'address' => 'required',
-            'profileImage' => 'mimes:jpeg,bmp,png|max:500000',
-        ]);
-        $firstName = $data['firstName'];
-        $lastName = $data['lastName'];
-        $email = $data['email'];
-        $fatherName = $data['fatherName'];
-        $mobile = $data['mobile'];
-        $student_id = $data['student_id'];
-        $middleName = $data['middleName'];
-        $gender_id = $data['gender_id'];
-        $address = $data['address'];
+//        $this->validate($request,[
+//            'firstName' => 'required',
+//            'lastName' => 'required',
+//            'email' => 'email|required',
+//            'fatherName' => 'required',
+//            'gender_id' => 'required',
+//            'mobile' => 'required',
+//            'student_id' => 'required',
+//            'middleName' => 'required',
+//            'address' => 'required',
+//            'profileImage' => 'mimes:jpeg,bmp,png|max:500000',
+//        ]);
+        $firstName = isset($data['firstName'])?$data['firstName']:'';
+        $lastName = isset($data['lastName'])?$data['lastName']:'';
+        $email = isset($data['email'])?$data['email']:'';
+        $fatherName = isset($data['fatherName'])?$data['fatherName']:'';
+        $mobile = isset($data['mobile'])?$data['mobile']:'';
+        $student_id = isset($data['student_id'])?$data['student_id']:'';
+        $middleName = isset($data['middleName'])?$data['middleName']:'';
+        $gender_id = isset($data['gender_id'])?$data['gender_id']:'';
+        $address = isset($data['address'])?$data['address']:'';
+
+        $update_array = array();
+        if(!empty($firstName)){$update_array['firstName'] = $firstName;}
+        if(!empty($lastName)){$update_array['lastName'] = $lastName;}
+        if(!empty($email)){$update_array['email'] = $email;}
+        if(!empty($fatherName)){$update_array['fatherName'] = $fatherName;}
+        if(!empty($student_id)){$student_id['student_id'] = $student_id;}
+        if(!empty($mobile)){$update_array['mobile'] = $mobile;}
+        if(!empty($gender_id)){$update_array['gender_id'] = $gender_id;}
+        if(!empty($address)){$update_array['address'] = $address;}
+        if(!empty($middleName)){$update_array['middleName'] = $middleName;}
 
         $user = User::where('id','=',$student_id)->first();
         if($user){
