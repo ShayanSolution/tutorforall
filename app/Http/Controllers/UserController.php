@@ -600,37 +600,51 @@ class UserController extends Controller
 
     public function updateTutorProfile(Request $request){
         $data = $request->all();
-        $this->validate($request,[
-            'firstName' => 'required',
-            'lastName' => 'required',
-            'email' => 'email|required',
-            'fatherName' => 'required',
-            'gender_id' => 'required',
-            'mobile' => 'required',
-            'tutor_id' => 'required',
-            'cnic_no' => 'required',
-            'experience' => 'required',
-            'qualification' => 'required',
-            'programme_id' => 'required',
-            'subject_id' => 'required',
-            'address' => 'required',
-            'profileImage' => 'mimes:jpeg,bmp,png|max:500000',
-        ]);
+//        $this->validate($request,[
+//            'firstName' => 'required',
+//            'lastName' => 'required',
+//            'email' => 'email|required',
+//            'fatherName' => 'required',
+//            'gender_id' => 'required',
+//            'mobile' => 'required',
+//            'tutor_id' => 'required',
+//            'cnic_no' => 'required',
+//            'experience' => 'required',
+//            'qualification' => 'required',
+//            'programme_id' => 'required',
+//            'subject_id' => 'required',
+//            'address' => 'required',
+//            'profileImage' => 'mimes:jpeg,bmp,png|max:500000',
+//        ]);
 
-        $firstName = $data['firstName'];
-        $lastName = $data['lastName'];
-        $email = $data['email'];
-        $fatherName = $data['fatherName'];
-        $mobile = $data['mobile'];
-        $tutor_id = $data['tutor_id'];
-        $gender_id = $data['gender_id'];
-        $address = $data['address'];
-        $cnic_no = $data['cnic_no'];
-        $experience = $data['experience'];
-        $qualification = $data['qualification'];
-        $programme_id = $data['programme_id'];
-        $subject_id = $data['subject_id'];
+        $firstName = isset($data['firstName'])?$data['firstName']:'';
+        $lastName = isset($data['lastName'])?$data['lastName']:'';
+        $email = isset($data['email'])?$data['email']:'';
+        $fatherName = isset($data['fatherName'])?$data['fatherName']:'';
+        $mobile = isset($data['mobile'])?$data['mobile']:'';
+        $tutor_id = isset($data['tutor_id'])?$data['tutor_id']:'';
+        $gender_id = isset($data['gender_id'])?$data['gender_id']:'';
+        $address = isset($data['address'])?$data['address']:'';
+        $cnic_no = isset($data['cnic_no'])?$data['cnic_no']:'';
+        $experience = isset($data['experience'])?$data['experience']:'';
+        $qualification = isset($data['qualification'])?$data['qualification']:'';
+        $programme_id = isset($data['programme_id'])?$data['programme_id']:'';
+        $subject_id = isset($data['subject_id'])?$data['subject_id']:'';
 
+        $update_array = array();
+        if(!empty($firstName)){$update_array['firstName'] = $firstName;}
+        if(!empty($lastName)){$update_array['lastName'] = $lastName;}
+        if(!empty($email)){$update_array['email'] = $email;}
+        if(!empty($fatherName)){$update_array['fatherName'] = $fatherName;}
+        if(!empty($mobile)){$update_array['mobile'] = $mobile;}
+        //if(!empty($tutor_id)){$update_array['tutor_id'] = $tutor_id;}
+        if(!empty($gender_id)){$update_array['gender_id'] = $gender_id;}
+        if(!empty($address)){$update_array['address'] = $address;}
+        if(!empty($cnic_no)){$update_array['cnic_no'] = $cnic_no;}
+        if(!empty($experience)){$update_array['experience'] = $experience;}
+        if(!empty($qualification)){$update_array['qualification'] = $qualification;}
+        //if(!empty($programme_id)){$update_array['programme_id'] = $programme_id;}
+        //if(!empty($subject_id)){$update_array['subject_id'] = $subject_id;}
         $user = User::where('id','=',$tutor_id)->first();
         if($user){
             //upload file
@@ -639,13 +653,16 @@ class UserController extends Controller
                 $file_name = $file->getClientOriginalName();
                 $destinationPath = base_path().'/images';
                 $file->move($destinationPath,$file->getClientOriginalName());
+
+                User::where('id','=',$tutor_id)
+                    ->where('role_id','=',2)
+                    -> update(['profileImage'=>$file_name]);
+
             }
             //update student profile
             User::where('id','=',$tutor_id)
                 ->where('role_id','=',2)
-                -> update(['firstName'=>$firstName,'lastName'=>$lastName,'fatherName'=>$fatherName,'email'=>$email,
-                    'gender_id'=>$gender_id,'mobile'=>$mobile,'profileImage'=>$file_name,
-                    'address'=>$address,'cnic_no'=>$cnic_no,'experience'=>$experience,'qualification'=>$qualification]);
+                -> update($update_array);
             $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
             if($tutor_profile){
                 Profile::where('user_id','=',$tutor_id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id]);
