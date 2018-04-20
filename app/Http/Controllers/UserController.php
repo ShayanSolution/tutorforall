@@ -373,7 +373,7 @@ class UserController extends Controller
         //update class and subjects for students
         Profile::where('user_id',$student_id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id]);
         $users = User::select('users.*')
-                ->select('users.*','profiles.is_group')
+                ->select('users.*')
                 /*->leftjoin('profiles','profiles.user_id','=','users.id')
                 ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
                 ->leftjoin('subjects','subjects.id','=','profiles.subject_id')*/
