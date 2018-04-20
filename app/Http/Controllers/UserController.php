@@ -409,7 +409,7 @@ class UserController extends Controller
                                 'Latitude' => $users->latitude,
                                 'Datetime' => Carbon::now()->toDateTimeString(),
                                 'Age' => $user_age>0?$user_age:'',
-                                'Profile_Image' => !empty($users->profileImage)?resource_path().'/images/'.$users->profileImage:'',
+                                'Profile_Image' => !empty($users->profileImage)?URL::to('/images').'/'.$users->profileImage:'',
                             ))
                         ));
 
@@ -513,7 +513,7 @@ class UserController extends Controller
                         'tutor_long' => $users->longitude,
                         'student_lat' => $student->latitude,
                         'student_long' => $student->longitude,
-                        'Profile_Image' => !empty($users->profileImage)?resource_path().'/images/'.$users->profileImage:'',
+                        'Profile_Image' => !empty($users->profileImage)?URL::to('/images').'/'.$users->profileImage:'',
                     ))
                 ));
             //send student info to student
@@ -572,7 +572,7 @@ class UserController extends Controller
             if(isset($data['profileImage'])){
                 $file = $request->file('profileImage');
                 $file_name = $file->getClientOriginalName();
-                $destinationPath = base_path().'/images';
+                $destinationPath = base_path().'/public/images';
                 $file->move($destinationPath,$file->getClientOriginalName());
             }
             //strtolower($data['gender_id']) == 'male'?$gender_id= 1:$gender_id= 2;
@@ -631,7 +631,7 @@ class UserController extends Controller
             if(isset($data['profileImage'])){
                 $file = $request->file('profileImage');
                 $file_name = $file->getClientOriginalName();
-                $destinationPath = base_path().'/images';
+                $destinationPath = base_path().'/public/images';
                 $file->move($destinationPath,$file_name);
                 User::where('id','=',$tutor_id)
                     ->where('role_id','=',2)
