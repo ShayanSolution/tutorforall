@@ -6,6 +6,8 @@ use App\Models\Invoice;
 use App\Models\Profile;
 use App\Models\Session;
 use App\Models\User;
+use App\Models\Programme;
+use App\Models\Subject;
 use App\Repositories\Contracts\UserRepository;
 use Illuminate\Http\Request;
 use App\Transformers\UserTransformer;
@@ -366,10 +368,12 @@ class UserController extends Controller
         $subject_id = $data['subject_id'];
         $tutors_ids = json_decode($data['tutor_id']);
         $device_token_array = array();
+        $class = Programme::find($programme_id);
+        $subject = Subject::find($subject_id);
         //update class and subjects for students
         Profile::where('user_id',$student_id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id]);
         $users = User::select('users.*')
-                ->select('users.*','programmes.name as p_name','subjects.name as s_name','programmes.id as p_id','subjects.id as s_id','profiles.is_group')
+                ->select('users.*','profiles.is_group')
                 /*->leftjoin('profiles','profiles.user_id','=','users.id')
                 ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
                 ->leftjoin('subjects','subjects.id','=','profiles.subject_id')*/
@@ -400,11 +404,11 @@ class UserController extends Controller
                             'custom' => array('custom_data' => array(
                                 'Student_Name' => $users->firstName." ".$users->lastName,
                                 'Student_id' => $users->id,
-                                'Class_Name' => $users->p_name,
-                                'Subject_Name' => $users->s_name,
-                                'Class_id' => $users->p_id,
-                                'Subject_id' => $users->s_id,
-                                'IS_Group' => $users->is_group,
+                                'Class_Name' => $class->name,
+                                'Subject_Name' => $subject->name,
+                                'Class_id' => $programme_id,
+                                'Subject_id' => $subject_id,
+                                'IS_Group' => 0,
                                 'Longitude' => $users->longitude,
                                 'Latitude' => $users->latitude,
                                 'Datetime' => Carbon::now()->toDateTimeString(),
