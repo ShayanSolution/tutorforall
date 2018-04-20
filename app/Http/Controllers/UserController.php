@@ -553,6 +553,7 @@ class UserController extends Controller
             'student_id' => 'required',
             'middleName' => 'required',
             'address' => 'required',
+            'profileImage' => 'mimes:jpeg,bmp,png|max:500000',
         ]);
         $firstName = $data['firstName'];
         $lastName = $data['lastName'];
@@ -612,6 +613,7 @@ class UserController extends Controller
             'programme_id' => 'required',
             'subject_id' => 'required',
             'address' => 'required',
+            'profileImage' => 'mimes:jpeg,bmp,png|max:500000',
         ]);
 
         $firstName = $data['firstName'];
@@ -628,7 +630,6 @@ class UserController extends Controller
         $programme_id = $data['programme_id'];
         $subject_id = $data['subject_id'];
 
-
         $user = User::where('id','=',$tutor_id)->first();
         if($user){
             //upload file
@@ -638,8 +639,6 @@ class UserController extends Controller
                 $destinationPath = base_path().'/images';
                 $file->move($destinationPath,$file->getClientOriginalName());
             }
-            //strtolower($data['gender_id']) == 'male'?$gender_id= 1:$gender_id= 2;
-
             //update student profile
             User::where('id','=',$tutor_id)
                 ->where('role_id','=',2)

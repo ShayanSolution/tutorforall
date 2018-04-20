@@ -209,7 +209,6 @@
                 }
             }
         },
-
         "/get-profile": {
             "get": {
                 "summary": "Get user profile",
@@ -241,7 +240,6 @@
                 }
             }
         },
-
         "/update-location": {
             "post": {
                 "summary": "Update Location",
@@ -288,7 +286,6 @@
                 }
             }
         },
-
         "/update-student-profile": {
             "post": {
                 "summary": "Update Student Profile",
@@ -372,7 +369,7 @@
                         "description": "Address",
                         "required": true,
                         "type": "string"
-                    },
+                    }
 
                 ],
                 "responses": {
@@ -385,7 +382,133 @@
                 }
             }
         },
+        "/update-tutor-profile": {
+            "post": {
+                "summary": "Update Tutor Profile",
+                "description": "",
+                "operationId": "updateTutorProfile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "firstName",
+                        "in": "query",
+                        "description": "First Name",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "lastName",
+                        "in": "query",
+                        "description": "Last Name",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Email",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "fatherName",
+                        "in": "query",
+                        "description": "Father Name",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "gender_id",
+                        "in": "query",
+                        "description": "i.e. Male or Female",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "mobile",
+                        "in": "query",
+                        "description": "Mobile Number",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "profileImage",
+                        "in": "formData",
+                        "description": "Profile Image",
+                        "required": true,
+                        "type": "file"
+                    },
+                    {
+                        "name": "tutor_id",
+                        "in": "query",
+                        "description": "Tutor id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "experience",
+                        "in": "query",
+                        "description": "Tutor Experience",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "qualification",
+                        "in": "query",
+                        "description": "Tutor qualification",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "programme_id",
+                        "in": "query",
+                        "description": "Tutor Programme Id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "subject_id",
+                        "in": "query",
+                        "description": "Tutor Subject Id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "cnic_no",
+                        "in": "query",
+                        "description": "CNIC Number",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "address",
+                        "in": "query",
+                        "description": "Address",
+                        "required": true,
+                        "type": "string"
+                    }
 
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Location updated"
+                    },
+                    "422": {
+                        "description": "Unable to update location"
+                    }
+                }
+            }
+        },
         "/tutor-notification": {
             "post": {
                 "summary": "Notification",
@@ -440,7 +563,6 @@
                 }
             }
         },
-
         "/booked": {
             "post": {
                 "summary": "Notification",
@@ -496,7 +618,6 @@
                 }
             }
         },
-
         "/get-tutors-profile": {
             "post": {
                 "summary": "Get Tutors",
@@ -553,7 +674,6 @@
                 }
             }
         },
-
         "/get-all-subjects": {
             "get": {
                 "summary": "Get All subjects",
@@ -570,7 +690,6 @@
                 }
             }
         },
-
         "/oauth/token": {
             "post": {
                 "summary": "Loggedin",
