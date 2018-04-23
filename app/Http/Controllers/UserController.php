@@ -656,6 +656,7 @@ class UserController extends Controller
                 $tutor_profile = new Profile();
                 $tutor_profile->programme_id = $programme_id;
                 $tutor_profile->subject_id = $subject_id;
+                $tutor_profile->user_id = $tutor_id;
                 $tutor_profile->save();
             }
 
