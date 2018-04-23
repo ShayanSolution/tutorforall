@@ -308,7 +308,7 @@ class UserController extends Controller
                 'Gender'=>$user->g_name,
                 'Rating'=>$user->rating,
                 'Experience'=>$user->experience,
-                'Profile Image'=>base_path().'/images/'.$user->profileImage,
+                'Profile_Image' => URL::to('/images').'/'.$user->profileImage,
             );
             return $profile;
         }
