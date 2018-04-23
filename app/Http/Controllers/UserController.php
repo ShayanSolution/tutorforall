@@ -550,7 +550,11 @@ class UserController extends Controller
         $this->validate($request,[
             'firstName' => 'regex:/^[a-zA-Z]+$/u|max:255',
             'lastName' => 'regex:/^[a-zA-Z]+$/u|max:255',
-            'email' => 'email|unique:users,email',
+            'email' => 'email',
+            'fatherName' => 'email|unique:users,email',
+            'student_id' => 'numeric',
+            'gender_id' => 'numeric',
+            'mobile' => 'numeric',
             'profileImage' => 'mimes:jpeg,jpg,png,gif|required|max:10000',
         ]);
 
@@ -561,7 +565,6 @@ class UserController extends Controller
         $fatherName = isset($data['fatherName'])?$data['fatherName']:'';
         $mobile = isset($data['mobile'])?$data['mobile']:'';
         $student_id = isset($data['student_id'])?$data['student_id']:'';
-        $middleName = isset($data['middleName'])?$data['middleName']:'';
         $gender_id = isset($data['gender_id'])?$data['gender_id']:'';
         $address = isset($data['address'])?$data['address']:'';
 
@@ -570,11 +573,9 @@ class UserController extends Controller
         if(!empty($lastName)){$update_array['lastName'] = $lastName;}
         if(!empty($email)){$update_array['email'] = $email;}
         if(!empty($fatherName)){$update_array['fatherName'] = $fatherName;}
-        //if(!empty($student_id)){$update_array['student_id'] = $student_id;}
         if(!empty($mobile)){$update_array['mobile'] = $mobile;}
         if(!empty($gender_id)){$update_array['gender_id'] = $gender_id;}
         if(!empty($address)){$update_array['address'] = $address;}
-        if(!empty($middleName)){$update_array['middleName'] = $middleName;}
 
         $user = User::where('id','=',$student_id)->first();
         if($user){
