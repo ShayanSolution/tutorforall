@@ -663,7 +663,7 @@ class UserController extends Controller
             return [
                 'status' => 'success',
                 'messages' => 'Tutor profile updated successfully!',
-                'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$user->profileImage:'',
+                'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$file_name:'',
 
             ];
         }else{
