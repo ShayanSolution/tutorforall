@@ -547,6 +547,13 @@ class UserController extends Controller
     }
 
     public function updateStudentProfile(Request $request){
+        $this->validate($request,[
+            'firstName' => 'regex:/^[a-zA-Z]+$/u|max:255',
+            'lastName' => 'regex:/^[a-zA-Z]+$/u|max:255',
+            'email' => 'email|unique:users,email',
+            'profileImage' => 'mimes:jpeg,jpg,png,gif|required|max:10000',
+        ]);
+
         $data = $request->all();
         $firstName = isset($data['firstName'])?$data['firstName']:'';
         $lastName = isset($data['lastName'])?$data['lastName']:'';
@@ -570,7 +577,6 @@ class UserController extends Controller
         if(!empty($middleName)){$update_array['middleName'] = $middleName;}
 
         $user = User::where('id','=',$student_id)->first();
-
         if($user){
             //upload file
             if(isset($data['profileImage'])){
@@ -603,6 +609,7 @@ class UserController extends Controller
                 'status' => 'success',
                 'messages' => 'Student profile updated successfully!',
                 'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$file_name:'',
+                'student_profile' => Response::json(['user_profile' => $user]),
             ];
         }else{
 
@@ -675,6 +682,7 @@ class UserController extends Controller
                 'status' => 'success',
                 'messages' => 'Tutor profile updated successfully!',
                 'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$file_name:'',
+                'tutor_profile' => Response::json(['user_profile' => $user]),
 
             ];
         }else{
