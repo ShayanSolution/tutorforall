@@ -551,7 +551,7 @@ class UserController extends Controller
             'firstName' => 'regex:/^[a-zA-Z]+$/u|max:255',
             'lastName' => 'regex:/^[a-zA-Z]+$/u|max:255',
             'email' => 'email',
-            'fatherName' => 'email|unique:users,email',
+            'fatherName' => 'regex:/^[a-zA-Z]+$/u|max:255',
             'student_id' => 'numeric',
             'gender_id' => 'numeric',
             'mobile' => 'numeric',
