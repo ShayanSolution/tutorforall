@@ -306,13 +306,6 @@
                         "type": "string"
                     },
                     {
-                        "name": "middleName",
-                        "in": "query",
-                        "description": "Middle Name",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
                         "name": "lastName",
                         "in": "query",
                         "description": "Last Name",

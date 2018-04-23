@@ -563,7 +563,7 @@ class UserController extends Controller
         if(!empty($lastName)){$update_array['lastName'] = $lastName;}
         if(!empty($email)){$update_array['email'] = $email;}
         if(!empty($fatherName)){$update_array['fatherName'] = $fatherName;}
-        if(!empty($student_id)){$student_id['student_id'] = $student_id;}
+        if(!empty($student_id)){$update_array['student_id'] = $student_id;}
         if(!empty($mobile)){$update_array['mobile'] = $mobile;}
         if(!empty($gender_id)){$update_array['gender_id'] = $gender_id;}
         if(!empty($address)){$update_array['address'] = $address;}
@@ -591,7 +591,7 @@ class UserController extends Controller
             return [
                 'status' => 'success',
                 'messages' => 'Student profile updated successfully!',
-                'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$user->profileImage:'',
+                'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$file_name:'',
             ];
         }else{
 
