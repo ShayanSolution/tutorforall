@@ -610,7 +610,6 @@ class UserController extends Controller
                 'status' => 'success',
                 'messages' => 'Student profile updated successfully!',
                 'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$file_name:'',
-                'student_profile' => Response::json(['user_profile' => $user]),
             ];
         }else{
 
@@ -683,7 +682,6 @@ class UserController extends Controller
                 'status' => 'success',
                 'messages' => 'Tutor profile updated successfully!',
                 'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$file_name:'',
-                'tutor_profile' => Response::json(['user_profile' => $user]),
 
             ];
         }else{
