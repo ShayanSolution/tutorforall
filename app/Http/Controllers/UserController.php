@@ -563,13 +563,14 @@ class UserController extends Controller
         if(!empty($lastName)){$update_array['lastName'] = $lastName;}
         if(!empty($email)){$update_array['email'] = $email;}
         if(!empty($fatherName)){$update_array['fatherName'] = $fatherName;}
-        if(!empty($student_id)){$update_array['student_id'] = $student_id;}
+        //if(!empty($student_id)){$update_array['student_id'] = $student_id;}
         if(!empty($mobile)){$update_array['mobile'] = $mobile;}
         if(!empty($gender_id)){$update_array['gender_id'] = $gender_id;}
         if(!empty($address)){$update_array['address'] = $address;}
         if(!empty($middleName)){$update_array['middleName'] = $middleName;}
 
         $user = User::where('id','=',$student_id)->first();
+
         if($user){
             //upload file
             if(isset($data['profileImage'])){
@@ -577,15 +578,16 @@ class UserController extends Controller
                 $file_name = $file->getClientOriginalName();
                 $destinationPath = base_path().'/public/images';
                 $file->move($destinationPath,$file->getClientOriginalName());
+
                 User::where('id','=',$student_id)
                     ->where('role_id','=',3)
                     -> update(['profileImage'=>$file_name]);
             }
+
             //update student profile
             User::where('id','=',$student_id)
                 ->where('role_id','=',3)
                 -> update($update_array);
-
             $student_profile = Profile::where('user_id','=',$student_id)->first();
             if($student_profile){
                 Profile::where('user_id','=',$student_id)->update(['programme_id'=>0,'subject_id'=>0]);
