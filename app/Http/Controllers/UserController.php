@@ -548,18 +548,6 @@ class UserController extends Controller
 
     public function updateStudentProfile(Request $request){
         $data = $request->all();
-//        $this->validate($request,[
-//            'firstName' => 'required',
-//            'lastName' => 'required',
-//            'email' => 'email|required',
-//            'fatherName' => 'required',
-//            'gender_id' => 'required',
-//            'mobile' => 'required',
-//            'student_id' => 'required',
-//            'middleName' => 'required',
-//            'address' => 'required',
-//            'profileImage' => 'mimes:jpeg,bmp,png|max:500000',
-//        ]);
         $firstName = isset($data['firstName'])?$data['firstName']:'';
         $lastName = isset($data['lastName'])?$data['lastName']:'';
         $email = isset($data['email'])?$data['email']:'';
@@ -589,6 +577,9 @@ class UserController extends Controller
                 $file_name = $file->getClientOriginalName();
                 $destinationPath = base_path().'/public/images';
                 $file->move($destinationPath,$file->getClientOriginalName());
+                User::where('id','=',$student_id)
+                    ->where('role_id','=',3)
+                    -> update(['profileImage'=>$file_name]);
             }
             //strtolower($data['gender_id']) == 'male'?$gender_id= 1:$gender_id= 2;
 
@@ -600,6 +591,7 @@ class UserController extends Controller
             return [
                 'status' => 'success',
                 'messages' => 'Student profile updated successfully!',
+                'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$user->profileImage:'',
             ];
         }else{
 
@@ -670,6 +662,8 @@ class UserController extends Controller
             return [
                 'status' => 'success',
                 'messages' => 'Tutor profile updated successfully!',
+                'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$user->profileImage:'',
+
             ];
         }else{
 
