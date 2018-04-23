@@ -581,13 +581,22 @@ class UserController extends Controller
                     ->where('role_id','=',3)
                     -> update(['profileImage'=>$file_name]);
             }
-            //strtolower($data['gender_id']) == 'male'?$gender_id= 1:$gender_id= 2;
-
             //update student profile
             User::where('id','=',$student_id)
-                  ->where('role_id','=',3)
-                  -> update(['firstName'=>$firstName,'lastName'=>$lastName,'fatherName'=>$fatherName,'email'=>$email,
-                  'gender_id'=>$gender_id,'mobile'=>$mobile,'middleName'=>$middleName,'profileImage'=>$file_name,'address'=>$address]);
+                ->where('role_id','=',3)
+                -> update($update_array);
+
+            $student_profile = Profile::where('user_id','=',$student_id)->first();
+            if($student_profile){
+                Profile::where('user_id','=',$student_id)->update(['programme_id'=>0,'subject_id'=>0]);
+            }else{
+                $tutor_profile = new Profile();
+                $tutor_profile->programme_id = 0;
+                $tutor_profile->subject_id = 0;
+                $tutor_profile->user_id = $student_id;
+                $tutor_profile->save();
+            }
+
             return [
                 'status' => 'success',
                 'messages' => 'Student profile updated successfully!',
