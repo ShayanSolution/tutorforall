@@ -39,6 +39,7 @@ $router->get('get-class-subjects', 'ProgrammeSubjectController@getProgrammeSubje
 $router->get('get-subjectby-id', 'ProgrammeSubjectController@getSubjectById');
 $router->post('save-programme', 'ProgrammeSubjectController@postSaveProgramme');
 $router->post('save-programme-subject', 'ProgrammeSubjectController@postSaveProgrammeSubject');
+$router->post('reject-api', 'ProgrammeSubjectController@postSaveProgrammeSubject');
 
 //Route::get('/push', function () {
 //    PushNotification::app('appNameIOS')

@@ -555,7 +555,7 @@ class UserController extends Controller
             'student_id' => 'numeric',
             'gender_id' => 'numeric',
             'mobile' => 'numeric',
-            'profileImage' => 'mimes:jpeg,jpg,png,gif|required|max:10000',
+            'profileImage' => 'mimes:jpeg,jpg,png,gif|max:10000',
         ]);
 
         $data = $request->all();
@@ -579,7 +579,7 @@ class UserController extends Controller
 
         $user = User::where('id','=',$student_id)->first();
         if($user){
-            //upload file
+            //upload file and update user profile image
             if(isset($data['profileImage'])){
                 $file = $request->file('profileImage');
                 $file_name = $file->getClientOriginalName();
@@ -662,6 +662,8 @@ class UserController extends Controller
                     ->where('role_id','=',2)
                     -> update(['profileImage'=>$file_name]);
 
+            }else{
+                $file_name='';
             }
             //update student profile
             User::where('id','=',$tutor_id)
