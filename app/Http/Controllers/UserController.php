@@ -589,6 +589,8 @@ class UserController extends Controller
                 User::where('id','=',$student_id)
                     ->where('role_id','=',3)
                     -> update(['profileImage'=>$file_name]);
+            }else{
+                $file_name = '';
             }
 
             //update student profile
