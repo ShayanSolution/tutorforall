@@ -57,7 +57,7 @@ class AuthenticationController extends Controller
             return $record;
         }else{
             return [
-                'code' => $code->code
+                'code' => "$code->code"
             ];
         }
     }
