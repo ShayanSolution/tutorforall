@@ -223,7 +223,7 @@ class AuthenticationController extends Controller
                 $profile->is_home = 0;
                 $profile->is_group = 0;
                 $profile->meeting_type_id = 0;
-                $profile->user_id = $user->id;
+                $profile->user_id = $user;
                 $profile->programme_id = 0;
                 $profile->subject_id = 0;
                 $profile->save();
