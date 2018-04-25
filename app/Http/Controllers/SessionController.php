@@ -2,18 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Invoice;
-use App\Models\Profile;
 use App\Models\Session;
 use App\Models\User;
-use App\Models\Programme;
-use App\Models\Subject;
-use App\Repositories\Contracts\UserRepository;
 use Illuminate\Http\Request;
-use App\Transformers\UserTransformer;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
-use Illuminate\Queue\Queue;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
 use Log;
 
@@ -30,24 +22,27 @@ class SessionController extends Controller
         if(isset($data['tutor_id'])){
             $tutor_id = $data['tutor_id'];
             $user_session = User::select('users.*')
-                ->select('users.*','sessions.created_at as Session_created_date')
+                ->select('users.*','sessions.created_at as Session_created_date','sessions.status as session_status','subjects.name as s_name')
                 ->join('sessions','sessions.tutor_id','=','users.id')
+                ->join('profiles','profiles.user_id','=','users.id')
+                ->join('programmes','programmes.id','=','profiles.programme_id')
+                ->join('subjects','subjects.id','=','profiles.subject_id')
                 ->where('users.role_id','=',2)
                 ->where('users.id','=',$tutor_id)
                 ->where('sessions.status','=','booked')
-                ->orWhere('sessions.status','=','end')
+                ->orWhere('sessions.status','=','ended')
                 ->get();
         }
         //student session list
         else{
             $student_id = $data['student_id'];
             $user_session = User::select('users.*')
-                ->select('users.*','sessions.created_at as Session_created_date')
+                ->select('users.*','sessions.created_at as Session_created_date','sessions.status as session_status')
                 ->join('sessions','sessions.student_id','=','users.id')
                 ->where('users.role_id','=',3)
                 ->where('users.id','=',$student_id)
                 ->where('sessions.status','=','booked')
-                ->orWhere('sessions.status','=','end')
+                ->orWhere('sessions.status','=','ended')
                 ->get();
         }
         if($user_session){
@@ -58,6 +53,8 @@ class SessionController extends Controller
                     'Date' => $user->Session_created_date,
                     'Lat' => $user->latitude,
                     'Long' => $user->longitude,
+                    'Status' => $user->session_status,
+                    'Subject' => $user->s_name,
                 ];
             }
 
