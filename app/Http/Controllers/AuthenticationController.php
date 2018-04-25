@@ -7,6 +7,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Profile;
 use App\Location;
 
 class AuthenticationController extends Controller
@@ -215,6 +216,17 @@ class AuthenticationController extends Controller
             ])->id;
 
             if($user){
+                //enter in profile
+                $profile = new Profile();
+                $profile->is_mentor = 0;
+                $profile->is_deserving = 0;
+                $profile->is_home = 0;
+                $profile->is_group = 0;
+                $profile->meeting_type_id = 0;
+                $profile->user_id = $user->id;
+                $profile->programme_id = 0;
+                $profile->subject_id = 0;
+                $profile->save();
                 return [
                     'status' => 'success',
                     'user_id' => $user,

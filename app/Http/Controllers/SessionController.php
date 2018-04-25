@@ -22,7 +22,8 @@ class SessionController extends Controller
         if(isset($data['tutor_id'])){
             $tutor_id = $data['tutor_id'];
             $user_session = User::select('users.*')
-                ->select('users.*','sessions.created_at as Session_created_date','sessions.status as session_status','subjects.name as s_name')
+                ->select('users.*','sessions.created_at as Session_created_date'
+                    ,'sessions.status as session_status','subjects.name as s_name','sessions.student_id as session_user_id')
                 ->join('sessions','sessions.tutor_id','=','users.id')
                 ->join('profiles','profiles.user_id','=','users.id')
                 ->join('programmes','programmes.id','=','profiles.programme_id')
@@ -32,12 +33,14 @@ class SessionController extends Controller
                 ->where('sessions.status','=','booked')
                 ->orWhere('sessions.status','=','ended')
                 ->get();
+
         }
         //student session list
         else{
             $student_id = $data['student_id'];
             $user_session = User::select('users.*')
-                ->select('users.*','sessions.created_at as Session_created_date','sessions.status as session_status','subjects.name as s_name')
+                ->select('users.*','sessions.created_at as Session_created_date'
+                    ,'sessions.status as session_status','subjects.name as s_name','sessions.tutor_id as session_user_id')
                 ->join('sessions','sessions.student_id','=','users.id')
                 ->join('profiles','profiles.user_id','=','users.id')
                 ->join('programmes','programmes.id','=','profiles.programme_id')
@@ -51,8 +54,10 @@ class SessionController extends Controller
         if($user_session){
             $tutor_sessions = [];
             foreach ($user_session as $user){
+                $user_name = User::where('id',$user->session_user_id)->first();
                 $tutor_sessions[] = [
                     'FullName' => $user->firstName.' '.$user->lastName,
+                    'StudentName' => $user_name->firstName.' '.$user_name->lastName,
                     'Date' => $user->Session_created_date,
                     'Lat' => $user->latitude,
                     'Long' => $user->longitude,
