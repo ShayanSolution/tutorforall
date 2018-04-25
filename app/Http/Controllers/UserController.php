@@ -444,109 +444,7 @@ class UserController extends Controller
 
     }
 
-    public function bookedTutor(Request $request){
-        $data = $request->all();
-        $this->validate($request,[
-            'student_id' => 'required',
-            'tutor_id' => 'required',
-            'subject_id' => 'required',
-            'class_id' => 'required',
-        ]);
-        $tutor_id = $data['tutor_id'];
-        $student_id = $data['student_id'];
-        $programme_id = $data['class_id'];
-        $subject_id = $data['subject_id'];
-        //get tutor profile
-        $users = User::select('users.*')
-                ->select('users.*','programmes.name as p_name','subjects.name as s_name'
-                    ,'programmes.id as p_id','subjects.id as s_id','profiles.is_group',
-                    'profiles.is_home as t_is_home')
-                ->leftjoin('profiles','profiles.user_id','=','users.id')
-                ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
-                ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
-                ->where('users.role_id','=',2)
-                ->where('users.id','=',$tutor_id)
-                ->first();
-        $student = User::where('id','=',$student_id)->first();
-        $session = Session::
-                            where('student_id','=',$student_id)
-                            ->where('programme_id','=',$programme_id)
-                            ->where('subject_id','=',$subject_id)
-                            ->where('status','=','booked')
-                            ->first();
-        
-        //if student session already exists.
-        if($session){
-            return [
-                'status' => 'fail',
-                'messages' => 'Session already booked!'
-            ];
-        }else{
-            $session = new Session;
-            $session->tutor_id = $tutor_id;
-            $session->student_id = $student_id;
-            $session->programme_id = $programme_id;
-            $session->subject_id = $subject_id;
-            $session->status = 'booked';
-            $session->subscription_id = 3;
-            $session->meeting_type_id = 1;
-            $session->save();
-
-            //get tutor device token
-            $device = User::where('id','=',$student_id)->select('device_token as token')->first();
-
-            $message = PushNotification::Message(
-                $users->firstName.' '.$users->lastName.' accepted your request',
-                array(
-                    'badge' => 1,
-                    'sound' => 'example.aiff',
-                    'actionLocKey' => 'Action button title!',
-                    'locKey' => 'localized key',
-                    'locArgs' => array(
-                        'localized args',
-                        'localized args',
-                    ),
-                    'launchImage' => 'image.jpg',
-                    'custom' => array('custom_data' => array(
-                        'Tutor_Name' => $users->firstName." ".$users->lastName,
-                        'Class_Name' => $users->p_name,
-                        'Subject_Name' => $users->s_name,
-                        'Class_id' => $users->p_id,
-                        'Subject_id' => $users->s_id,
-                        'is_group' => $users->is_group,
-                        'tutor_is_home' => $users->t_is_home,
-                        'tutor_lat' => $users->latitude,
-                        'tutor_long' => $users->longitude,
-                        'student_lat' => $student->latitude,
-                        'student_long' => $student->longitude,
-                        'Profile_Image' => !empty($users->profileImage)?URL::to('/images').'/'.$users->profileImage:'',
-                    ))
-                ));
-            //send student info to student
-//            Queue::push(PushNotification::app('appStudentIOS')
-//                ->to($device->token)
-//                ->send($message));
-            PushNotification::app('appStudentIOS')
-                            ->to($device->token)
-                            ->send($message);
-
-        }
-
-        if($session){
-            return [
-                'status' => 'success',
-                'messages' => 'Session Created successfully'
-            ];
-        }else{
-            return response()->json(
-                [
-                    'status' => 'error',
-                    'message' => 'Unable to find tutor'
-                ], 422
-            );
-        }
-
-    }
+    
 
     public function updateStudentProfile(Request $request){
         $this->validate($request,[
@@ -701,27 +599,5 @@ class UserController extends Controller
         }
     }
 
-    public function sessionAPI(Request $request){
-        $data = $request->all();
-//        $this->validate($request,[
-//            'tutor_id' => 'required|numeric',
-//        ]);
-
-       // $tutor_id = $data['tutor_id'];
-
-        $users = User::select('users.*')
-            ->select('users.*','programmes.name as p_name','subjects.name as s_name'
-                ,'programmes.id as p_id','subjects.id as s_id','profiles.is_group',
-                'profiles.is_home as t_is_home')
-            ->leftjoin('profiles','profiles.user_id','=','users.id')
-            ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
-            ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
-            ->leftjoin('sessions','sessions.tutor_id','=','profiles.tutor_id')
-            ->where('users.role_id','=',2)
-            ->where('users.id','=',10)
-            ->first();
-
-        dd($users);
-
-    }
+   
 }

@@ -39,17 +39,10 @@ $router->get('get-class-subjects', 'ProgrammeSubjectController@getProgrammeSubje
 $router->get('get-subjectby-id', 'ProgrammeSubjectController@getSubjectById');
 $router->post('save-programme', 'ProgrammeSubjectController@postSaveProgramme');
 $router->post('save-programme-subject', 'ProgrammeSubjectController@postSaveProgrammeSubject');
-$router->get('session-api', 'UserController@sessionAPI');
-
-//Route::get('/push', function () {
-//    PushNotification::app('appNameIOS')
-//        ->to('7586cf31a8ee6680b6ea130bcf9da9cbe2c2df16a2fc81962a91eb66a7b7b166')
-//        ->send('Hello World, i`m a push message');
-//
-//});
+$router->get('my-sessions', 'SessionController@mySessions');
 
 Route::post('/tutor-notification','UserController@tutorSessionInfo');
-Route::post('/booked','UserController@bookedTutor');
+Route::post('/booked','SessionController@bookedTutor');
 Route::post('/update-student-profile','UserController@updateStudentProfile');
 Route::post('/update-tutor-profile','UserController@updateTutorProfile');
 
