@@ -308,6 +308,8 @@ class UserController extends Controller
                 'Gender'=>$user->g_name,
                 'Rating'=>$user->rating,
                 'Experience'=>$user->experience,
+                'Address'=>$user->address,
+                'User CNIC'=>$user->cnic_no,
                 'Profile_Image' => URL::to('/images').'/'.$user->profileImage,
             );
             return $profile;
@@ -697,5 +699,29 @@ class UserController extends Controller
                 ], 422
             );
         }
+    }
+
+    public function sessionAPI(Request $request){
+        $data = $request->all();
+//        $this->validate($request,[
+//            'tutor_id' => 'required|numeric',
+//        ]);
+
+       // $tutor_id = $data['tutor_id'];
+
+        $users = User::select('users.*')
+            ->select('users.*','programmes.name as p_name','subjects.name as s_name'
+                ,'programmes.id as p_id','subjects.id as s_id','profiles.is_group',
+                'profiles.is_home as t_is_home')
+            ->leftjoin('profiles','profiles.user_id','=','users.id')
+            ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
+            ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
+            ->leftjoin('sessions','sessions.tutor_id','=','profiles.tutor_id')
+            ->where('users.role_id','=',2)
+            ->where('users.id','=',10)
+            ->first();
+
+        dd($users);
+
     }
 }
