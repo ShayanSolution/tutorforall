@@ -37,7 +37,7 @@ class SessionController extends Controller
         else{
             $student_id = $data['student_id'];
             $user_session = User::select('users.*')
-                ->select('users.*','sessions.created_at as Session_created_date','sessions.status as session_status')
+                ->select('users.*','sessions.created_at as Session_created_date','sessions.status as session_status','subjects.name as s_name')
                 ->join('sessions','sessions.student_id','=','users.id')
                 ->where('users.role_id','=',3)
                 ->where('users.id','=',$student_id)
