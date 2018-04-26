@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 
 class Session extends Model
 {
@@ -51,9 +52,52 @@ class Session extends Model
     {
         return $this->hasOne('App\Models\Invoice');
     }
+
+    public function saveSession($data){
+        $tutor_id = $data['tutor_id'];
+        $student_id = $data['student_id'];
+        $programme_id = $data['class_id'];
+        $subject_id = $data['subject_id'];
+        if(isset($data['subject_id'])){
+            $status = 'reject';
+        }else{
+            $status = 'booked';
+        }
+        $session = new Session;
+        $session->tutor_id = $tutor_id;
+        $session->student_id = $student_id;
+        $session->programme_id = $programme_id;
+        $session->subject_id = $subject_id;
+        $session->status = 'booked';
+        $session->subscription_id = 1;
+        $session->meeting_type_id = 1;
+        $session->save();
+        return $session;
+    }
+
+    public function findStudentSession($data){
+        $student_id = $data['student_id'];
+        $programme_id = $data['class_id'];
+        $subject_id = $data['subject_id'];
+        return Session::where('student_id','=',$student_id)
+                ->where('programme_id','=',$programme_id)
+                ->where('subject_id','=',$subject_id)
+                ->where('status','=','booked')
+                ->first();
+    }
     
-    public function save()
-    {
-        
+    public function findRequestSession($tutor_id){
+        return User::select('users.*')
+                ->select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name','profiles.is_group'
+                    ,'sessions.status as session_status','subjects.name as s_name','sessions.student_id as session_user_id')
+                ->join('sessions','sessions.tutor_id','=','users.id')
+                ->join('profiles','profiles.user_id','=','users.id')
+                ->join('programmes','programmes.id','=','profiles.programme_id')
+                ->join('subjects','subjects.id','=','profiles.subject_id')
+                ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
+                ->where('users.id','=',$tutor_id)
+                ->where('sessions.status','=','pending')
+                ->orWhere('sessions.status','=','reject')
+                ->get();
     }
 }

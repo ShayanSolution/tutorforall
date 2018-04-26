@@ -105,4 +105,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             return $user;
         }
     }
+    
+    public function findBookedUser($tutor_id){
+        $user = User::select('users.*')
+                ->select('users.*','programmes.name as p_name','subjects.name as s_name'
+                    ,'programmes.id as p_id','subjects.id as s_id','profiles.is_group',
+                    'profiles.is_home as t_is_home')
+                ->leftjoin('profiles','profiles.user_id','=','users.id')
+                ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
+                ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
+                ->where('users.role_id','=',2)
+                ->where('users.id','=',$tutor_id)
+                ->first();
+        return $user;
+    }
 }

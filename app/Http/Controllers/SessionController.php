@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Illuminate\Support\Facades\URL;
 use Log;
-use Illuminate\Support\Facades\Config;
+
 
 /**
  * Class SessionController
@@ -92,25 +92,14 @@ class SessionController extends Controller
      * Api will list all reject and pending sessions
      */
     public function requestSessions(Request $request){
+        $this->validate($request,[
+            'tutor_id' => 'required',
+        ]);
         $data = $request->all();
         //tutor session list
-        if(isset($data['tutor_id'])){
-            $tutor_id = $data['tutor_id'];
-            $user_session = User::select('users.*')
-                ->select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name'
-                    ,'sessions.status as session_status','subjects.name as s_name','sessions.student_id as session_user_id')
-                ->join('sessions','sessions.tutor_id','=','users.id')
-                ->join('profiles','profiles.user_id','=','users.id')
-                ->join('programmes','programmes.id','=','profiles.programme_id')
-                ->join('subjects','subjects.id','=','profiles.subject_id')
-                ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
-                ->where('users.id','=',$tutor_id)
-                ->where('sessions.status','=','pending')
-                ->orWhere('sessions.status','=','reject')
-                ->get();
-
-        }
-
+        $tutor_id = $data['tutor_id'];
+        $session =  new Session();
+        $user_session = $session->findRequestSession($tutor_id);
         if($user_session){
             $tutor_sessions = [];
             foreach ($user_session as $tutor){
@@ -128,6 +117,7 @@ class SessionController extends Controller
                     'Status' => $tutor->session_status,
                     'Subject' => $tutor->s_name,
                     'Class' => $tutor->p_name,
+                    'IsGroup' => $tutor->is_group,
                 ];
             }
 
@@ -163,27 +153,12 @@ class SessionController extends Controller
         ]);
         $tutor_id = $data['tutor_id'];
         $student_id = $data['student_id'];
-        $programme_id = $data['class_id'];
-        $subject_id = $data['subject_id'];
         //get tutor profile
-        $users = User::select('users.*')
-            ->select('users.*','programmes.name as p_name','subjects.name as s_name'
-                ,'programmes.id as p_id','subjects.id as s_id','profiles.is_group',
-                'profiles.is_home as t_is_home')
-            ->leftjoin('profiles','profiles.user_id','=','users.id')
-            ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
-            ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
-            ->where('users.role_id','=',2)
-            ->where('users.id','=',$tutor_id)
-            ->first();
+        $user = new User();
+        $users = $user->findBookedUser($tutor_id);
         $student = User::where('id','=',$student_id)->first();
-        $session = Session::
-        where('student_id','=',$student_id)
-            ->where('programme_id','=',$programme_id)
-            ->where('subject_id','=',$subject_id)
-            ->where('status','=','booked')
-            ->first();
-
+        $session = new Session();
+        $session = $session->findStudentSession($data);
         //if student session already exists.
         if($session){
             return [
@@ -191,19 +166,10 @@ class SessionController extends Controller
                 'messages' => 'Session already booked!'
             ];
         }else{
-            $session = new Session;
-            $session->tutor_id = $tutor_id;
-            $session->student_id = $student_id;
-            $session->programme_id = $programme_id;
-            $session->subject_id = $subject_id;
-            $session->status = 'booked';
-            $session->subscription_id = 3;
-            $session->meeting_type_id = 1;
-            $session->save();
-
+            $session = new Session();
+            $session->saveSession($data);
             //get tutor device token
             $device = User::where('id','=',$student_id)->select('device_token as token')->first();
-
             $message = PushNotification::Message(
                 $users->firstName.' '.$users->lastName.' accepted your request',
                 array(
@@ -231,7 +197,7 @@ class SessionController extends Controller
                         'Profile_Image' => !empty($users->profileImage)?URL::to('/images').'/'.$users->profileImage:'',
                     ))
                 ));
-            //send student info to student
+            //send student info
 //            Queue::push(PushNotification::app('appStudentIOS')
 //                ->to($device->token)
 //                ->send($message));
@@ -244,7 +210,39 @@ class SessionController extends Controller
         if($session){
             return [
                 'status' => 'success',
-                'messages' => 'Session Created successfully'
+                'messages' => 'Session booked successfully'
+            ];
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to find tutor'
+                ], 422
+            );
+        }
+
+    }
+
+    /**
+     * @param Request $request
+     * @return insert session with status rejected.
+     * 
+     */
+    public function sessionRejected(Request $request){
+        $this->validate($request,[
+            'tutor_id' => 'required',
+            'student_id' => 'required',
+            'class_id' => 'required',
+            'subject_id' => 'required',
+        ]);
+        $data = $request->all();
+        $data['status'] = 'reject';
+        $session = new Session();
+        $session = $session->saveSession($data);
+        if($session){
+            return [
+                'status' => 'success',
+                'messages' => 'Session with reject status created successfully'
             ];
         }else{
             return response()->json(
