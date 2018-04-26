@@ -51,4 +51,9 @@ class Session extends Model
     {
         return $this->hasOne('App\Models\Invoice');
     }
+    
+    public function save()
+    {
+        
+    }
 }

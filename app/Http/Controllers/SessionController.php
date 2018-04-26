@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Illuminate\Support\Facades\URL;
 use Log;
+use Illuminate\Support\Facades\Config;
 
 /**
  * Class SessionController
@@ -57,7 +58,7 @@ class SessionController extends Controller
                 $user_name = User::where('id',$user->session_user_id)->first();
                 $tutor_sessions[] = [
                     'FullName' => $user->firstName.' '.$user->lastName,
-                    'StudentName' => $user_name->firstName.' '.$user_name->lastName,
+                    'UserName' => $user_name->firstName.' '.$user_name->lastName,
                     'Date' => $user->Session_created_date,
                     'Lat' => $user->latitude,
                     'Long' => $user->longitude,
@@ -102,7 +103,7 @@ class SessionController extends Controller
                 ->join('profiles','profiles.user_id','=','users.id')
                 ->join('programmes','programmes.id','=','profiles.programme_id')
                 ->join('subjects','subjects.id','=','profiles.subject_id')
-                ->where('users.role_id','=',2)
+                ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
                 ->where('users.id','=',$tutor_id)
                 ->where('sessions.status','=','pending')
                 ->orWhere('sessions.status','=','reject')
@@ -112,20 +113,21 @@ class SessionController extends Controller
 
         if($user_session){
             $tutor_sessions = [];
-            foreach ($user_session as $user){
-                $user_name = User::
-                where('id',$user->session_user_id)->first();
+            foreach ($user_session as $tutor){
+                $student = User::where('id',$tutor->session_user_id)->first();
                 $tutor_sessions[] = [
-                    'FullName' => $user->firstName.' '.$user->lastName,
-                    'StudentName' => $user_name->firstName.' '.$user_name->lastName,
-                    'Date' => $user->Session_created_date,
-                    'Lat' => $user->latitude,
-                    'Long' => $user->longitude,
-                    'User_Lat' => $user_name->latitude,
-                    'User_Long' => $user_name->longitude,
-                    'Status' => $user->session_status,
-                    'Subject' => $user->s_name,
-                    'Class' => $user->p_name,
+                    'TutorName' => $tutor->firstName.' '.$tutor->lastName,
+                    'StudentName' => $student->firstName.' '.$student->lastName,
+                    'TutorID'=>$tutor->id,
+                    'StudentID'=>$tutor->session_user_id,
+                    'Date' => $tutor->Session_created_date,
+                    'TutorLat' => $tutor->latitude,
+                    'TutorLong' => $tutor->longitude,
+                    'StudentLat' => $student->latitude,
+                    'StudentLong' => $student->longitude,
+                    'Status' => $tutor->session_status,
+                    'Subject' => $tutor->s_name,
+                    'Class' => $tutor->p_name,
                 ];
             }
 
