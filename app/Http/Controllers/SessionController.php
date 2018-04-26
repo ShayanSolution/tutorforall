@@ -45,7 +45,7 @@ class SessionController extends Controller
                     'User_Long' => $user_details->longitude,
                     'Status' => $user->session_status,
                     'Subject' => $user->s_name,
-                    'Profile_image'=>$user_details->profileImage
+                    'Profile_image'=>!empty($user_details->profileImage)?URL::to('/images').'/'.$user_details->profileImage:''
                 ];
             }
 
@@ -98,6 +98,7 @@ class SessionController extends Controller
                     'Subject' => $tutor->s_name,
                     'Class' => $tutor->p_name,
                     'IsGroup' => $tutor->is_group,
+                    'Profile_image'=>!empty($tutor->profileImage)?URL::to('/images').'/'.$tutor->profileImage:''
                 ];
             }
 
