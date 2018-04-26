@@ -88,7 +88,7 @@ class SessionController extends Controller
     /**
      * Class SessionController
      * @package App\Http\Controllers
-     * Api will list all booked sessions
+     * Api will list all reject and pending sessions
      */
     public function requestSessions(Request $request){
         $data = $request->all();
