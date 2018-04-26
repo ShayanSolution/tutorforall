@@ -58,6 +58,9 @@ $app->configure('cors');
 // load mail configurations
 $app->configure('mail');
 
+// load constatns configurations
+$app->configure('user-constants');
+
 // load database configurations
 $app->configure('database');
 

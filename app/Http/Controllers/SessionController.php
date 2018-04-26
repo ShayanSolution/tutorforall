@@ -105,7 +105,7 @@ class SessionController extends Controller
                 ->where('users.role_id','=',2)
                 ->where('users.id','=',$tutor_id)
                 ->where('sessions.status','=','pending')
-                ->orWhere('sessions.status','=','rejected')
+                ->orWhere('sessions.status','=','reject')
                 ->get();
 
         }

@@ -16,6 +16,7 @@ use Illuminate\Queue\Queue;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
 use Log;
+use Illuminate\Support\Facades\Config;
 
 
 class UserController extends Controller
@@ -489,7 +490,7 @@ class UserController extends Controller
                 $file->move($destinationPath,$file->getClientOriginalName());
 
                 User::where('id','=',$student_id)
-                    ->where('role_id','=',3)
+                    ->where('role_id','=',Config::get('user-constants.STUDENT_ROLE_ID'))
                     -> update(['profileImage'=>$file_name]);
             }else{
                 $file_name = '';
@@ -497,7 +498,7 @@ class UserController extends Controller
 
             //update student profile
             User::where('id','=',$student_id)
-                ->where('role_id','=',3)
+                ->where('role_id','=',Config::get('user-constants.STUDENT_ROLE_ID'))
                 -> update($update_array);
             $student_profile = Profile::where('user_id','=',$student_id)->first();
             if($student_profile){
@@ -509,11 +510,12 @@ class UserController extends Controller
                 $tutor_profile->user_id = $student_id;
                 $tutor_profile->save();
             }
-
+            //get student profile image
+            $student_info = User::where('id','=',$student_id)->first();
             return [
                 'status' => 'success',
                 'messages' => 'Student profile updated successfully!',
-                'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$file_name:'',
+                'Profile_Image' => !empty($student_info->profileImage)?URL::to('/images').'/'.$student_info->profileImage:'',
             ];
         }else{
 
