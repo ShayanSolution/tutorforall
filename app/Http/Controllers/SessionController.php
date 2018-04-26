@@ -61,8 +61,71 @@ class SessionController extends Controller
                     'Date' => $user->Session_created_date,
                     'Lat' => $user->latitude,
                     'Long' => $user->longitude,
+                    'User_Lat' => $user_name->latitude,
+                    'User_Long' => $user_name->longitude,
                     'Status' => $user->session_status,
                     'Subject' => $user->s_name,
+                ];
+            }
+
+            return response()->json(
+                [
+                    'data' => $tutor_sessions
+                ]
+            );
+
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to find user session'
+                ], 422
+            );
+
+        }
+    }
+
+    /**
+     * Class SessionController
+     * @package App\Http\Controllers
+     * Api will list all booked sessions
+     */
+    public function requestSessions(Request $request){
+        $data = $request->all();
+        //tutor session list
+        if(isset($data['tutor_id'])){
+            $tutor_id = $data['tutor_id'];
+            $user_session = User::select('users.*')
+                ->select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name'
+                    ,'sessions.status as session_status','subjects.name as s_name','sessions.student_id as session_user_id')
+                ->join('sessions','sessions.tutor_id','=','users.id')
+                ->join('profiles','profiles.user_id','=','users.id')
+                ->join('programmes','programmes.id','=','profiles.programme_id')
+                ->join('subjects','subjects.id','=','profiles.subject_id')
+                ->where('users.role_id','=',2)
+                ->where('users.id','=',$tutor_id)
+                ->where('sessions.status','=','pending')
+                ->orWhere('sessions.status','=','rejected')
+                ->get();
+
+        }
+
+        if($user_session){
+            $tutor_sessions = [];
+            foreach ($user_session as $user){
+                $user_name = User::
+                where('id',$user->session_user_id)->first();
+                $tutor_sessions[] = [
+                    'FullName' => $user->firstName.' '.$user->lastName,
+                    'StudentName' => $user_name->firstName.' '.$user_name->lastName,
+                    'Date' => $user->Session_created_date,
+                    'Lat' => $user->latitude,
+                    'Long' => $user->longitude,
+                    'User_Lat' => $user_name->latitude,
+                    'User_Long' => $user_name->longitude,
+                    'Status' => $user->session_status,
+                    'Subject' => $user->s_name,
+                    'Class' => $user->p_name,
                 ];
             }
 

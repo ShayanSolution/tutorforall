@@ -248,6 +248,37 @@
                 }
             }
         },
+        "/request-sessions": {
+            "get": {
+                "summary": "Get user booked sessions list",
+                "description": "",
+                "operationId": "getUserBookedSession",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "tutor_id",
+                        "in": "query",
+                        "description": "tutor id",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User's List"
+                    },
+                    "422": {
+                        "description": "Un Processable Entry"
+                    }
+                }
+            }
+        },
         "/get-profile": {
             "get": {
                 "summary": "Get user profile",
@@ -341,42 +372,42 @@
                         "name": "firstName",
                         "in": "query",
                         "description": "First Name",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "lastName",
                         "in": "query",
                         "description": "Last Name",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "email",
                         "in": "query",
                         "description": "Email",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "fatherName",
                         "in": "query",
                         "description": "Father Name",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "gender_id",
                         "in": "query",
                         "description": "i.e. Male or Female",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "mobile",
                         "in": "query",
                         "description": "Mobile Number",
-                        "required": true,
+                        "required": false,
                         "type": "integer",
                         "format": "int64"
                     },
@@ -384,7 +415,7 @@
                         "name": "profileImage",
                         "in": "formData",
                         "description": "Profile Image",
-                        "required": true,
+                        "required": false,
                         "type": "file"
                     },
                     {
@@ -399,17 +430,24 @@
                         "name": "address",
                         "in": "query",
                         "description": "Address",
-                        "required": true,
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "qualification",
+                        "in": "query",
+                        "description": "Qualification",
+                        "required": false,
                         "type": "string"
                     }
 
                 ],
                 "responses": {
                     "200": {
-                        "description": "Location updated"
+                        "description": "Profile updated"
                     },
                     "422": {
-                        "description": "Unable to update location"
+                        "description": "Unable to update profile"
                     }
                 }
             }
@@ -430,35 +468,35 @@
                         "name": "firstName",
                         "in": "query",
                         "description": "First Name",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "lastName",
                         "in": "query",
                         "description": "Last Name",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "email",
                         "in": "query",
                         "description": "Email",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "fatherName",
                         "in": "query",
                         "description": "Father Name",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "gender_id",
                         "in": "query",
                         "description": "i.e. Male or Female",
-                        "required": true,
+                        "required": false,
                         "type": "integer",
                         "format": "int64"
                     },
@@ -466,7 +504,7 @@
                         "name": "mobile",
                         "in": "query",
                         "description": "Mobile Number",
-                        "required": true,
+                        "required": false,
                         "type": "integer",
                         "format": "int64"
                     },
@@ -474,7 +512,7 @@
                         "name": "profileImage",
                         "in": "formData",
                         "description": "Profile Image",
-                        "required": true,
+                        "required": false,
                         "type": "file"
                     },
                     {
@@ -489,21 +527,21 @@
                         "name": "experience",
                         "in": "query",
                         "description": "Tutor Experience",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "qualification",
                         "in": "query",
                         "description": "Tutor qualification",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "programme_id",
                         "in": "query",
                         "description": "Tutor Programme Id",
-                        "required": true,
+                        "required": false,
                         "type": "integer",
                         "format": "int64"
                     },
@@ -533,10 +571,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Location updated"
+                        "description": "Profile updated"
                     },
                     "422": {
-                        "description": "Unable to update location"
+                        "description": "Unable to update profile"
                     }
                 }
             }

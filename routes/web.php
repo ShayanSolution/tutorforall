@@ -40,6 +40,7 @@ $router->get('get-subjectby-id', 'ProgrammeSubjectController@getSubjectById');
 $router->post('save-programme', 'ProgrammeSubjectController@postSaveProgramme');
 $router->post('save-programme-subject', 'ProgrammeSubjectController@postSaveProgrammeSubject');
 $router->get('my-sessions', 'SessionController@mySessions');
+$router->get('request-sessions', 'SessionController@requestSessions');
 
 Route::post('/tutor-notification','UserController@tutorSessionInfo');
 Route::post('/booked','SessionController@bookedTutor');

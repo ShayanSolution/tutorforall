@@ -452,7 +452,7 @@ class UserController extends Controller
             'lastName' => 'regex:/^[a-zA-Z]+$/u|max:255',
             'email' => 'email',
             'fatherName' => 'regex:/^[a-zA-Z]+$/u|max:255',
-            'student_id' => 'numeric',
+            'student_id' => 'Required|numeric',
             'gender_id' => 'numeric',
             'mobile' => 'numeric',
             'profileImage' => 'mimes:jpeg,jpg,png,gif|max:10000',
@@ -467,6 +467,7 @@ class UserController extends Controller
         $student_id = isset($data['student_id'])?$data['student_id']:'';
         $gender_id = isset($data['gender_id'])?$data['gender_id']:'';
         $address = isset($data['address'])?$data['address']:'';
+        $qualification = isset($data['qualification'])?$data['qualification']:'';
 
         $update_array = array();
         if(!empty($firstName)){$update_array['firstName'] = $firstName;}
@@ -476,6 +477,7 @@ class UserController extends Controller
         if(!empty($mobile)){$update_array['mobile'] = $mobile;}
         if(!empty($gender_id)){$update_array['gender_id'] = $gender_id;}
         if(!empty($address)){$update_array['address'] = $address;}
+        if(!empty($qualification)){$update_array['qualification'] = $qualification;}
 
         $user = User::where('id','=',$student_id)->first();
         if($user){
