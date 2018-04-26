@@ -304,7 +304,7 @@ class UserController extends Controller
                 'Email'=>$user->email,
                 'Phone Number'=>$user->phone,
                 'Father Name'=>$user->fatherName,
-                'Qualification'=>$user->qualifitaction,
+                'Qualification'=>$user->qualification,
                 'Expert Class'=>$user->p_name,
                 'Expert Subjects'=>$user->s_name,
                 'Gender'=>$user->g_name,
