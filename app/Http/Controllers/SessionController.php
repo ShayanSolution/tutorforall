@@ -19,38 +19,17 @@ class SessionController extends Controller
 {
     public function mySessions(Request $request){
         $data = $request->all();
+        $session = new Session();
         //tutor session list
         if(isset($data['tutor_id'])){
             $tutor_id = $data['tutor_id'];
-            $user_session = User::select('users.*')
-                ->select('users.*','sessions.created_at as Session_created_date'
-                    ,'sessions.status as session_status','subjects.name as s_name','sessions.student_id as session_user_id')
-                ->join('sessions','sessions.tutor_id','=','users.id')
-                ->join('profiles','profiles.user_id','=','users.id')
-                ->join('programmes','programmes.id','=','profiles.programme_id')
-                ->join('subjects','subjects.id','=','profiles.subject_id')
-                ->where('users.role_id','=',2)
-                ->where('users.id','=',$tutor_id)
-                ->where('sessions.status','=','booked')
-                ->orWhere('sessions.status','=','ended')
-                ->get();
-
+            $user_session = $session->getTutorSessionDetail($tutor_id);
         }
         //student session list
         else{
             $student_id = $data['student_id'];
-            $user_session = User::select('users.*')
-                ->select('users.*','sessions.created_at as Session_created_date'
-                    ,'sessions.status as session_status','subjects.name as s_name','sessions.tutor_id as session_user_id')
-                ->join('sessions','sessions.student_id','=','users.id')
-                ->join('profiles','profiles.user_id','=','users.id')
-                ->join('programmes','programmes.id','=','profiles.programme_id')
-                ->join('subjects','subjects.id','=','profiles.subject_id')
-                ->where('users.role_id','=',3)
-                ->where('users.id','=',$student_id)
-                ->where('sessions.status','=','booked')
-                ->orWhere('sessions.status','=','ended')
-                ->get();
+            $user_session = $session->getStudentSessionDetail($student_id);
+            
         }
         if($user_session){
             $tutor_sessions = [];
