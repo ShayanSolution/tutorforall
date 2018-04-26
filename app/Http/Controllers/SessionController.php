@@ -29,22 +29,23 @@ class SessionController extends Controller
         else{
             $student_id = $data['student_id'];
             $user_session = $session->getStudentSessionDetail($student_id);
-            
+
         }
         if($user_session){
             $tutor_sessions = [];
             foreach ($user_session as $user){
-                $user_name = User::where('id',$user->session_user_id)->first();
+                $user_details = User::where('id',$user->session_user_id)->first();
                 $tutor_sessions[] = [
                     'FullName' => $user->firstName.' '.$user->lastName,
-                    'UserName' => $user_name->firstName.' '.$user_name->lastName,
+                    'UserName' => $user_details->firstName.' '.$user_details->lastName,
                     'Date' => $user->Session_created_date,
                     'Lat' => $user->latitude,
                     'Long' => $user->longitude,
-                    'User_Lat' => $user_name->latitude,
-                    'User_Long' => $user_name->longitude,
+                    'User_Lat' => $user_details->latitude,
+                    'User_Long' => $user_details->longitude,
                     'Status' => $user->session_status,
                     'Subject' => $user->s_name,
+                    'Profile_image'=>$user_details->profileImage
                 ];
             }
 
