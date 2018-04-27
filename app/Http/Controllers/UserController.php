@@ -409,35 +409,16 @@ class UserController extends Controller
             'firstName' => 'regex:/^[a-zA-Z]+$/u|max:255',
             'lastName' => 'regex:/^[a-zA-Z]+$/u|max:255',
             'email' => 'email',
-            'fatherName' => 'regex:/^[a-zA-Z]+$/u|max:255',
             'student_id' => 'Required|numeric',
             'gender_id' => 'numeric',
             'mobile' => 'numeric',
             'profileImage' => 'mimes:jpeg,jpg,png,gif|max:10000',
         ]);
-
         $data = $request->all();
-        $firstName = isset($data['firstName'])?$data['firstName']:'';
-        $lastName = isset($data['lastName'])?$data['lastName']:'';
-        $email = isset($data['email'])?$data['email']:'';
-        $fatherName = isset($data['fatherName'])?$data['fatherName']:'';
-        $mobile = isset($data['mobile'])?$data['mobile']:'';
         $student_id = isset($data['student_id'])?$data['student_id']:'';
-        $gender_id = isset($data['gender_id'])?$data['gender_id']:'';
-        $address = isset($data['address'])?$data['address']:'';
-        $qualification = isset($data['qualification'])?$data['qualification']:'';
-
-        $update_array = array();
-        if(!empty($firstName)){$update_array['firstName'] = $firstName;}
-        if(!empty($lastName)){$update_array['lastName'] = $lastName;}
-        if(!empty($email)){$update_array['email'] = $email;}
-        if(!empty($fatherName)){$update_array['fatherName'] = $fatherName;}
-        if(!empty($mobile)){$update_array['mobile'] = $mobile;}
-        if(!empty($gender_id)){$update_array['gender_id'] = $gender_id;}
-        if(!empty($address)){$update_array['address'] = $address;}
-        if(!empty($qualification)){$update_array['qualification'] = $qualification;}
-
+        $update_array = $this->getUpdatedValues($data);
         $user = User::where('id','=',$student_id)->first();
+        $role_id = Config::get('user-constants.STUDENT_ROLE_ID');
         if($user){
             //upload file and update user profile image
             if(isset($data['profileImage'])){
@@ -445,28 +426,10 @@ class UserController extends Controller
                 $file_name = $file->getClientOriginalName();
                 $destinationPath = base_path().'/public/images';
                 $file->move($destinationPath,$file->getClientOriginalName());
-
-                User::where('id','=',$student_id)
-                    ->where('role_id','=',Config::get('user-constants.STUDENT_ROLE_ID'))
-                    -> update(['profileImage'=>$file_name]);
-            }else{
-                $file_name = '';
+                User::updateProfileImage($student_id,$file_name,$role_id);
             }
-
             //update student profile
-            User::where('id','=',$student_id)
-                ->where('role_id','=',Config::get('user-constants.STUDENT_ROLE_ID'))
-                -> update($update_array);
-            $student_profile = Profile::where('user_id','=',$student_id)->first();
-            if($student_profile){
-                Profile::where('user_id','=',$student_id)->update(['programme_id'=>0,'subject_id'=>0]);
-            }else{
-                $tutor_profile = new Profile();
-                $tutor_profile->programme_id = 0;
-                $tutor_profile->subject_id = 0;
-                $tutor_profile->user_id = $student_id;
-                $tutor_profile->save();
-            }
+            User::updateUserProfile($student_id,$update_array,$role_id);
             //get student profile image
             $student_info = User::where('id','=',$student_id)->first();
             return [
@@ -475,7 +438,6 @@ class UserController extends Controller
                 'Profile_Image' => !empty($student_info->profileImage)?URL::to('/images').'/'.$student_info->profileImage:'',
             ];
         }else{
-
             return response()->json(
                 [
                     'status' => 'error',
@@ -566,13 +528,15 @@ class UserController extends Controller
         $programme_id = isset($data['programme_id'])?$data['programme_id']:'';
         $subject_id = isset($data['subject_id'])?$data['subject_id']:'';
         $tutor_id = isset($data['tutor_id'])?$data['tutor_id']:'';
-        
+        $student_id = isset($data['student_id'])?$data['student_id']:'';
+
         if(!empty($subject_id)){$update_array['subject_id'] = $subject_id;}
         if(!empty($programme_id)){$update_array['programme_id'] = $programme_id;}
         if(!empty($is_home)){$update_array['is_home'] = $is_home;}
         if(!empty($is_group)){$update_array['is_group'] = $is_group;}
         if(!empty($is_mentor)){$update_array['is_mentor'] = $is_mentor;}
         if(!empty($tutor_id)){$update_array['user_id'] = $tutor_id;}
+        if(!empty($student_id)){$update_array['user_id'] = $student_id;}
         return $update_array;
         
     }
