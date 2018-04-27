@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
 use Log;
 use Illuminate\Support\Facades\Config;
+use App\Jobs\SendPushNotification;
 
 
 class UserController extends Controller
@@ -344,13 +345,12 @@ class UserController extends Controller
             $user_age = Carbon::parse($users->dob)->age;
             for($j=0;$j<count($tutors_ids);$j++){
                 //get tutor device token to send notification
-                $device = User::where('id','=',$tutors_ids[$j])->select('device_token as token')->first();
-
-                if(!empty($device->token)){
-                    $device_token_array[] = $device->token;
+                $user = User::where('id','=',$tutors_ids[$j])->select('users.*','device_token as token')->first();
+                if(!empty($user->token)){
+                    $device_token_array[] = $user->token;
                     //notification message
                     $message = PushNotification::Message(
-                        $users->firstName.' '.$users->lastName.' wants a session with you',
+                        $user->firstName.' '.$user->lastName.' wants a session with you',
                         array(
                             'badge' => 1,
                             'sound' => 'example.aiff',
@@ -362,26 +362,27 @@ class UserController extends Controller
                             ),
                             'launchImage' => 'image.jpg',
                             'custom' => array('custom_data' => array(
-                                'Student_Name' => $users->firstName." ".$users->lastName,
-                                'Student_id' => $users->id,
+                                'Student_Name' => $user->firstName." ".$user->lastName,
+                                'Student_id' => $user->id,
                                 'Class_Name' => $class->name,
                                 'Subject_Name' => $subject->name,
                                 'Class_id' => $programme_id,
                                 'Subject_id' => $subject_id,
                                 'IS_Group' => 0,
-                                'Longitude' => $users->longitude,
-                                'Latitude' => $users->latitude,
+                                'Longitude' => $user->longitude,
+                                'Latitude' => $user->latitude,
                                 'Datetime' => Carbon::now()->toDateTimeString(),
                                 'Age' => $user_age>0?$user_age:'',
-                                'Profile_Image' => !empty($users->profileImage)?URL::to('/images').'/'.$users->profileImage:'',
+                                'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$user->profileImage:'',
                             ))
                         ));
 
                     //send student info to tutor
-                    PushNotification::app('appNameIOS')
-                        ->to($device->token)
-                        ->send($message);
-
+//                    Log::info("Request Cycle with Queues Begins");
+//                    $job = new SendPushNotification($user->token,$user,$class,$subject,$user_age,$programme_id,$subject_id);
+//                    dispatch($job);
+//                    Log::info('Request Cycle with Queues Ends');
+                    PushNotification::app('appNameIOS')->to($user->token)->send($message);
                 }
             }
 
