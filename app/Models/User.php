@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Support\Facades\Config;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -118,5 +119,36 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 ->where('users.id','=',$tutor_id)
                 ->first();
         return $user;
+    }
+
+    public function userProfile($user_id){
+
+       return Self::select('users.*','programmes.name as p_name','subjects.name as s_name','genders.name as g_name','rating')
+                    ->leftjoin('profiles','profiles.user_id','=','users.id')
+                    ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
+                    ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
+                    ->leftjoin('genders','genders.id','=','users.gender_id')
+                    ->leftjoin('ratings','ratings.user_id','=','users.id')
+                    ->where('users.id', $user_id)
+                    ->first();
+    }
+
+    public function getTutorProfile($data){
+        return Self::select('users.*')
+                ->join('profiles','profiles.user_id','=','users.id')
+                ->where('profiles.programme_id','=',$data['class_id'])
+                ->where('profiles.subject_id','=',$data['subject_id'])
+                ->where('profiles.is_home','=',$data['is_home'])
+                ->where('profiles.is_group','=',$data['is_group'])
+                ->where('users.role_id','=',2)
+                ->get();
+    }
+    
+    public static function updateProfileImage($tutor_id,$file_name,$role_id){
+        User::where('id','=',$tutor_id)->where('role_id','=',$role_id)-> update(['profileImage'=>$file_name]);
+    }
+    
+    public static function updateUserProfile($tutor_id,$update_array,$role_id){
+        User::where('id','=',$tutor_id)->where('role_id','=',$role_id)-> update($update_array);
     }
 }

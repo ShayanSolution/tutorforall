@@ -247,33 +247,6 @@ class UserController extends Controller
         ];
     }
 
-    /**
-     * @SWG\get(
-     *     path="/get-students",
-     *     operationId="getUser",
-     *     summary="Get user",
-     *     description="",
-     *     consumes={"application/json"},
-     *     produces={"application/json"},
-     *      @SWG\Parameter(
-     *         description="Roleid",
-     *         in="query",
-     *         name="role_id",
-     *         required=true,
-     *         type="integer",
-     *         format="int64",
-     *     ),
-     *
-     *    @SWG\Response(
-     *         response=200,
-     *         description="User's List",
-     *     ),
-     *     @SWG\Response(
-     *         response=422,
-     *         description="Un Processable Entry",
-     *     ),
-     * )
-     */
     public function getStudents(){
         return User::where('role_id', 2)->get();
     }
@@ -288,16 +261,8 @@ class UserController extends Controller
             'user_id' => 'required'
         ]);
         $user_id = $user_id['user_id'];
-
-        $user = User::
-                select('users.*','programmes.name as p_name','subjects.name as s_name','genders.name as g_name','rating')
-                ->leftjoin('profiles','profiles.user_id','=','users.id')
-                ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
-                ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
-                ->leftjoin('genders','genders.id','=','users.gender_id')
-                ->leftjoin('ratings','ratings.user_id','=','users.id')
-                ->where('users.id', $user_id)
-                ->first();
+        $user = new User();
+        $user = $user->userProfile($user_id);
         if($user){
             $profile = array(
                 'Full Name'=>$user->firstName.' '.$user->lastName,
@@ -335,16 +300,8 @@ class UserController extends Controller
             'is_home' => 'required',
             'is_group' => 'required',
         ]);
-
-        $users = User::select('users.*')
-                ->join('profiles','profiles.user_id','=','users.id')
-                ->where('profiles.programme_id','=',$data['class_id'])
-                ->where('profiles.subject_id','=',$data['subject_id'])
-                ->where('profiles.is_home','=',$data['is_home'])
-                ->where('profiles.is_group','=',$data['is_group'])
-                ->where('users.role_id','=',2)
-                ->get();
-
+        $user = new User();
+        $users = $user->getTutorProfile($data);
         if($users){
             return response()->json(['data' => $users]);
         }else{
@@ -366,7 +323,6 @@ class UserController extends Controller
             'subject_id' => 'required',
             'class_id' => 'required',
         ]);
-
         $student_id = $data['student_id'];
         $programme_id = $data['class_id'];
         $subject_id = $data['subject_id'];
@@ -532,21 +488,61 @@ class UserController extends Controller
 
     public function updateTutorProfile(Request $request){
         $data = $request->all();
+        $tutor_id = isset($data['tutor_id'])?$data['tutor_id']:'';
+        $role_id = Config::get('user-constants.TUTOR_ROLE_ID');
+        //build array to be updated.
+        $update_array = $this->getUpdatedValues($data);
+        $user = User::where('id','=',$tutor_id)->first();
+        if($user){
+            //upload file
+            if(isset($data['profileImage'])){
+                $file = $request->file('profileImage');
+                $file_name = $file->getClientOriginalName();
+                $destinationPath = base_path().'/public/images';
+                $file->move($destinationPath,$file_name);
+                User::updateProfileImage($tutor_id,$file_name,$role_id);
+            }
+            //update tutor profile
+            User::updateUserProfile($tutor_id,$update_array,$role_id);
+            $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
+            if($tutor_profile){
+                $update_profile_values = $this->getProfileUpdatedValues($data);
+                Profile::updateUserProfile($update_profile_values);
+            }else{
+                Profile::createUserProfile($data);
+            }
+            //get student profile image
+            $tutor_info = User::where('id','=',$tutor_id)->first();
+            return [
+                'status' => 'success',
+                'messages' => 'Tutor profile updated successfully!',
+                'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$tutor_info->profileImage:'',
+
+            ];
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to update user'
+                ], 422
+            );
+        }
+    }
+
+    public function getUpdatedValues($data){
+        $update_array = array();
         $firstName = isset($data['firstName'])?$data['firstName']:'';
         $lastName = isset($data['lastName'])?$data['lastName']:'';
         $email = isset($data['email'])?$data['email']:'';
         $fatherName = isset($data['fatherName'])?$data['fatherName']:'';
         $mobile = isset($data['mobile'])?$data['mobile']:'';
-        $tutor_id = isset($data['tutor_id'])?$data['tutor_id']:'';
         $gender_id = isset($data['gender_id'])?$data['gender_id']:'';
         $address = isset($data['address'])?$data['address']:'';
         $cnic_no = isset($data['cnic_no'])?$data['cnic_no']:'';
         $experience = isset($data['experience'])?$data['experience']:'';
         $qualification = isset($data['qualification'])?$data['qualification']:'';
-        $programme_id = isset($data['programme_id'])?$data['programme_id']:'';
-        $subject_id = isset($data['subject_id'])?$data['subject_id']:'';
+        
 
-        $update_array = array();
         if(!empty($firstName)){$update_array['firstName'] = $firstName;}
         if(!empty($lastName)){$update_array['lastName'] = $lastName;}
         if(!empty($email)){$update_array['email'] = $email;}
@@ -557,51 +553,28 @@ class UserController extends Controller
         if(!empty($cnic_no)){$update_array['cnic_no'] = $cnic_no;}
         if(!empty($experience)){$update_array['experience'] = $experience;}
         if(!empty($qualification)){$update_array['qualification'] = $qualification;}
-         $user = User::where('id','=',$tutor_id)->first();
-        if($user){
-            //upload file
-            if(isset($data['profileImage'])){
-                $file = $request->file('profileImage');
-                $file_name = $file->getClientOriginalName();
-                $destinationPath = base_path().'/public/images';
-                $file->move($destinationPath,$file_name);
-                User::where('id','=',$tutor_id)
-                    ->where('role_id','=',2)
-                    -> update(['profileImage'=>$file_name]);
+        
 
-            }else{
-                $file_name='';
-            }
-            //update student profile
-            User::where('id','=',$tutor_id)
-                ->where('role_id','=',2)
-                -> update($update_array);
-            $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
-            if($tutor_profile){
-                Profile::where('user_id','=',$tutor_id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id]);
-            }else{
-                $tutor_profile = new Profile();
-                $tutor_profile->programme_id = $programme_id;
-                $tutor_profile->subject_id = $subject_id;
-                $tutor_profile->user_id = $tutor_id;
-                $tutor_profile->save();
-            }
-
-            return [
-                'status' => 'success',
-                'messages' => 'Tutor profile updated successfully!',
-                'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$file_name:'',
-
-            ];
-        }else{
-
-            return response()->json(
-                [
-                    'status' => 'error',
-                    'message' => 'Unable to update user'
-                ], 422
-            );
-        }
+        return $update_array;
+    }
+    
+    public function getProfileUpdatedValues($data){
+        $update_array = array();        
+        $is_home = isset($data['is_home'])?$data['is_home']:'';
+        $is_group = isset($data['is_group'])?$data['is_group']:'';
+        $is_mentor = isset($data['is_mentor'])?$data['is_mentor']:'';
+        $programme_id = isset($data['programme_id'])?$data['programme_id']:'';
+        $subject_id = isset($data['subject_id'])?$data['subject_id']:'';
+        $tutor_id = isset($data['tutor_id'])?$data['tutor_id']:'';
+        
+        if(!empty($subject_id)){$update_array['subject_id'] = $subject_id;}
+        if(!empty($programme_id)){$update_array['programme_id'] = $programme_id;}
+        if(!empty($is_home)){$update_array['is_home'] = $is_home;}
+        if(!empty($is_group)){$update_array['is_group'] = $is_group;}
+        if(!empty($is_mentor)){$update_array['is_mentor'] = $is_mentor;}
+        if(!empty($tutor_id)){$update_array['user_id'] = $tutor_id;}
+        return $update_array;
+        
     }
 
    
