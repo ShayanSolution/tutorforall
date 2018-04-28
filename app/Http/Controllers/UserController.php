@@ -249,11 +249,11 @@ class UserController extends Controller
     }
 
     public function getStudents(){
-        return User::where('role_id', 2)->get();
+        return User::where('role_id', 3)->get();
     }
 
     public function getTutors(){
-        return User::where('role_id', 3)->get();
+        return User::where('role_id', 2)->get();
     }
 
     public function getUserProfile(Request $request){
