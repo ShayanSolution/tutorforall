@@ -97,6 +97,8 @@ class SessionController extends Controller
                     'Status' => $tutor->session_status,
                     'Subject' => $tutor->s_name,
                     'Class' => $tutor->p_name,
+                    'Subject_id' => $tutor->subject_id,
+                    'Class_id' => $tutor->programme_id,
                     'IsGroup' => $tutor->is_group,
                     'Profile_image'=>!empty($tutor->profileImage)?URL::to('/images').'/'.$tutor->profileImage:''
                 ];
