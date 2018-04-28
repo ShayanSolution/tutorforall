@@ -333,7 +333,7 @@ class UserController extends Controller
         $subject = Subject::find($subject_id);
         //update class and subjects for students
         Profile::where('user_id',$student_id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id]);
-        $users = User::select('users.*')
+        $student = User::select('users.*')
                 ->select('users.*')
                 /*->leftjoin('profiles','profiles.user_id','=','users.id')
                 ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
@@ -341,8 +341,8 @@ class UserController extends Controller
                 ->where('users.role_id','=',3)
                 ->where('users.id','=',$student_id)
                 ->first();
-        if($users){
-            $user_age = Carbon::parse($users->dob)->age;
+        if($student){
+            $user_age = Carbon::parse($student->dob)->age;
             for($j=0;$j<count($tutors_ids);$j++){
                 //get tutor device token to send notification
                 $user = User::where('id','=',$tutors_ids[$j])->select('users.*','device_token as token')->first();
@@ -350,7 +350,7 @@ class UserController extends Controller
                     $device_token_array[] = $user->token;
                     //notification message
                     $message = PushNotification::Message(
-                        $user->firstName.' '.$user->lastName.' wants a session with you',
+                        $student->firstName.' '.$student->lastName.' wants a session with you',
                         array(
                             'badge' => 1,
                             'sound' => 'example.aiff',
@@ -362,18 +362,18 @@ class UserController extends Controller
                             ),
                             'launchImage' => 'image.jpg',
                             'custom' => array('custom_data' => array(
-                                'Student_Name' => $user->firstName." ".$user->lastName,
-                                'Student_id' => $user->id,
+                                'Student_Name' => $student->firstName." ".$student->lastName,
+                                'Student_id' => $student->id,
                                 'Class_Name' => $class->name,
                                 'Subject_Name' => $subject->name,
                                 'Class_id' => $programme_id,
                                 'Subject_id' => $subject_id,
                                 'IS_Group' => 0,
-                                'Longitude' => $user->longitude,
-                                'Latitude' => $user->latitude,
+                                'Longitude' => $student->longitude,
+                                'Latitude' => $student->latitude,
                                 'Datetime' => Carbon::now()->toDateTimeString(),
                                 'Age' => $user_age>0?$user_age:'',
-                                'Profile_Image' => !empty($user->profileImage)?URL::to('/images').'/'.$user->profileImage:'',
+                                'Profile_Image' => !empty($student->profileImage)?URL::to('/images').'/'.$student->profileImage:'',
                             ))
                         ));
 
