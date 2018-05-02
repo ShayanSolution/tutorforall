@@ -49,6 +49,7 @@ Route::post('/update-tutor-profile','UserController@updateTutorProfile');
 Route::post('/session-rejected','SessionController@sessionRejected');
 $router->post('/register-tutor', 'AuthenticationController@postRegisterTutor');
 $router->post('/package-cost', 'PackageController@packageCost');
+$router->get('/request-categories', 'PackageController@getPackageCategories');
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
     //Dashboard Routes

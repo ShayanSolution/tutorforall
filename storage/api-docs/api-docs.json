@@ -278,6 +278,27 @@
                 }
             }
         },
+        "/request-categories": {
+            "get": {
+                "summary": "Get package categories",
+                "description": "",
+                "operationId": "getPackageCategories",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categories List"
+                    },
+                    "422": {
+                        "description": "Un Processable Entry"
+                    }
+                }
+            }
+        },
         "/session-rejected": {
             "post": {
                 "summary": "reject sessions",

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Package;
 use Illuminate\Http\Request;
 
@@ -70,5 +71,34 @@ class PackageController extends Controller
                 ], 422
             );
         }
+    }
+
+    public function getPackageCategories(){
+        $categories = Category::where('status',1)->get();
+        if($categories){
+            $package_categories = [];
+            foreach ($categories as $category){
+                $package_categories[] = [
+                    'id'=>$category->id,
+                    'name'=>$category->name,
+                ];
+            }
+
+            return response()->json(
+                [
+                    'data' => $package_categories
+                ]
+            );
+
+        }else{
+
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to find user session'
+                ], 422
+            );
+        }
+
     }
 }
