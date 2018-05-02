@@ -13,7 +13,7 @@
         },
         "version": "1.0.0"
     },
-    "host": "localhost:8000",
+    "host": "tutor4all-api.shayansolutions.com",
     "basePath": "/",
     "schemes": [
         "http",
