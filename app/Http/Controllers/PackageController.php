@@ -24,7 +24,7 @@ class PackageController extends Controller
         $is_group = $request['is_group'];
         $group_count = $request['group_count'];
         $package = Package::where('category_id',$category_id)->where('is_active',1)->first();
-        if($is_group){
+        if($is_group && !empty($package)){
             if ($group_count == 2) {
                 $hourly_rate = $package->hourly_rate + $package->extra_percentage_for_group_of_two;
                 return response()->json(
@@ -55,12 +55,19 @@ class PackageController extends Controller
                 );
             }
 
-        }else{
+        }else if(!empty($package)){
             $hourly_rate = $package->hourly_rate;
             return response()->json(
                 [
                     'hourly_rate' => $hourly_rate
                 ]
+            );
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to find user hourly rate'
+                ], 422
             );
         }
     }
