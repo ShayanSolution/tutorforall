@@ -13,7 +13,7 @@
         },
         "version": "1.0.0"
     },
-    "host": "tutor4all-api.shayansolutions.com",
+    "host": "localhost:8000",
     "basePath": "/",
     "schemes": [
         "http",
@@ -326,6 +326,54 @@
                 "responses": {
                     "200": {
                         "description": "Session Rejected"
+                    },
+                    "422": {
+                        "description": "Un Processable Entry"
+                    }
+                }
+            }
+        },
+        "/package-cost": {
+            "post": {
+                "summary": "Package Cost",
+                "description": "",
+                "operationId": "categoryId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "description": "category id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "is_group",
+                        "in": "query",
+                        "description": "is group i.e. 1 or 0",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "group_count",
+                        "in": "query",
+                        "description": "Group Count",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Hourly Rate"
                     },
                     "422": {
                         "description": "Un Processable Entry"

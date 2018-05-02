@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -150,5 +151,27 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     
     public static function updateUserProfile($tutor_id,$update_array,$role_id){
         User::where('id','=',$tutor_id)->where('role_id','=',$role_id)-> update($update_array);
+    }
+    
+    public static function registerTutor($request){
+        //print_r($request); dd();
+        $email = $request['email'];
+        $fullName = explode(" ",$request['name']);
+        if(count($fullName)>0){
+            $firstName = $fullName[0]; $lastName = $fullName[0];
+        }
+        $password = $request['passwords']['password'];
+        $phone = $request['phone'];
+
+        $user = Self::create([
+            'email' => $email,
+            'firstName' => $firstName,
+            'lastName' => $lastName,
+            'password' => Hash::make($password),
+            'role_id' => Config::get('user-constants.TUTOR_ROLE_ID'),
+            'phone'=>$phone
+        ])->id;
+        
+        return $user;
     }
 }

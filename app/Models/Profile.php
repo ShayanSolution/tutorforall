@@ -41,4 +41,19 @@ class Profile extends Model
     public static function updateUserProfile($update_profile_values){
         Profile::where('user_id','=',$update_profile_values['user_id'])->update($update_profile_values);
     }
+    
+    public static function registerUserProfile($tutor_id){
+        $profile = Self::create([
+            'is_mentor' => 0,
+            'is_deserving' => 0,
+            'is_home' => 0,
+            'is_group' => 0,
+            'meeting_type_id' => 0,
+            'user_id'=>$tutor_id,
+            'programme_id'=>0,
+            'subject_id'=>0,
+        ])->id;
+        
+        return $profile;
+    }
 }
