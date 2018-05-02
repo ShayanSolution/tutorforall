@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Package;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PackageController extends Controller
 {
@@ -74,6 +75,7 @@ class PackageController extends Controller
     }
 
     public function getPackageCategories(){
+        Mail::raw('Raw string email', function($msg) { $msg->to(['x@x.com']); $msg->from(['x@x.com']); });
         $categories = Category::where('status',1)->get();
         if($categories){
             $package_categories = [];
