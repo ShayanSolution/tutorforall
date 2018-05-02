@@ -85,7 +85,6 @@ class PackageController extends Controller
                     'name'=>$category->name,
                 ];
             }
-
             return response()->json(
                 [
                     'data' => $package_categories
