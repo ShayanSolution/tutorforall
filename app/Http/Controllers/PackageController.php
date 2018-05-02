@@ -75,7 +75,7 @@ class PackageController extends Controller
     }
 
     public function getPackageCategories(){
-        Mail::raw('Raw string email', function($msg) { $msg->to(['dev2@shayansolutions.com']); $msg->from(['dev2@shayansolutions.com']); });
+        //Mail::raw('Raw string email', function($msg) { $msg->to(['dev2@shayansolutions.com']); $msg->from(['dev2@shayansolutions.com']); });
         $categories = Category::where('status',1)->get();
         if($categories){
             $package_categories = [];
