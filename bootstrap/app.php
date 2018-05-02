@@ -25,8 +25,7 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
- //$app->withFacades('Davibennun\LaravelPushNotification\Facades\PushNotification');
- $app->withFacades();
+ $app->withFacades('Davibennun\LaravelPushNotification\Facades\PushNotification');
 
  $app->withEloquent();
 
