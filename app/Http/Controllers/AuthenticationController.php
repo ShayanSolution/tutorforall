@@ -229,10 +229,10 @@ class AuthenticationController extends Controller
                 Profile::registerUserProfile($user);
                 $user = User::where('id',$user)->first();
                 $user_detail = ['confirmation_code'=>$confirmation_code,'firstName'=>$user['firstName'],'phone'=>$user['phone'],'password'=>$password];
-                Mail::send('emails.welcome', ['confirmation_code'=>$confirmation_code,'user'=>$user_detail], function($message) use($user) {
-                    $message->to($user['email'], $user['firstName'])->subject('Verify your email address');
-                    $message->from('info@tutor4all.com','Tutor4all');
-                });
+//                Mail::send('emails.welcome', ['confirmation_code'=>$confirmation_code,'user'=>$user_detail], function($message) use($user) {
+//                    $message->to($user['email'], $user['firstName'])->subject('Verify your email address');
+//                    $message->from('info@tutor4all.com','Tutor4all');
+//                });
                 return [
                     'status' => 'success',
                     'user_id' => $user,
