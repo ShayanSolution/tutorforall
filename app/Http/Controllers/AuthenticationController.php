@@ -191,15 +191,15 @@ class AuthenticationController extends Controller
             'code' => 'required|digits:4',
             'device_token' => 'required',
         ]);
-        $confirmation_code = str_random(30);
-        $password = str_random(6);
-        $user = User::where('id',10)->first();
-        $user_detail = ['confirmation_code'=>$confirmation_code,'firstName'=>$user['firstName'],'phone'=>$user['phone'],'password'=>$password];
-        Mail::send('emails.welcome', ['confirmation_code'=>$confirmation_code,'user'=>$user_detail], function($message) use($user) {
-            $message->to($user['email'], $user['firstName'])->subject('Verify your email address');
-            $message->from('info@tutor4all.com','Tutor4all');
-        });
-dd();
+//        $confirmation_code = str_random(30);
+//        $password = str_random(6);
+//        $user = User::where('id',10)->first();
+//        $user_detail = ['confirmation_code'=>$confirmation_code,'firstName'=>$user['firstName'],'phone'=>$user['phone'],'password'=>$password];
+//        Mail::send('emails.welcome', ['confirmation_code'=>$confirmation_code,'user'=>$user_detail], function($message) use($user) {
+//            $message->to($user['email'], $user['firstName'])->subject('Verify your email address');
+//            $message->from('info@tutor4all.com','Tutor4all');
+//        });dd();
+
         $email = $request->email;
         $phone = $request->phone;
         $code = $request->code;
