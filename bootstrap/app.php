@@ -39,31 +39,27 @@ $app = new Laravel\Lumen\Application(
 | your own bindings here if you like or you can make another file.
 |
 */
-
 $app->configure('swagger-lume');
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     App\Exceptions\Handler::class
 );
-
 $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
     App\Console\Kernel::class
 );
-
 // load cors configurations
 $app->configure('cors');
-
 // load mail configurations
 $app->configure('mail');
-
+// load mail services
+$app->configure('services');
 // load constatns configurations
 $app->configure('user-constants');
-
 // load database configurations
 $app->configure('database');
-
+// load push notification configurations
 $app->configure('push-notification');
 
 /*

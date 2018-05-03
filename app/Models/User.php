@@ -50,7 +50,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'role_id',
         'isActive',
         'profileImage',
-        'device_token'
+        'device_token',
+        'confirmation_code',
+        'confirmation_code',
+        'confirmed',
     ];
 
     /**
@@ -100,7 +103,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             return self::where('email', $username)->first();
         }else{
             $request  = Request::all();
-            $user = self::where('phone', $username)->first();
+            $user = self::where('phone', $username)->where('confirmed','=',1)->first();
+            if(!$user){
+                return $user;
+            }
             if(isset($request['device_token']) && !empty($request['device_token'])){
                 self::where('id','=',$user->id)->update(['device_token'=>$request['device_token']]);
             }

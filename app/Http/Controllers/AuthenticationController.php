@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Profile;
 use App\Location;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Mail;
 
 class AuthenticationController extends Controller
 {
@@ -83,7 +84,7 @@ class AuthenticationController extends Controller
      *         type="integer",
      *         format="int64",
      *     ),
-     *     
+     *
      *     @SWG\Parameter(
      *         description="Code number",
      *         in="query",
@@ -92,7 +93,7 @@ class AuthenticationController extends Controller
      *         type="integer",
      *         format="int64",
      *     ),
-     *    
+     *
      *    @SWG\Response(
      *         response=200,
      *         description="Phone code has been verified",
@@ -191,7 +192,6 @@ class AuthenticationController extends Controller
             'device_token' => 'required',
         ]);
 
-
         $email = $request->email;
         $phone = $request->phone;
         $code = $request->code;
@@ -204,30 +204,27 @@ class AuthenticationController extends Controller
             ->orderBy('id')
             ->first();
 
-
         if($code){
-
+            $confirmation_code = str_random(30);
+            $password = str_random(6);
             $user = User::create([
                 'email' => $email,
                 'phone' => $phone,
-                'password' => Hash::make($code),
+                'password' => Hash::make($password),
                 'uid' => md5(microtime()),
                 'role_id' => 3,
                 'device_token' => $device_token,
+                'confirmation_code' => $confirmation_code,
             ])->id;
 
             if($user){
-                //enter in profile
-                $profile = new Profile();
-                $profile->is_mentor = 0;
-                $profile->is_deserving = 0;
-                $profile->is_home = 0;
-                $profile->is_group = 0;
-                $profile->meeting_type_id = 0;
-                $profile->user_id = $user;
-                $profile->programme_id = 0;
-                $profile->subject_id = 0;
-                $profile->save();
+                Profile::registerUserProfile($user);
+                $user = User::where('id',$user)->first();
+                $user_detail = ['confirmation_code'=>$confirmation_code,'firstName'=>$user['firstName'],'phone'=>$user['phone'],'password'=>$password];
+                Mail::send('emails.welcome', ['confirmation_code'=>$confirmation_code,'user'=>$user_detail], function($message) use($user) {
+                    $message->to($user['email'], $user['firstName'])->subject('Verify your email address');
+                    $message->from('info@tutor4all.com','Tutor4all');
+                });
                 return [
                     'status' => 'success',
                     'user_id' => $user,
@@ -293,7 +290,7 @@ class AuthenticationController extends Controller
                 ], 422
             );
         }
-        
+
     }
 
     public function postRegisterTutor(Request $request){
@@ -310,6 +307,30 @@ class AuthenticationController extends Controller
         return [
             'status' => 'success',
             'messages' => 'Location updated'
+        ];
+    }
+
+    public function confirm($confirmation_code)
+    {
+        if( ! $confirmation_code)
+        {
+            throw new InvalidConfirmationCodeException;
+        }
+
+        $user = User::whereConfirmationCode($confirmation_code)->first();
+
+        if ( ! $user)
+        {
+            throw new InvalidConfirmationCodeException;
+        }
+
+        $user->confirmed = 1;
+        $user->confirmation_code = null;
+        $user->save();
+
+        return [
+            'status' => 'success',
+            'messages' => 'You have successfully verified your account.'
         ];
     }
 

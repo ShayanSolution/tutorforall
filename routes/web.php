@@ -50,6 +50,7 @@ Route::post('/session-rejected','SessionController@sessionRejected');
 $router->post('/register-tutor', 'AuthenticationController@postRegisterTutor');
 $router->post('/package-cost', 'PackageController@packageCost');
 $router->get('/request-categories', 'PackageController@getPackageCategories');
+$router->get('/register/verify/{confirmationCode}', 'AuthenticationController@confirm');
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
     //Dashboard Routes
