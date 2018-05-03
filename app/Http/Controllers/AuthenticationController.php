@@ -192,6 +192,7 @@ class AuthenticationController extends Controller
             'device_token' => 'required',
         ]);
         $confirmation_code = str_random(30);
+        $password = str_random(6);
         $user = User::where('id',10)->first();
         $user_detail = ['confirmation_code'=>$confirmation_code,'firstName'=>$user['firstName'],'phone'=>$user['phone'],'password'=>$password];
         Mail::send('emails.welcome', ['confirmation_code'=>$confirmation_code,'user'=>$user_detail], function($message) use($user) {
