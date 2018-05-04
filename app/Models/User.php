@@ -165,14 +165,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $email = $request['email'];
         $fullName = explode(" ",$request['name']);
         if(count($fullName)>0){
-            $firstName = $fullName[0]; $lastName = $fullName[0];
+            $firstName = $fullName[0]; $lastName = $fullName[1];
         }
         $password = $request['passwords']['password'];
         $phone = $request['phone'];
-
+        $uid = str_random(32);
         $user = Self::create([
             'email' => $email,
             'firstName' => $firstName,
+            'uid' => $uid,
             'lastName' => $lastName,
             'password' => Hash::make($password),
             'role_id' => Config::get('user-constants.TUTOR_ROLE_ID'),
