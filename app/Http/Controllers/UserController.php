@@ -336,9 +336,9 @@ class UserController extends Controller
         Profile::where('user_id',$student_id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id]);
         $student = User::select('users.*')
                 ->select('users.*')
-                /*->leftjoin('profiles','profiles.user_id','=','users.id')
+                ->leftjoin('profiles','profiles.user_id','=','users.id')
                 ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
-                ->leftjoin('subjects','subjects.id','=','profiles.subject_id')*/
+                ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
                 ->where('users.role_id','=',3)
                 ->where('users.id','=',$student_id)
                 ->first();
@@ -369,7 +369,7 @@ class UserController extends Controller
                                 'Subject_Name' => $subject->name,
                                 'Class_id' => $programme_id,
                                 'Subject_id' => $subject_id,
-                                'IS_Group' => 0,
+                                'IS_Group' => $student->is_group,
                                 'Longitude' => $student->longitude,
                                 'Latitude' => $student->latitude,
                                 'Datetime' => Carbon::now()->toDateTimeString(),
