@@ -148,6 +148,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 ->where('profiles.subject_id','=',$data['subject_id'])
                 ->where('profiles.is_home','=',$data['is_home'])
                 ->where('profiles.is_group','=',$data['is_group'])
+                ->where('profiles.call_student','=',$data['call_student'])
                 ->where('users.role_id','=',2)
                 ->get();
     }

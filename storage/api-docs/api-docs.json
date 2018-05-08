@@ -896,6 +896,14 @@
                         "format": "int64"
                     },
                     {
+                        "name": "call_student",
+                        "in": "query",
+                        "description": "Tutor option for Call student",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
                         "name": "is_group",
                         "in": "query",
                         "description": "Individual or group",

@@ -300,6 +300,7 @@ class UserController extends Controller
             'class_id' => 'required',
             'is_home' => 'required',
             'is_group' => 'required',
+            'call_student' => 'required',
         ]);
         $user = new User();
         $users = $user->getTutorProfile($data);
