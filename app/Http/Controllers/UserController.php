@@ -530,6 +530,9 @@ class UserController extends Controller
         $subject_id = isset($data['subject_id'])?$data['subject_id']:'';
         $tutor_id = isset($data['tutor_id'])?$data['tutor_id']:'';
         $student_id = isset($data['student_id'])?$data['student_id']:'';
+        $one_on_one = isset($data['one_on_one'])?$data['one_on_one']:'';
+        $call_tutor = isset($data['call_tutor'])?$data['call_tutor']:'';
+        $call_student = isset($data['call_student'])?$data['call_student']:'';
 
         if(!empty($subject_id)){$update_array['subject_id'] = $subject_id;}
         if(!empty($programme_id)){$update_array['programme_id'] = $programme_id;}
@@ -538,6 +541,9 @@ class UserController extends Controller
         if(!empty($is_mentor)){$update_array['is_mentor'] = $is_mentor;}
         if(!empty($tutor_id)){$update_array['user_id'] = $tutor_id;}
         if(!empty($student_id)){$update_array['user_id'] = $student_id;}
+        if(!empty($one_on_one)){$update_array['one_on_one'] = $one_on_one;}
+        if(!empty($call_tutor)){$update_array['call_tutor'] = $call_tutor;}
+        if(!empty($call_student)){$update_array['call_student'] = $call_student;}
         return $update_array;
         
     }

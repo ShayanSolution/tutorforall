@@ -713,6 +713,30 @@
                         "required": false,
                         "type": "integer",
                         "format": "int64"
+                    },
+                    {
+                        "name": "one_on_one",
+                        "in": "query",
+                        "description": "i.e. 1 for one on one",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "call_tutor",
+                        "in": "query",
+                        "description": "i.e. 1 for call tutor",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "call_student",
+                        "in": "query",
+                        "description": "i.e. 1 for call student",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
                     }
 
                 ],
