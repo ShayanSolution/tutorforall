@@ -915,7 +915,7 @@
                         "name": "student_id",
                         "in": "query",
                         "description": "Update is_group field for student",
-                        "required": true,
+                        "required": false,
                         "type": "integer",
                         "format": "int64"
                     }
