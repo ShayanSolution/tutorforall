@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Profile;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -142,6 +143,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     public function getTutorProfile($data){
+        if(isset($data['student_id'])){
+            $student_id = $data['student_id'];
+            $group = $data['is_group'];
+            Profile::updateStudentGroup($student_id,$group);
+        }
         return Self::select('users.*')
                 ->join('profiles','profiles.user_id','=','users.id')
                 ->where('profiles.programme_id','=',$data['class_id'])

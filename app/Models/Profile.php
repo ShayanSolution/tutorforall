@@ -56,4 +56,8 @@ class Profile extends Model
         
         return $profile;
     }
+
+    public static function updateStudentGroup($student_id,$group){
+        self::where('user_id',$student_id)->update(['is_group'=>$group]);
+    }
 }
