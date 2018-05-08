@@ -335,13 +335,14 @@ class UserController extends Controller
         //update class and subjects for students
         Profile::where('user_id',$student_id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id]);
         $student = User::select('users.*')
-                ->select('users.*')
-                ->leftjoin('profiles','profiles.user_id','=','users.id')
-                ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
-                ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
-                ->where('users.role_id','=',3)
-                ->where('users.id','=',$student_id)
-                ->first();
+                    ->select('users.*','profiles.is_group')
+                    ->leftjoin('profiles','profiles.user_id','=','users.id')
+                    ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
+                    ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
+                    ->where('users.role_id','=',3)
+                    ->where('users.id','=',$student_id)
+                    ->first();
+
         if($student){
             $user_age = Carbon::parse($student->dob)->age;
             for($j=0;$j<count($tutors_ids);$j++){
@@ -365,8 +366,8 @@ class UserController extends Controller
                             'custom' => array('custom_data' => array(
                                 'Student_Name' => $student->firstName." ".$student->lastName,
                                 'Student_id' => $student->id,
-                                'Class_Name' => $class->name,
-                                'Subject_Name' => $subject->name,
+                                'Class_Name' => isset($class->name)?$class->name:'',
+                                'Subject_Name' => isset($subject->name)?$subject->name:'',
                                 'Class_id' => $programme_id,
                                 'Subject_id' => $subject_id,
                                 'IS_Group' => $student->is_group,
