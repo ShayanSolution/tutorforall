@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Illuminate\Support\Facades\URL;
 use Log;
+use Carbon\Carbon;
 
 
 /**
@@ -100,6 +101,7 @@ class SessionController extends Controller
                     'Subject_id' => $tutor->subject_id,
                     'Class_id' => $tutor->programme_id,
                     'IsGroup' => $tutor->is_group,
+                    'Datetime' => Carbon::now()->toDateTimeString(),
                     'Profile_image'=>!empty($tutor->profileImage)?URL::to('/images').'/'.$tutor->profileImage:''
                 ];
             }
