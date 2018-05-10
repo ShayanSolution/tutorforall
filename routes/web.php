@@ -51,6 +51,8 @@ $router->post('/register-tutor', 'AuthenticationController@postRegisterTutor');
 $router->post('/package-cost', 'PackageController@packageCost');
 $router->get('/request-categories', 'PackageController@getPackageCategories');
 $router->get('/register/verify/{confirmationCode}', 'AuthenticationController@confirm');
+$router->get('/user/session/{userid}', 'SessionController@getUserSession');
+$router->get('/deserve/{userid}', 'SessionController@studentDeserve');
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
     //Dashboard Routes
@@ -58,6 +60,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
         'uses'       => 'UserController@getDashboardTotalOfPieCharts',
         //'middleware' => "scope:admin"
     ]);
+
+    //$router->get('/user/session/{userid}', 'SessionController@getUserSession');
     
     $router->get('get-students', [
         'uses'       => 'UserController@getStudents',

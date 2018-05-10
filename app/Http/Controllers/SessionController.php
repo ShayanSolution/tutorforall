@@ -239,4 +239,10 @@ class SessionController extends Controller
         }
 
     }
+
+    public function getUserSession($user_id){
+        $session = new Session();
+        $user_session = $session->getTutorSessionDetail($user_id);
+        return $user_session;
+    }
 }
