@@ -171,8 +171,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         //print_r($request); dd();
         $email = $request['email'];
         $fullName = explode(" ",$request['name']);
-        if(count($fullName)>0){
+        if(count($fullName)>1){
             $firstName = $fullName[0]; $lastName = $fullName[1];
+        }else{
+            $firstName = $fullName[0]; $lastName = '';
         }
         $password = $request['passwords']['password'];
         $phone = $request['phone'];
