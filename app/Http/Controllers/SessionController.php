@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
 use App\Models\Session;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -9,7 +10,7 @@ use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Illuminate\Support\Facades\URL;
 use Log;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Config;
 
 /**
  * Class SessionController
@@ -244,5 +245,12 @@ class SessionController extends Controller
         $session = new Session();
         $user_session = $session->getTutorSessionDetail($user_id);
         return $user_session;
+    }
+    
+    public function updateDeserveStudentStatus($student_id){
+        //update student deserving status
+        Profile::updateDerserveStatus($student_id);
+        $students =  User::getStudents();
+        return $students;
     }
 }

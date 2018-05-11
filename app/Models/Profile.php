@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Profile extends Model
 {
     protected $fillable = [
@@ -59,5 +60,16 @@ class Profile extends Model
 
     public static function updateStudentGroup($student_id,$group){
         self::where('user_id',$student_id)->update(['is_group'=>$group]);
+    }
+
+    public static function updateDerserveStatus($student_id){
+        $result = Self::where('user_id',$student_id)->first();
+        if($result->is_deserving == 0){
+            $deserving_status = 1;
+        }else{
+            $deserving_status = 0;
+        }
+        self::where('user_id',$student_id)->update(['is_deserving'=>$deserving_status]);
+
     }
 }

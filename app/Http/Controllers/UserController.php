@@ -248,12 +248,10 @@ class UserController extends Controller
         ];
     }
 
-    public function getStudents(){
-        return User::where('role_id', 3)->get();
-    }
-
-    public function getTutors(){
-        return User::where('role_id', 2)->get();
+    public function getStudents()
+    {
+       return $students =  User::getStudents();
+        
     }
 
     public function getUserProfile(Request $request){
@@ -548,6 +546,23 @@ class UserController extends Controller
         if(!empty($call_student)){$update_array['call_student'] = $call_student;}
         return $update_array;
         
+    }
+
+    public function getTutors(){
+        return User::getTutors();
+    }
+
+    public function updateUserActiveStatus($id){
+        //update student deserving status
+        User::updateUserActiveStatus($id);
+        $students =  User::getStudents();
+        return $students;
+    }
+    
+    public function removeUser($id){
+        $id = User::find($id); $id ->delete();
+        //User::withTrashed()->where('id', $id)->restore();
+        return User::getStudents();
     }
 
    

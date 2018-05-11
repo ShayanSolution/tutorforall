@@ -20,7 +20,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     const ADMIN_ROLE = 'ADMIN_USER';
     const BASIC_ROLE = 'BASIC_USER';
-
+    protected $dates = ['deleted_at'];
     /**
      * The database table used by the model.
      *
@@ -190,5 +190,71 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         ])->id;
         
         return $user;
+    }
+
+    public static function getStudents(){
+        $students = self::select('users.*','profiles.is_deserving')
+                    ->join('profiles','profiles.user_id','=','users.id')
+                    ->where('role_id', Config::get('user-constants.STUDENT_ROLE_ID'))
+                    ->get();
+        $student_detail=[];
+        $index = 0;
+        foreach ($students as $student){
+            $student_detail[$index]['id'] = $student->id;
+            $student_detail[$index]['firstName'] = $student->firstName;
+            $student_detail[$index]['lastName'] = $student->lastName;
+            $student_detail[$index]['username'] = $student->username;
+            $student_detail[$index]['email'] = $student->email;
+            $student_detail[$index]['city'] = $student->city;
+            $student_detail[$index]['country'] = $student->country;
+            if($student->is_deserving == '1'){
+                $student_detail[$index]['is_deserving'] = 'Yes';
+            }else{
+                $student_detail[$index]['is_deserving'] = 'No';
+            }
+            if($student->is_active == '1'){
+                $student_detail[$index]['is_active'] = 'Yes';
+            }else{
+                $student_detail[$index]['is_active'] = 'No';
+            }
+            $index++;
+        }
+        return $student_detail;
+    }
+    
+    public static function updateUserActiveStatus($id){
+        $user = Self::where('id',$id)->first();
+        if($user->is_active == 0){
+            $is_active = 1;
+        }else{
+            $is_active = 0;
+        }
+        self::where('id',$id)->update(['is_active'=>$is_active]);
+    }
+
+    public static function getTutors(){
+        $tutors = self::select('users.*','profiles.is_deserving')
+            ->join('profiles','profiles.user_id','=','users.id')
+            ->where('role_id', Config::get('user-constants.TUTOR_ROLE_ID'))
+            ->get();
+        $tutor_detail=[];
+        $index = 0;
+        foreach ($tutors as $tutor){
+            $tutor_detail[$index]['id'] = $tutor->id;
+            $tutor_detail[$index]['firstName'] = $tutor->firstName;
+            $tutor_detail[$index]['lastName'] = $tutor->lastName;
+            $tutor_detail[$index]['username'] = $tutor->username;
+            $tutor_detail[$index]['email'] = $tutor->email;
+            $tutor_detail[$index]['city'] = $tutor->city;
+            $tutor_detail[$index]['country'] = $tutor->country;
+
+            if($tutor->is_active == '1'){
+                $tutor_detail[$index]['is_active'] = 'Yes';
+            }else{
+                $tutor_detail[$index]['is_active'] = 'No';
+            }
+            $index++;
+        }
+        return $tutor_detail;
     }
 }
