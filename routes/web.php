@@ -55,10 +55,18 @@ $router->get('/user/session/{userid}', 'SessionController@getUserSession');
 $router->get('/user/deserve/{id}', 'SessionController@updateDeserveStudentStatus');
 $router->get('/user/active/{id}', 'UserController@updateUserActiveStatus');
 $router->get('/user/remove/{id}', 'UserController@removeUser');
+$router->get('/user/profile/{id}', 'UserController@userProfile');
 $router->get('get-students', [
     'uses'       => 'UserController@getStudents',
     //'middleware' => "scope:users,users:create"
 ]);
+
+$router->get('get-tutors', [
+    'uses'       => 'UserController@getTutors',
+    //'middleware' => "scope:users,users:create"
+]);
+
+$router->post('/update-user', 'AuthenticationController@postRegisterTutor');
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
     //Dashboard Routes
@@ -74,10 +82,7 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
 //        //'middleware' => "scope:users,users:create"
 //    ]);
 
-    $router->get('get-tutors', [
-        'uses'       => 'UserController@getTutors',
-        //'middleware' => "scope:users,users:create"
-    ]);
+
 
     $router->post('users', [
         'uses'       => 'UserController@store',

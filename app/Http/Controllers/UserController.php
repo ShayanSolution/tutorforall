@@ -565,5 +565,9 @@ class UserController extends Controller
         return User::getStudents();
     }
 
-   
+    public function userProfile($id){
+        $user = new User();
+        return $user->userProfile($id);
+        
+    } 
 }

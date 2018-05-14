@@ -139,7 +139,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                     ->leftjoin('genders','genders.id','=','users.gender_id')
                     ->leftjoin('ratings','ratings.user_id','=','users.id')
                     ->where('users.id', $user_id)
-                    ->first();
+                    ->get();
     }
 
     public function getTutorProfile($data){
