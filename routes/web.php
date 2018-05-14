@@ -61,11 +61,6 @@ $router->get('get-students', [
     //'middleware' => "scope:users,users:create"
 ]);
 
-$router->get('get-tutors', [
-    'uses'       => 'UserController@getTutors',
-    //'middleware' => "scope:users,users:create"
-]);
-
 $router->post('/update-user', 'AuthenticationController@postRegisterTutor');
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
@@ -82,7 +77,10 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
 //        //'middleware' => "scope:users,users:create"
 //    ]);
 
-
+    $router->get('get-tutors', [
+        'uses'       => 'UserController@getTutors',
+        //'middleware' => "scope:users,users:create"
+    ]);
 
     $router->post('users', [
         'uses'       => 'UserController@store',
