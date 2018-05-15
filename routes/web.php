@@ -60,9 +60,7 @@ $router->get('get-students', [
     'uses'       => 'UserController@getStudents',
     //'middleware' => "scope:users,users:create"
 ]);
-
-$router->post('/update-user', 'AuthenticationController@postRegisterTutor');
-
+$router->post('/update-user', 'AuthenticationController@updateUser');
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
     //Dashboard Routes
     $router->get('dashboard-pie-chart-totals',  [
@@ -102,6 +100,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
         'uses'       => 'UserController@destroy',
         'middleware' => "scope:users,users:delete"
     ]);
+
+
 });
 
 

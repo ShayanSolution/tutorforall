@@ -11,6 +11,7 @@ use App\Models\Profile;
 use App\Location;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
+use DB;
 
 class AuthenticationController extends Controller
 {
@@ -340,6 +341,45 @@ class AuthenticationController extends Controller
             'status' => 'success',
             'messages' => 'You have successfully verified your account.'
         ];
+    }
+
+    public function updateUser(Request $request){
+        $request = $request->all();
+        $update_arr = [];
+        if(isset($request['userid'])){
+            $userid = $request['userid'];
+            $password = isset($request['password'])&&!empty($request['password'])?$request['password']:'';
+            $name = isset($request['name'])&&!empty($request['name'])?$request['name']:'';
+            $email = isset($request['emailf'])&&!empty($request['emailf'])?$request['emailf']:'';
+            $phone = isset($request['phonef'])&&!empty($request['phonef'])?$request['phonef']:'';
+            if(!empty($password)){ $update_arr['password'] = $password;}
+            if(!empty($name)){
+                $fullName = explode(" ",$request['name']);
+                if(count($fullName)>1){
+                    $firstName = $fullName[0]; $lastName = $fullName[1];
+                }else{
+                    $firstName = $fullName[0]; $lastName = '';
+                }
+                $update_arr['firstName'] = $firstName;
+                $update_arr['lastName'] = $lastName;
+            }
+            if(!empty($email)){ $update_arr['email'] = $email;}
+            if(!empty($phone)){ $update_arr['phone'] = $phone;}
+            //return $update_arr;
+            User::where('id','=',$userid)->update($update_arr);
+            //DB::statement("UPDATE users  SET  firstName = 'wasim' where id = 9");
+            return [
+                'status' => 'success',
+                'user_id' => $userid,
+                'messages' => 'User updated'
+            ];
+        }
+        return response()->json(
+            [
+                'status' => 'error',
+                'message' => 'Unable to update user'
+            ], 422
+        );
     }
 
 }
