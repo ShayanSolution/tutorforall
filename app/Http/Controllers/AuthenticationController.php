@@ -303,19 +303,19 @@ class AuthenticationController extends Controller
     }
 
     public function postRegisterTutor(Request $request){
-//        $this->validate($request,[
-//            'email' => 'required|email|unique:users',
-//            'name' => 'required',
-//           // 'phone' => 'required|digits_between:11,20|unique:users',
-//        ]);
-        $request = $request->all();echo "here"; dd($request);
+        $this->validate($request,[
+            'email' => 'required|email|unique:users',
+            'name' => 'required',
+            'phone' => 'required|digits_between:11,20|unique:users',
+        ]);
+        $request = $request->all();
         //register students
         $user = User::registerTutor($request);
         //insert user profile
         Profile::registerUserProfile($user);
         return [
             'status' => 'success',
-            'messages' => 'Location updated'
+            'messages' => 'Tutor registered'
         ];
     }
 

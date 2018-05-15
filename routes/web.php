@@ -41,13 +41,13 @@ $router->post('save-programme', 'ProgrammeSubjectController@postSaveProgramme');
 $router->post('save-programme-subject', 'ProgrammeSubjectController@postSaveProgrammeSubject');
 $router->get('my-sessions', 'SessionController@mySessions');
 $router->get('request-sessions', 'SessionController@requestSessions');
-
+$router->post('/register-tutor', 'AuthenticationController@postRegisterTutor');
 Route::post('/tutor-notification','UserController@tutorSessionInfo');
 Route::post('/booked','SessionController@bookedTutor');
 Route::post('/update-student-profile','UserController@updateStudentProfile');
 Route::post('/update-tutor-profile','UserController@updateTutorProfile');
 Route::post('/session-rejected','SessionController@sessionRejected');
-$router->post('/register-tutor', 'AuthenticationController@postRegisterTutor');
+
 $router->post('/package-cost', 'PackageController@packageCost');
 $router->get('/request-categories', 'PackageController@getPackageCategories');
 $router->get('/register/verify/{confirmationCode}', 'AuthenticationController@confirm');
@@ -100,8 +100,6 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
         'uses'       => 'UserController@destroy',
         'middleware' => "scope:users,users:delete"
     ]);
-
-
 });
 
 
