@@ -23,9 +23,14 @@ class SessionController extends Controller
         $data = $request->all();
         $session = new Session();
         //tutor session list
-        if(isset($data['tutor_id'])){
+        if(isset($data['tutor_id']) && !empty($data['tutor_id'])){
             $tutor_id = $data['tutor_id'];
             $user_session = $session->getTutorSessionDetail($tutor_id);
+            return response()->json(
+                [
+                    'data' => $user_session
+                ]
+            );
         }
         //student session list
         else{

@@ -136,12 +136,16 @@ class Session extends Model
                                         ,'sessions.status as session_status','subjects.name as s_name','sessions.tutor_id as session_user_id')
                                     ->join('sessions','sessions.student_id','=','users.id')
                                     ->join('profiles','profiles.user_id','=','users.id')
-                                    ->join('programmes','programmes.id','=','profiles.programme_id')
-                                    ->join('subjects','subjects.id','=','profiles.subject_id')
+                                    ->join('programmes','programmes.id','=','sessions.programme_id')
+                                    ->join('subjects','subjects.id','=','sessions.subject_id')
                                     ->where('users.role_id','=',Config::get('user-constants.STUDENT_ROLE_ID'))
                                     ->where('users.id','=',$student_id)
-                                    ->where('sessions.status','=','booked')
-                                    ->orWhere('sessions.status','=','ended')
+                                    ->where(function($q){
+                                        $q->where('sessions.status','=','booked')
+                                        ->orWhere('sessions.status','=','ended');
+                                    })
+//                                    ->where('sessions.status','=','booked')
+//                                    ->orWhere('sessions.status','=','ended')
                                     ->get();
         return $student_session_detail;
     }
