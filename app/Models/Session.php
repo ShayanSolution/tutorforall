@@ -73,7 +73,7 @@ class Session extends Model
         $session->programme_id = $programme_id;
         $session->subject_id = $subject_id;
         $session->status = $status;
-        $session->subscription_id = 1;
+        $session->subscription_id = 3;
         $session->meeting_type_id = 1;
         $session->longitude = $longitude;
         $session->latitude = $latitude;
