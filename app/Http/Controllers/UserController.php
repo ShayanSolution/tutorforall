@@ -472,6 +472,7 @@ class UserController extends Controller
             $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
             if($tutor_profile){
                 $update_profile_values = $this->getProfileUpdatedValues($data);
+                dd($update_profile_values);
                 Profile::updateUserProfile($data['tutor_id'],$update_profile_values);
             }else{
                 Profile::createUserProfile($data);
@@ -538,14 +539,14 @@ class UserController extends Controller
 
         if(!empty($subject_id)){$update_array['subject_id'] = $subject_id;}
         if(!empty($programme_id)){$update_array['programme_id'] = $programme_id;}
-        if(!empty($is_home)){$update_array['is_home'] = $is_home;}
-        if(!empty($is_group)){$update_array['is_group'] = $is_group;}
-        if(!empty($is_mentor)){$update_array['is_mentor'] = $is_mentor;}
+        if(!empty($is_home) || ($is_home == 0) ){$update_array['is_home'] = $is_home;}
+        if(!empty($is_group) || ($is_group == 0)){$update_array['is_group'] = $is_group;}
+        if(!empty($is_mentor) || ($is_mentor == 0)){$update_array['is_mentor'] = $is_mentor;}
         //if(!empty($tutor_id)){$update_array['user_id'] = $tutor_id;}
         if(!empty($student_id)){$update_array['user_id'] = $student_id;}
-        if(!empty($one_on_one)){$update_array['one_on_one'] = $one_on_one;}
-        if(!empty($call_tutor)){$update_array['call_tutor'] = $call_tutor;}
-        if(!empty($call_student)){$update_array['call_student'] = $call_student;}
+        if(!empty($one_on_one) || ($one_on_one == 0) ){$update_array['one_on_one'] = $one_on_one;}
+        if(!empty($call_tutor) || ($call_tutor == 0)){$update_array['call_tutor'] = $call_tutor;}
+        if(!empty($call_student) || ($call_student == 0)){$update_array['call_student'] = $call_student;}
         return $update_array;
         
     }
