@@ -266,6 +266,8 @@ class UserController extends Controller
             $profile = array(
                 'Full Name'=>$user->firstName.' '.$user->lastName,
                 'Email'=>$user->email,
+                'First Name'=>$user->firstName,
+                'Last Name'=>$user->lastName,
                 'Phone Number'=>$user->phone,
                 'Father Name'=>$user->fatherName,
                 'Qualification'=>$user->qualification,
