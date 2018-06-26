@@ -23,7 +23,7 @@ class SessionController extends Controller
         $data = $request->all();
         $session = new Session();
         //tutor session list
-        if(isset($data['tutor_id']) && !empty($data['tutor_id'])){echo "here"; exit;
+        if(isset($data['tutor_id']) && !empty($data['tutor_id'])){
             $tutor_id = $data['tutor_id'];
             $user_session = $session->getTutorSessionDetail($tutor_id);
             return response()->json(
