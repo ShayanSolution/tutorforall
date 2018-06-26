@@ -472,7 +472,6 @@ class UserController extends Controller
             $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
             if($tutor_profile){
                 $update_profile_values = $this->getProfileUpdatedValues($data);
-                dd($update_profile_values);
                 Profile::updateUserProfile($data['tutor_id'],$update_profile_values);
             }else{
                 Profile::createUserProfile($data);
