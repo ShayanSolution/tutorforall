@@ -130,8 +130,8 @@ class Session extends Model
             $session_detail[$index]['s_name'] = $session->s_name;
             $session_detail[$index]['p_name'] = $session->p_name;
             $session_detail[$index]['student_id'] = $session->student_id;
-            $session_detail[$index]['lastName'] = $student_detail->firstName;
-            $session_detail[$index]['firstName'] = $student_detail->lastName;
+            $session_detail[$index]['firstName'] = $student_detail->firstName;
+            $session_detail[$index]['lastName'] = $student_detail->lastName;
             $session_detail[$index]['id'] = $session->id;
             $session_detail[$index]['Student_Longitude'] = $session->longitude;
             $session_detail[$index]['Student_Latitude'] = $session->latitude;

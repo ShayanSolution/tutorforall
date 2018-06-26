@@ -39,8 +39,8 @@ class Profile extends Model
         $tutor_profile->save();
     }
     
-    public static function updateUserProfile($update_profile_values){
-        Profile::where('user_id','=',$update_profile_values['user_id'])->update($update_profile_values);
+    public static function updateUserProfile($id,$update_profile_values){
+        Profile::where('user_id','=',$id)->update($update_profile_values);
     }
     
     public static function registerUserProfile($tutor_id){

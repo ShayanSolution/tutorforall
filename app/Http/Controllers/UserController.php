@@ -472,7 +472,7 @@ class UserController extends Controller
             $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
             if($tutor_profile){
                 $update_profile_values = $this->getProfileUpdatedValues($data);
-                Profile::updateUserProfile($update_profile_values);
+                Profile::updateUserProfile($data['tutor_id'],$update_profile_values);
             }else{
                 Profile::createUserProfile($data);
             }
@@ -541,7 +541,7 @@ class UserController extends Controller
         if(!empty($is_home)){$update_array['is_home'] = $is_home;}
         if(!empty($is_group)){$update_array['is_group'] = $is_group;}
         if(!empty($is_mentor)){$update_array['is_mentor'] = $is_mentor;}
-        if(!empty($tutor_id)){$update_array['user_id'] = $tutor_id;}
+        //if(!empty($tutor_id)){$update_array['user_id'] = $tutor_id;}
         if(!empty($student_id)){$update_array['user_id'] = $student_id;}
         if(!empty($one_on_one)){$update_array['one_on_one'] = $one_on_one;}
         if(!empty($call_tutor)){$update_array['call_tutor'] = $call_tutor;}
