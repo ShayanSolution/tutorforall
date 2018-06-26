@@ -58,6 +58,10 @@ class Session extends Model
         $student_id = $data['student_id'];
         $programme_id = $data['class_id'];
         $subject_id = $data['subject_id'];
+        $longitude = $data['longitude'];
+        $latitude = $data['latitude'];
+        $rate = $data['rate'];
+        $duration = $data['duration'];
         if(isset($data['status'])){
             $status = 'reject';
         }else{
@@ -69,8 +73,12 @@ class Session extends Model
         $session->programme_id = $programme_id;
         $session->subject_id = $subject_id;
         $session->status = $status;
-        $session->subscription_id = 3;
+        $session->subscription_id = 1;
         $session->meeting_type_id = 1;
+        $session->longitude = $longitude;
+        $session->latitude = $latitude;
+        $session->rate = $rate;
+        $session->duration = $duration;
         $session->save();
         return $session;
     }
@@ -105,7 +113,8 @@ class Session extends Model
     public function getTutorSessionDetail($tutor_id){
         $tutor_session_detail = User::select('users.*')
                                 ->select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name','sessions.student_id'
-                                    ,'sessions.status as session_status','subjects.name as s_name','sessions.student_id as session_user_id')
+                                   ,'sessions.longitude','sessions.latitude','rate','duration' ,'sessions.status as session_status',
+                                    'subjects.name as s_name','sessions.student_id as session_user_id')
                                 ->join('sessions','sessions.tutor_id','=','users.id')
                                 ->join('profiles','profiles.user_id','=','users.id')
                                 ->join('programmes','programmes.id','=','sessions.programme_id')
@@ -124,6 +133,10 @@ class Session extends Model
             $session_detail[$index]['lastName'] = $student_detail->firstName;
             $session_detail[$index]['firstName'] = $student_detail->lastName;
             $session_detail[$index]['id'] = $session->id;
+            $session_detail[$index]['Student_Longitude'] = $session->longitude;
+            $session_detail[$index]['Student_Latitude'] = $session->latitude;
+            $session_detail[$index]['Hour'] = $session->duration;
+            $session_detail[$index]['Hourly_Rate'] = $session->rate;
             $index++;
         }
        // echo "<pre>"; print_r($session_detail); dd();
@@ -132,8 +145,8 @@ class Session extends Model
     
     public function getStudentSessionDetail($student_id){
         $student_session_detail = User::select('users.*')
-                                    ->select('users.*','sessions.created_at as Session_created_date'
-                                        ,'sessions.status as session_status','subjects.name as s_name','sessions.tutor_id as session_user_id')
+                                    ->select('users.*','sessions.created_at as Session_created_date','sessions.longitude','sessions.latitude','rate','duration'
+                                        ,'sessions.status as session_status','subjects.name as s_name','sessions.tutor_id as session_user_id','sessions.id as session_id')
                                     ->join('sessions','sessions.student_id','=','users.id')
                                     ->join('profiles','profiles.user_id','=','users.id')
                                     ->join('programmes','programmes.id','=','sessions.programme_id')

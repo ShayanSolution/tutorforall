@@ -52,6 +52,11 @@ class SessionController extends Controller
                     'User_Long' => $user_details->longitude,
                     'Status' => $user->session_status,
                     'Subject' => $user->s_name,
+                    'Student_Longitude' => $user->longitude,
+                    'Student_Latitude' => $user->latitude,
+                    'Hour' => $user->duration,
+                    'Hourly_Rate' => $user->rate,
+                    'Session_id' => $user->session_id,
                     'Profile_image'=>!empty($user_details->profileImage)?URL::to('/images').'/'.$user_details->profileImage:''
                 ];
             }
@@ -141,6 +146,9 @@ class SessionController extends Controller
             'tutor_id' => 'required',
             'subject_id' => 'required',
             'class_id' => 'required',
+            'longitude' => 'required',
+            'latitude' => 'required',
+            'rate' => 'required',
         ]);
         $tutor_id = $data['tutor_id'];
         $student_id = $data['student_id'];
