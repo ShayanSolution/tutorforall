@@ -563,6 +563,13 @@
                         "description": "Qualification",
                         "required": false,
                         "type": "string"
+                    },
+                    {
+                        "name": "dob",
+                        "in": "query",
+                        "description": "Date of birth i.e. 2010-12-26",
+                        "required": false,
+                        "type": "string"
                     }
 
                 ],
@@ -738,6 +745,13 @@
                         "required": false,
                         "type": "integer",
                         "format": "int64"
+                    },
+                    {
+                        "name": "dob",
+                        "in": "query",
+                        "description": "Date of birth i.e. 2010-12-26",
+                        "required": false,
+                        "type": "string"
                     }
 
                 ],

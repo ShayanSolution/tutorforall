@@ -100,6 +100,13 @@ class SessionController extends Controller
                 $tutor_sessions[] = [
                     'TutorName' => $tutor->firstName.' '.$tutor->lastName,
                     'StudentName' => $student->firstName.' '.$student->lastName,
+                    'StudentFirstName' => $student->firstName,
+                    'StudentLastName' => $student->lastName,
+                    'TutorFirstName' => $tutor->firstName,
+                    'TutorLastName' => $tutor->lastName,
+                    'TutorAge' => Carbon::parse($tutor->dob)->age,
+                    'StudentAge' => Carbon::parse($student->dob)->age,
+                    'Price' => $tutor->rate,
                     'TutorID'=>$tutor->id,
                     'StudentID'=>$tutor->session_user_id,
                     'Date' => $tutor->Session_created_date,
@@ -114,11 +121,9 @@ class SessionController extends Controller
                     'Class_id' => $tutor->programme_id,
                     'IsGroup' => $tutor->is_group,
                     'Datetime' => Carbon::now()->toDateTimeString(),
-                    'Rate' => $tutor->rate,
                     'Latitude' => $tutor->latitude,
                     'Longitude' => $tutor->longitude,
                     'Hour' => $tutor->duration,
-                    'Rate' => $tutor->rate,
                     'Profile_image'=>!empty($tutor->profileImage)?URL::to('/images').'/'.$tutor->profileImage:''
                 ];
             }

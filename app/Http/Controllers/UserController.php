@@ -512,6 +512,7 @@ class UserController extends Controller
         $cnic_no = isset($data['cnic_no'])?$data['cnic_no']:'';
         $experience = isset($data['experience'])?$data['experience']:'';
         $qualification = isset($data['qualification'])?$data['qualification']:'';
+        $dob = isset($data['dob'])?$data['dob']:'';
         
 
         if(!empty($firstName)){$update_array['firstName'] = $firstName;}
@@ -524,8 +525,8 @@ class UserController extends Controller
         if(!empty($cnic_no)){$update_array['cnic_no'] = $cnic_no;}
         if(!empty($experience)){$update_array['experience'] = $experience;}
         if(!empty($qualification)){$update_array['qualification'] = $qualification;}
+        if(!empty($dob)){$update_array['dob'] = $dob;}
         
-
         return $update_array;
     }
 
