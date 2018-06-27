@@ -257,4 +257,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
         return $tutor_detail;
     }
+
+    public static function updateTutorLocation($user_id,$longitude,$latitude){
+        return User::where('id','=',$user_id)->where('role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))->update(['longitude'=>$longitude,'latitude'=>$latitude]);
+    }
 }

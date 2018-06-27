@@ -269,6 +269,7 @@ class UserController extends Controller
                 'First Name'=>$user->firstName,
                 'Last Name'=>$user->lastName,
                 'Phone Number'=>$user->phone,
+                'Mobile Number'=>$user->mobile,
                 'Father Name'=>$user->fatherName,
                 'Qualification'=>$user->qualification,
                 'Expert Class'=>$user->p_name,
