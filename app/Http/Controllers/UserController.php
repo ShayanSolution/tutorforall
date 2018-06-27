@@ -477,7 +477,10 @@ class UserController extends Controller
                 User::updateUserValues($data['tutor_id'],$update_user_values);
                 Profile::updateUserProfile($data['tutor_id'],$update_profile_values);
             }else{
-                Profile::createUserProfile($data);
+                $update_profile_values = $this->getProfileUpdatedValues($data);
+                $update_user_values = $this->getUserUpdatedValues($data);
+                User::updateUserValues($data['tutor_id'],$update_user_values);
+                Profile::createUserProfile($data['tutor_id'],$update_profile_values);
             }
             //get student profile image
             $tutor_info = User::where('id','=',$tutor_id)->first();

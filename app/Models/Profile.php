@@ -13,6 +13,13 @@ class Profile extends Model
         'is_deserving',
         'meeting_type_id',
         'user_id',
+        'subject_id',
+        'programme_id',
+        'is_home',
+        'is_group',
+        'one_on_one',
+        'call_tutor',
+        'call_student',
     ];
 
     public function user()
@@ -25,18 +32,10 @@ class Profile extends Model
         return $this->belongsTo('App\Models\MeetingType');
     }
     
-    public static function createUserProfile($data){
-        $tutor_id = isset($data['tutor_id'])?$data['tutor_id']:'';
-        $programme_id = isset($data['programme_id'])?$data['programme_id']:'';
-        $subject_id = isset($data['subject_id'])?$data['subject_id']:'';
-        
-        $tutor_profile = new Profile();
-        $tutor_profile->programme_id = $programme_id;
-        $tutor_profile->subject_id = $subject_id;
-        $tutor_profile->user_id = $tutor_id;
-        $tutor_profile->is_home = 0;
-        $tutor_profile->is_group = 0;
-        $tutor_profile->save();
+    public static function createUserProfile($id,$update_profile_values){
+        $update_profile_values['user_id'] = $id;
+        //dd($update_profile_values);
+        Profile::create($update_profile_values);
     }
     
     public static function updateUserProfile($id,$update_profile_values){
