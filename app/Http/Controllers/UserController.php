@@ -473,6 +473,8 @@ class UserController extends Controller
             $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
             if($tutor_profile){
                 $update_profile_values = $this->getProfileUpdatedValues($data);
+                $update_user_values = $this->getUserUpdatedValues($data);
+                User::updateUserValues($data['tutor_id'],$update_user_values);
                 Profile::updateUserProfile($data['tutor_id'],$update_profile_values);
             }else{
                 Profile::createUserProfile($data);
@@ -523,10 +525,11 @@ class UserController extends Controller
 
         return $update_array;
     }
-    
-    public function getProfileUpdatedValues($data){
-        $update_array = array();        
-        $is_home = isset($data['is_home'])?$data['is_home']:'';
+
+
+    public function getUserUpdatedValues($data){
+        $update_array = array();
+
         $firstName = isset($data['firstName'])?$data['firstName']:'';
         $lastName = isset($data['lastName'])?$data['lastName']:'';
         $email = isset($data['email'])?$data['email']:'';
@@ -538,17 +541,7 @@ class UserController extends Controller
         $experience = isset($data['experience'])?$data['experience']:'';
         $qualification = isset($data['qualification'])?$data['qualification']:'';
         $dob = isset($data['dob'])?$data['dob']:'';
-        $is_group = isset($data['is_group'])?$data['is_group']:'';
-        $is_mentor = isset($data['is_mentor'])?$data['is_mentor']:'';
-        $programme_id = isset($data['programme_id'])?$data['programme_id']:'';
-        $subject_id = isset($data['subject_id'])?$data['subject_id']:'';
-        $tutor_id = isset($data['tutor_id'])?$data['tutor_id']:'';
-        $student_id = isset($data['student_id'])?$data['student_id']:'';
-        $one_on_one = isset($data['one_on_one'])?$data['one_on_one']:'';
-        $call_tutor = isset($data['call_tutor'])?$data['call_tutor']:'';
-        $call_student = isset($data['call_student'])?$data['call_student']:'';
 
-        if(!empty($subject_id)){$update_array['subject_id'] = $subject_id;}
         if(!empty($firstName)){$update_array['firstName'] = $firstName;}
         if(!empty($lastName)){$update_array['lastName'] = $lastName;}
         if(!empty($email)){$update_array['email'] = $email;}
@@ -560,6 +553,25 @@ class UserController extends Controller
         if(!empty($experience)){$update_array['experience'] = $experience;}
         if(!empty($gender_id)){$update_array['gender_id'] = $gender_id;}
         if(!empty($qualification)){$update_array['qualification'] = $qualification;}
+
+        return $update_array;
+
+    }
+    
+    public function getProfileUpdatedValues($data){
+        $update_array = array();
+
+        $is_home = isset($data['is_home'])?$data['is_home']:'';$is_group = isset($data['is_group'])?$data['is_group']:'';
+        $is_mentor = isset($data['is_mentor'])?$data['is_mentor']:'';
+        $programme_id = isset($data['programme_id'])?$data['programme_id']:'';
+        $subject_id = isset($data['subject_id'])?$data['subject_id']:'';
+        $tutor_id = isset($data['tutor_id'])?$data['tutor_id']:'';
+        $student_id = isset($data['student_id'])?$data['student_id']:'';
+        $one_on_one = isset($data['one_on_one'])?$data['one_on_one']:'';
+        $call_tutor = isset($data['call_tutor'])?$data['call_tutor']:'';
+        $call_student = isset($data['call_student'])?$data['call_student']:'';
+
+        if(!empty($subject_id)){$update_array['subject_id'] = $subject_id;}
         if(!empty($programme_id)){$update_array['programme_id'] = $programme_id;}
         if(!empty($is_home) || ($is_home == 0) ){$update_array['is_home'] = $is_home;}
         if(!empty($is_group) || ($is_group == 0)){$update_array['is_group'] = $is_group;}
