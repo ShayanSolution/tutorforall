@@ -527,6 +527,17 @@ class UserController extends Controller
     public function getProfileUpdatedValues($data){
         $update_array = array();        
         $is_home = isset($data['is_home'])?$data['is_home']:'';
+        $firstName = isset($data['firstName'])?$data['firstName']:'';
+        $lastName = isset($data['lastName'])?$data['lastName']:'';
+        $email = isset($data['email'])?$data['email']:'';
+        $fatherName = isset($data['fatherName'])?$data['fatherName']:'';
+        $gender_id = isset($data['gender_id'])?$data['gender_id']:'';
+        $mobile = isset($data['mobile'])?$data['mobile']:'';
+        $cnic_no = isset($data['cnic_no'])?$data['cnic_no']:'';
+        $address = isset($data['address'])?$data['address']:'';
+        $experience = isset($data['experience'])?$data['experience']:'';
+        $qualification = isset($data['qualification'])?$data['qualification']:'';
+        $dob = isset($data['dob'])?$data['dob']:'';
         $is_group = isset($data['is_group'])?$data['is_group']:'';
         $is_mentor = isset($data['is_mentor'])?$data['is_mentor']:'';
         $programme_id = isset($data['programme_id'])?$data['programme_id']:'';
@@ -538,6 +549,17 @@ class UserController extends Controller
         $call_student = isset($data['call_student'])?$data['call_student']:'';
 
         if(!empty($subject_id)){$update_array['subject_id'] = $subject_id;}
+        if(!empty($firstName)){$update_array['firstName'] = $firstName;}
+        if(!empty($lastName)){$update_array['lastName'] = $lastName;}
+        if(!empty($email)){$update_array['email'] = $email;}
+        if(!empty($fatherName)){$update_array['fatherName'] = $fatherName;}
+        if(!empty($mobile)){$update_array['mobile'] = $mobile;}
+        if(!empty($cnic_no)){$update_array['cnic_no'] = $cnic_no;}
+        if(!empty($address)){$update_array['address'] = $address;}
+        if(!empty($dob)){$update_array['dob'] = $dob;}
+        if(!empty($experience)){$update_array['experience'] = $experience;}
+        if(!empty($gender_id)){$update_array['gender_id'] = $gender_id;}
+        if(!empty($qualification)){$update_array['qualification'] = $qualification;}
         if(!empty($programme_id)){$update_array['programme_id'] = $programme_id;}
         if(!empty($is_home) || ($is_home == 0) ){$update_array['is_home'] = $is_home;}
         if(!empty($is_group) || ($is_group == 0)){$update_array['is_group'] = $is_group;}

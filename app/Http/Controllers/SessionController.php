@@ -114,6 +114,11 @@ class SessionController extends Controller
                     'Class_id' => $tutor->programme_id,
                     'IsGroup' => $tutor->is_group,
                     'Datetime' => Carbon::now()->toDateTimeString(),
+                    'Rate' => $tutor->rate,
+                    'Latitude' => $tutor->latitude,
+                    'Longitude' => $tutor->longitude,
+                    'Hour' => $tutor->duration,
+                    'Rate' => $tutor->rate,
                     'Profile_image'=>!empty($tutor->profileImage)?URL::to('/images').'/'.$tutor->profileImage:''
                 ];
             }
