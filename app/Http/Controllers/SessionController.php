@@ -56,8 +56,9 @@ class SessionController extends Controller
                     'Student_Longitude' => $user->longitude,
                     'Student_Latitude' => $user->latitude,
                     'Hour' => $user->duration,
-                    'Hourly_Rate' => $user->rate,
+                    'Price' => $user->rate,
                     'Session_id' => $user->session_id,
+                    'Age' => Carbon::parse($user->dob)->age,
                     'Profile_image'=>!empty($user_details->profileImage)?URL::to('/images').'/'.$user_details->profileImage:''
                 ];
             }

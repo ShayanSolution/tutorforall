@@ -23,21 +23,13 @@ $router->get('appKey', function () {
     return str_random('32');
 });
 
-// route for creating access_token
+
 $router->post('login', 'AccessTokenController@createAccessToken');
+
 $router->get('get-class-name', 'ProgrammeSubjectController@getProgramme');
 $router->get('get-subjectby-id', 'ProgrammeSubjectController@getSubjectById');$router->post('save-programme', 'ProgrammeSubjectController@postSaveProgramme');
 $router->post('save-programme-subject', 'ProgrammeSubjectController@postSaveProgrammeSubject');
-
-
 $router->post('/register-tutor', 'AuthenticationController@postRegisterTutor');
-Route::post('/tutor-notification','UserController@tutorSessionInfo');
-Route::post('/booked','SessionController@bookedTutor');
-
-
-Route::post('/session-rejected','SessionController@sessionRejected');
-
-$router->post('/package-cost', 'PackageController@packageCost');
 $router->get('/request-categories', 'PackageController@getPackageCategories');
 $router->get('/register/verify/{confirmationCode}', 'AuthenticationController@confirm');
 $router->get('/user/session/{userid}', 'SessionController@getUserSession');
@@ -45,11 +37,9 @@ $router->get('/user/deserve/{id}', 'SessionController@updateDeserveStudentStatus
 $router->get('/user/active/{id}', 'UserController@updateUserActiveStatus');
 $router->get('/user/remove/{id}', 'UserController@removeUser');
 $router->get('/user/profile/{id}', 'UserController@userProfile');
-$router->get('get-students', [
-    'uses'       => 'UserController@getStudents',
-    //'middleware' => "scope:users,users:create"
-]);
 $router->post('/update-user', 'AuthenticationController@updateUser');
+
+Route::post('/booked','SessionController@bookedTutor');
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
     //Dashboard Routes
     $router->get('dashboard-pie-chart-totals',  [
@@ -69,6 +59,13 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     $router->get('request-sessions', 'SessionController@requestSessions');
     $router->post('/update-tutor-profile','UserController@updateTutorProfile');
     $router->post('/update-student-profile','UserController@updateStudentProfile');
+    $router->post('/tutor-notification','UserController@tutorSessionInfo');
+    $router->post('/package-cost', 'PackageController@packageCost');
+    Route::post('/session-rejected','SessionController@sessionRejected');
+    $router->get('get-students', [
+        'uses'       => 'UserController@getStudents',
+        'middleware' => "scope:users,users:list"
+    ]);
 
     $router->get('get-tutors', [
         'uses'       => 'UserController@getTutors',

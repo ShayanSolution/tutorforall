@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
+use Carbon\Carbon;
 
 class Session extends Model
 {
@@ -58,10 +59,7 @@ class Session extends Model
         $student_id = $data['student_id'];
         $programme_id = $data['class_id'];
         $subject_id = $data['subject_id'];
-        $longitude = $data['longitude'];
-        $latitude = $data['latitude'];
-        $rate = $data['rate'];
-        $duration = $data['duration'];
+
         if(isset($data['status'])){
             $status = 'reject';
         }else{
@@ -75,10 +73,18 @@ class Session extends Model
         $session->status = $status;
         $session->subscription_id = 3;
         $session->meeting_type_id = 1;
-        $session->longitude = $longitude;
-        $session->latitude = $latitude;
-        $session->rate = $rate;
-        $session->duration = $duration;
+        if(isset($data['longitude'])){
+            $session->longitude = $data['longitude'];
+        }
+        if(isset($data['latitude'])){
+            $session->latitude = $data['latitude'];
+        }
+        if(isset($data['rate'])){
+            $session->rate = $data['rate'];
+        }
+        if(isset($data['duration'])){
+            $session->duration = $data['duration'];
+        }
         $session->save();
         return $session;
     }
@@ -136,8 +142,9 @@ class Session extends Model
             $session_detail[$index]['Student_Longitude'] = $session->longitude;
             $session_detail[$index]['Student_Latitude'] = $session->latitude;
             $session_detail[$index]['Hour'] = $session->duration;
-            $session_detail[$index]['Hourly_Rate'] = $session->rate;
+            $session_detail[$index]['Price'] = $session->rate;
             $session_detail[$index]['Date'] = $session->Session_created_date;
+            $session_detail[$index]['Age'] = Carbon::parse($session->dob)->age;
             $index++;
         }
        // echo "<pre>"; print_r($session_detail); dd();
