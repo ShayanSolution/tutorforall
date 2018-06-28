@@ -25,6 +25,9 @@ $router->get('appKey', function () {
 
 
 $router->post('login', 'AccessTokenController@createAccessToken');
+$router->get('get-phone-code', 'AuthenticationController@getPhoneVerificationCode');
+$router->post('verify-phone-code', 'AuthenticationController@postPhoneVerificationCode');
+$router->post('register-student', 'AuthenticationController@postRegisterStudent');
 
 $router->get('get-class-name', 'ProgrammeSubjectController@getProgramme');
 $router->get('get-subjectby-id', 'ProgrammeSubjectController@getSubjectById');$router->post('save-programme', 'ProgrammeSubjectController@postSaveProgramme');
@@ -48,9 +51,7 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     ]);
     $router->get('my-sessions', 'SessionController@mySessions');
     $router->get('get-profile', 'UserController@getUserProfile');
-    $router->get('get-phone-code', 'AuthenticationController@getPhoneVerificationCode');
-    $router->post('verify-phone-code', 'AuthenticationController@postPhoneVerificationCode');
-    $router->post('register-student', 'AuthenticationController@postRegisterStudent');
+
     $router->post('update-location', 'AuthenticationController@postUpdateLocation');
     $router->get('get-classes', 'ProgrammeSubjectController@getAllProgrammes');
     $router->get('get-all-subjects', 'ProgrammeSubjectController@getAllSubjects');
