@@ -260,7 +260,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     public static function updateTutorLocation($user_id,$longitude,$latitude){
-        return User::where('id','=',$user_id)->where('role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))->update(['longitude'=>$longitude,'latitude'=>$latitude]);
+        return User::where('id','=',$user_id)->update(['longitude'=>$longitude,'latitude'=>$latitude]);
     }
 
     public static function updateUserValues($id,$update_profile_values){
