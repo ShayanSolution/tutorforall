@@ -41,29 +41,29 @@ class FindTutorController extends Controller
         $distanceInKmMin = 0;
         $distanceInKmMax = 2;
         
-        // Check tutor accept so break loop
-        $findTutorStatus = \DB::table('find_tutors')->where('id', $studentTableId)->first();
-        dd($findTutorStatus);
-        // Check tutor accept so break loop
-//        $findTutorStatus = \DB::table('find_tutors')->where('student_id', $studentId)
-//                                                    ->where('class_id', $studentClassId)
-//                                                    ->where('subject_id', $studentSubjectId)
-//                                                    ->first();
         
         for( $i=0; $i<=3; $i++){
-        // Query to find Tutors in range(KM)
-        $query = "SELECT id, firstName, role_id, latitude, longitude, device_token, "
-                    . "( 6371 "
-                    . " * acos ( cos ( radians(". $studentLong .") )"
-                    . " * cos( radians( `latitude` ) )"
-                    . " * cos( radians( `longitude` ) - radians(".  $studentLat .") )"
-                    . " + sin ( radians(". $studentLong .") )"
-                    . " * sin( radians( `latitude` ) ) ) )"
-                    . " AS `distance`"
-                    . " FROM `Users`"
-                    . " WHERE `role_id` = 2 "
-                    . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
+            
+            // Check if tutor has accepted so break loop
+            $findTutorStatus = \DB::table('find_tutors')->where('id', $studentTableId)->first();
+
             if ($findTutorStatus->status == 0){
+                
+                // Query to find Tutors in range(KM)
+                //6371 = Kilometers
+                //3959 = Miles
+                $query = "SELECT id, firstName, role_id, latitude, longitude, device_token, "
+                        . "( 6371 "
+                        . " * acos ( cos ( radians(". $studentLong .") )"
+                        . " * cos( radians( `latitude` ) )"
+                        . " * cos( radians( `longitude` ) - radians(".  $studentLat .") )"
+                        . " + sin ( radians(". $studentLong .") )"
+                        . " * sin( radians( `latitude` ) ) ) )"
+                        . " AS `distance`"
+                        . " FROM `Users`"
+                        . " WHERE `role_id` = 2 "
+                        . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
+                
                 $tutors = \DB::select($query);
                 dd($tutors);
                 foreach($tutors as $tutor){
