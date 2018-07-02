@@ -93,6 +93,16 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
         'uses'       => 'UserController@destroy',
         'middleware' => "scope:users,users:delete"
     ]);
+    
+    // Find Tutor APi
+    $router->post('/find-tutor', 'FindTutorController@findTutor');
+    
+});
+
+Route::get("notify", function(){
+    $notify = new \App\Notify();
+    $message = "I am Tutor";
+    $notify->sendNotification(53, "Tutor Notify", $message);
 });
 
 
