@@ -16,6 +16,8 @@ use Illuminate\Queue\Queue;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
 use Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Config;
 use App\Jobs\SendPushNotification;
 
@@ -610,5 +612,57 @@ class UserController extends Controller
         $user = new User();
         return $user->userProfile($id);
         
-    } 
+    }
+
+
+    public function updateUserDeviceToken(Request $request){
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'device_token' => 'required',
+        ]);
+        $response = User::generateErrorResponse($validator);
+        if($response['code'] == 500){
+            return $response;
+        }
+        $token = User::updateToken($request);
+        if($token){
+            return response()->json(
+                [
+                    'status' => 'Device token updated successfully',
+                ], 200
+            );
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to update device token'
+                ], 422
+            );
+        }
+
+    }
+
+
+    public function getUser(){
+
+        $user = Auth::user();
+
+        if($user){
+            return response()->json(
+                [
+                    'user' => $user,
+                ], 200
+            );
+        }else{
+
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to find user'
+                ], 422
+            );
+        }
+
+    }
+
 }
