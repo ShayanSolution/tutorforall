@@ -96,6 +96,12 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     
     // Find Tutor APi
     $router->post('/find-tutor', 'FindTutorController@findTutor');
+    // Update User device token
+    Route::post('/update-device-token','UserController@updateUserDeviceToken');
+    // Get User Detail By Authentication token
+    Route::post('/get-user','UserController@getUser');
+    //Update User Session Status
+    Route::post('/update-session-status','SessionController@updateSessionStatus');
     
 });
 
