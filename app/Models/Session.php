@@ -65,7 +65,12 @@ class Session extends Model
         }else{
             $status = 'booked';
         }
-        $session = new Session;
+        //check if session already exist.
+        $session = Session::where(['tutor_id'=>$tutor_id, 'student_id'=>$student_id, 'programme_id'=>$programme_id, 'subject_id'=> $subject_id])->first();
+        if(!$session){
+            $session = new Session;
+        }
+        
         $session->tutor_id = $tutor_id;
         $session->student_id = $student_id;
         $session->programme_id = $programme_id;
@@ -170,4 +175,44 @@ class Session extends Model
                                     ->get();
         return $student_session_detail;
     }
+
+
+
+    public function updateSession($data){
+        $tutor_id = $data['tutor_id'];
+        $student_id = $data['student_id'];
+        $programme_id = $data['class_id'];
+        $subject_id = $data['subject_id'];
+        $status = $data['status'];
+
+        //check if session already exist.
+        $session = Session::where(['tutor_id'=>$tutor_id, 'student_id'=>$student_id, 'programme_id'=>$programme_id, 'subject_id'=> $subject_id])->first();
+        if(!$session){
+            $session = new Session;
+        }
+
+        $session->tutor_id = $tutor_id;
+        $session->student_id = $student_id;
+        $session->programme_id = $programme_id;
+        $session->subject_id = $subject_id;
+        $session->status = $status;
+        $session->subscription_id = 3;
+        $session->meeting_type_id = 1;
+        if(isset($data['longitude'])){
+            $session->longitude = $data['longitude'];
+        }
+        if(isset($data['latitude'])){
+            $session->latitude = $data['latitude'];
+        }
+        if(isset($data['rate'])){
+            $session->rate = $data['rate'];
+        }
+        if(isset($data['duration'])){
+            $session->duration = $data['duration'];
+        }
+        $session->save();
+        return $session;
+    }
+
+
 }

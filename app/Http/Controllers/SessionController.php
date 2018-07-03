@@ -278,4 +278,38 @@ class SessionController extends Controller
         $students =  User::getStudents();
         return $students;
     }
+
+
+    /**
+     * @param Request $request
+     * @return insert session with status rejected.
+     *
+     */
+    public function updateSessionStatus(Request $request){
+        $this->validate($request,[
+            'tutor_id' => 'required',
+            'student_id' => 'required',
+            'class_id' => 'required',
+            'subject_id' => 'required',
+            'status' => 'required'
+        ]);
+        $data = $request->all();
+        $session = new Session();
+        $session = $session->updateSession($data);
+        if($session){
+            return [
+                'status' => 'success',
+                'messages' => 'Session status updated successfully'
+            ];
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to find tutor'
+                ], 422
+            );
+        }
+
+    }
+
 }
