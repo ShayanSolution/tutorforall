@@ -412,8 +412,8 @@ class UserController extends Controller
 
     public function updateStudentProfile(Request $request){
         $this->validate($request,[
-            'firstName' => 'regex:/^[a-zA-Z]+$/u|max:255',
-            'lastName' => 'regex:/^[a-zA-Z]+$/u|max:255',
+            'firstName' => 'regex:/^[a-zA-Z ]*$/u|max:255',
+            'lastName' => 'regex:/^[a-zA-Z ]*$/u|max:255',
             'email' => 'email',
             'student_id' => 'Required|numeric',
             'gender_id' => 'numeric',
@@ -455,6 +455,15 @@ class UserController extends Controller
 
 
     public function updateTutorProfile(Request $request){
+        $this->validate($request,[
+            'firstName' => 'regex:/^[a-zA-Z ]*$/u|max:255',
+            'lastName' => 'regex:/^[a-zA-Z ]*$/u|max:255',
+            'email' => 'email',
+            'tutor_id' => 'Required|numeric',
+            'gender_id' => 'numeric',
+            'mobile' => 'numeric',
+            'profileImage' => 'mimes:jpeg,jpg,png,gif|max:10000',
+        ]);
         $data = $request->all();
         $tutor_id = isset($data['tutor_id'])?$data['tutor_id']:'';
         $role_id = Config::get('user-constants.TUTOR_ROLE_ID');
