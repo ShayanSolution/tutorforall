@@ -172,6 +172,7 @@ class Session extends Model
 //                                    ->where('sessions.status','=','booked')
 //                                    ->orWhere('sessions.status','=','ended')
                                     ->get();
+        
         return $student_session_detail;
     }
 
