@@ -106,18 +106,19 @@ class Session extends Model
     }
     
     public function findRequestSession($tutor_id){
-        return User::select('users.*')
-                ->select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name','profiles.is_group','sessions.duration'
+        return User::select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name','profiles.is_group','sessions.duration'
                     ,'profiles.programme_id','profiles.subject_id','sessions.rate','sessions.duration','sessions.longitude','sessions.latitude'
                     ,'sessions.status as session_status','subjects.name as s_name','sessions.student_id as session_user_id')
                 ->join('sessions','sessions.tutor_id','=','users.id')
                 ->join('profiles','profiles.user_id','=','users.id')
-                ->join('programmes','programmes.id','=','profiles.programme_id')
-                ->join('subjects','subjects.id','=','profiles.subject_id')
+                ->join('programmes','programmes.id','=','sessions.programme_id')
+                ->join('subjects','subjects.id','=','sessions.subject_id')
                 ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
                 ->where('users.id','=',$tutor_id)
-                ->where('sessions.status','=','pending')
-                ->orWhere('sessions.status','=','reject')
+                ->where(function($q){
+                    $q->where('sessions.status','=','pending')
+                    ->orWhere('sessions.status','=','reject');
+                })
                 ->get();
     }
 
@@ -169,8 +170,6 @@ class Session extends Model
                                         $q->where('sessions.status','=','booked')
                                         ->orWhere('sessions.status','=','ended');
                                     })
-//                                    ->where('sessions.status','=','booked')
-//                                    ->orWhere('sessions.status','=','ended')
                                     ->get();
         
         return $student_session_detail;
