@@ -133,7 +133,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function userProfile($user_id){
 
-       return Self::select('users.*','programmes.name as p_name','subjects.name as s_name','genders.name as g_name','rating')
+       return Self::select('users.*', 'profiles.*','programmes.name as p_name','subjects.name as s_name','genders.name as g_name','rating')
                     ->leftjoin('profiles','profiles.user_id','=','users.id')
                     ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
                     ->leftjoin('subjects','subjects.id','=','profiles.subject_id')

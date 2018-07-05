@@ -281,7 +281,18 @@ class UserController extends Controller
                 'Experience'=>$user->experience,
                 'Address'=>$user->address,
                 'User CNIC'=>$user->cnic_no,
+                'Is Mentor'=>$user->is_mentor,
+                'Is Deserving'=>$user->is_deserving,
+                'One On One'=>$user->one_on_one,
+                'Call Tutor'=>$user->call_tutor,
+                'Call Student'=>$user->call_student,
+                'Is Home'=>$user->is_home,
+                'Is Group'=>$user->is_group,
+                'Meeting Type Id'=>$user->meeting_type_id,
+                'Programme Id'=>$user->programme_id,
+                'Subject Id'=>$user->subject_id,
                 'Profile_Image' => URL::to('/images').'/'.$user->profileImage,
+
             );
             return $profile;
         }
