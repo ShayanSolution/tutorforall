@@ -42,7 +42,7 @@ $router->get('/user/remove/{id}', 'UserController@removeUser');
 $router->get('/user/profile/{id}', 'UserController@userProfile');
 $router->post('/update-user', 'AuthenticationController@updateUser');
 
-Route::post('/booked','SessionController@bookedTutor');
+
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
     //Dashboard Routes
     $router->get('dashboard-pie-chart-totals',  [
@@ -93,6 +93,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
         'uses'       => 'UserController@destroy',
         'middleware' => "scope:users,users:delete"
     ]);
+
+    Route::post('/booked','SessionController@bookedTutor');
     
     // Find Tutor APi
     $router->post('/find-tutor', 'FindTutorController@findTutor');
