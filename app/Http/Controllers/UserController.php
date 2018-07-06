@@ -338,6 +338,9 @@ class UserController extends Controller
             'tutor_id' => 'required',
             'subject_id' => 'required',
             'class_id' => 'required',
+            'latitude' => 'required',
+            'longitude' => 'required',
+
         ]);
         $student_id = $data['student_id'];
         $programme_id = $data['class_id'];
@@ -363,6 +366,18 @@ class UserController extends Controller
                 //get tutor device token to send notification
                 $user = User::where('id','=',$tutors_ids[$j])->select('users.*','device_token as token')->first();
                 if(!empty($user->token)){
+                    //save session record
+                    $session_data['tutor_id'] =  $tutors_ids[$j];
+                    $session_data['student_id'] =  $student_id;
+                    $session_data['programme_id'] =  $programme_id;
+                    $session_data['subject_id'] =  $subject_id;
+                    $session_data['status'] =  'pending';
+                    $session_data['latitude'] =  $data['latitude'];
+                    $session_data['longitude'] =  $data['longitude'];
+
+                    $session = new Session();
+                    $session_request = $session->addSession($session_data);
+
                     $device_token_array[] = $user->token;
                     //notification message
                     $message = PushNotification::Message(
@@ -378,6 +393,7 @@ class UserController extends Controller
                             ),
                             'launchImage' => 'image.jpg',
                             'custom' => array('custom_data' => array(
+                                'session_id' => $session_request->id,
                                 'Student_Name' => $student->firstName." ".$student->lastName,
                                 'Student_id' => $student->id,
                                 'Class_Name' => isset($class->name)?$class->name:'',
@@ -399,6 +415,7 @@ class UserController extends Controller
 //                    dispatch($job);
 //                    Log::info('Request Cycle with Queues Ends');
                     PushNotification::app('appNameIOS')->to($user->token)->send($message);
+
                 }
             }
 

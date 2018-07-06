@@ -22,6 +22,8 @@ class Session extends Model
         'started_at',
         'ended_at',
         'duration',
+        'latitude',
+        'longitude'
     ];
 
     public function student()
@@ -53,6 +55,16 @@ class Session extends Model
     {
         return $this->hasOne('App\Models\Invoice');
     }
+
+
+    public function addSession($data){
+        $data['subscription_id']= 3;
+        $data['meeting_type_id']= 1;
+        
+        $session = Session::create($data);
+        return $session;
+    }
+    
 
     public function saveSession($data){
         $tutor_id = $data['tutor_id'];
