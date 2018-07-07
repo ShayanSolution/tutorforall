@@ -8,6 +8,9 @@ use App\Models\Session;
 use App\Models\User;
 use App\Models\Programme;
 use App\Models\Subject;
+//helpers
+use TimeZoneHelper;
+
 use App\Repositories\Contracts\UserRepository;
 use Illuminate\Http\Request;
 use App\Transformers\UserTransformer;
@@ -340,7 +343,8 @@ class UserController extends Controller
             'class_id' => 'required',
             'latitude' => 'required',
             'longitude' => 'required',
-
+            'is_group'  => 'required',
+            'group_members' => 'required_if:is_group,==,1',
         ]);
         $student_id = $data['student_id'];
         $programme_id = $data['class_id'];
@@ -374,6 +378,14 @@ class UserController extends Controller
                     $session_data['status'] =  'pending';
                     $session_data['latitude'] =  $data['latitude'];
                     $session_data['longitude'] =  $data['longitude'];
+                    $session_data['is_group'] = $data['is_group'];
+                    if(isset($data['group_members'])){
+                        $session_data['group_members'] = $data['group_members'];
+                    }else{
+                        $session_data['group_members'] = 0;
+                    }
+                    $session_data['started_at'] = TimeZoneHelper::timeConversion(Carbon::now(), 0);
+
 
                     $session = new Session();
                     $session_request = $session->addSession($session_data);
