@@ -159,13 +159,18 @@ class SessionController extends Controller
     public function bookedTutor(Request $request){
         $data = $request->all();
         $this->validate($request,[
-            'session_id' => 'required',
+//            'session_id' => 'required', //TODO: this field will be required when mobile developer work on it.
+            'student_id' => 'required',
+            'tutor_id' => 'required',
+            'subject_id' => 'required',
+            'class_id' => 'required',
+            'longitude' => 'required',
+            'latitude' => 'required',
             'rate' => 'required'
         ]);
         $session_id = $data['session_id'];
         //get session by id
-        $session = new Session();
-        $session = $session->findSessionById($session_id);
+        $session = Session::find($session_id);
 
         if(!$session){
             return [
@@ -263,7 +268,11 @@ class SessionController extends Controller
      */
     public function sessionRejected(Request $request){
         $this->validate($request,[
-            'session_id' => 'required'
+//            'session_id' => 'required', //TODO: this field will be required when mobile developer work on it.
+            'tutor_id' => 'required',
+            'student_id' => 'required',
+            'class_id' => 'required',
+            'subject_id' => 'required',
         ]);
         $data = $request->all();
         $data['status'] = 'reject';
@@ -307,7 +316,11 @@ class SessionController extends Controller
      */
     public function updateSessionStatus(Request $request){
         $this->validate($request,[
-            'session_id' => 'required',
+//            'session_id' => 'required', //TODO: this field will be required when mobile developer work on it.
+            'tutor_id' => 'required',
+            'student_id' => 'required',
+            'class_id' => 'required',
+            'subject_id' => 'required',
             'status' => 'required'
         ]);
         $data = $request->all();
