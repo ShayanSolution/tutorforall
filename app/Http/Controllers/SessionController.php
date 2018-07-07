@@ -263,10 +263,6 @@ class SessionController extends Controller
     public function sessionRejected(Request $request){
         $this->validate($request,[
             'session_id' => 'required'
-//            'tutor_id' => 'required',
-//            'student_id' => 'required',
-//            'class_id' => 'required',
-//            'subject_id' => 'required',
         ]);
         $data = $request->all();
         $data['status'] = 'reject';
