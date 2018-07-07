@@ -57,6 +57,7 @@ class SessionController extends Controller
                     'User_Long' => $user_details->longitude,
                     'Status' => $user->session_status,
                     'Subject' => $user->s_name,
+                    'Program' => $user->p_name,
                     'Student_Longitude' => $user->longitude,
                     'Student_Latitude' => $user->latitude,
                     'Hour' => $user->duration,

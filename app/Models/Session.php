@@ -175,7 +175,7 @@ class Session extends Model
     
     public function getStudentSessionDetail($student_id){
         $student_session_detail = User::select('users.*','sessions.created_at as Session_created_date','sessions.longitude','sessions.latitude','rate','duration'
-                                        ,'sessions.status as session_status','subjects.name as s_name','sessions.tutor_id as session_user_id','sessions.id as session_id')
+                                        ,'sessions.status as session_status','subjects.name as s_name', 'programmes.name as p_name','sessions.tutor_id as session_user_id','sessions.id as session_id')
                                     ->join('sessions','sessions.student_id','=','users.id')
                                     ->join('profiles','profiles.user_id','=','users.id')
                                     ->join('programmes','programmes.id','=','sessions.programme_id')
