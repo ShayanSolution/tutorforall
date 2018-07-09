@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Profile;
-use App\Models\Session;
-use App\Models\User;
+
 use Illuminate\Http\Request;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Illuminate\Support\Facades\URL;
 use Log;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
+
+//Models
+use App\Models\Profile;
+use App\Models\Session;
+use App\Models\User;
+use App\Package;
 
 /**
  * Class SessionController
@@ -53,6 +57,7 @@ class SessionController extends Controller
                     'User_Long' => $user_details->longitude,
                     'Status' => $user->session_status,
                     'Subject' => $user->s_name,
+                    'Program' => $user->p_name,
                     'Student_Longitude' => $user->longitude,
                     'Student_Latitude' => $user->latitude,
                     'Hour' => $user->duration,
@@ -154,83 +159,105 @@ class SessionController extends Controller
     public function bookedTutor(Request $request){
         $data = $request->all();
         $this->validate($request,[
+//            'session_id' => 'required', //TODO: this field will be required when mobile developer work on it.
             'student_id' => 'required',
             'tutor_id' => 'required',
             'subject_id' => 'required',
             'class_id' => 'required',
             'longitude' => 'required',
             'latitude' => 'required',
-            'rate' => 'required',
+            'rate' => 'required'
         ]);
-        $tutor_id = $data['tutor_id'];
-        $student_id = $data['student_id'];
-        //get tutor profile
-        $user = new User();
-        $users = $user->findBookedUser($tutor_id);
-        $student = User::where('id','=',$student_id)->first();
-        $session = new Session();
-        $session = $session->findStudentSession($data);
+        $session_id = $data['session_id'];
+        //get session by id
+        $session = Session::find($session_id);
+
+        if(!$session){
+            return [
+                'status' => 'fail',
+                'messages' => 'Session id does not exist'
+            ];
+        }
+
         //if student session already exists.
-        if($session){
+        if($session->status == 'booked'){
             return [
                 'status' => 'fail',
                 'messages' => 'Session already booked!'
             ];
         }else{
-            $session = new Session();
-            $session->saveSession($data);
-            //get tutor device token
-            $device = User::where('id','=',$student_id)->select('device_token as token')->first();
-            $message = PushNotification::Message(
-                $users->firstName.' '.$users->lastName.' accepted your request',
-                array(
-                    'badge' => 1,
-                    'sound' => 'example.aiff',
-                    'actionLocKey' => 'Action button title!',
-                    'locKey' => 'localized key',
-                    'locArgs' => array(
-                        'localized args',
-                        'localized args',
-                    ),
-                    'launchImage' => 'image.jpg',
-                    'custom' => array('custom_data' => array(
-                        'Tutor_Name' => $users->firstName." ".$users->lastName,
-                        'Class_Name' => $users->p_name,
-                        'Subject_Name' => $users->s_name,
-                        'Class_id' => $users->p_id,
-                        'Subject_id' => $users->s_id,
-                        'is_group' => $users->is_group,
-                        'tutor_is_home' => $users->t_is_home,
-                        'tutor_lat' => $users->latitude,
-                        'tutor_long' => $users->longitude,
-                        'student_lat' => $student->latitude,
-                        'student_long' => $student->longitude,
-                        'Profile_Image' => !empty($users->profileImage)?URL::to('/images').'/'.$users->profileImage:'',
-                    ))
-                ));
-            //send student info
-//            Queue::push(PushNotification::app('appStudentIOS')
-//                ->to($device->token)
-//                ->send($message));
-            PushNotification::app('appStudentIOS')
-                ->to($device->token)
-                ->send($message);
+            $tutor_id = $session->tutor_id;
+            $student_id = $session->student_id;
+
+            //get tutor profile
+            $user = new User();
+            $users = $user->findBookedUser($tutor_id);
+            //get student profile
+            $student = User::where('id','=',$student_id)->first();
+
+            //get package rate
+            $package_id = $data['rate'];
+            $package = new Package();
+            $package_rate = $package->getPackageRate($package_id, $session->is_group, $session->group_members);
+
+            $updated_session = $session->updateSession(['id'=>$session_id], ['status'=>'booked', 'rate'=> $package_rate]);
+
+            if($updated_session){
+
+                //get tutor device token
+                $device = User::where('id','=',$student_id)->select('device_token as token')->first();
+                $message = PushNotification::Message(
+                    $users->firstName.' '.$users->lastName.' accepted your request',
+                    array(
+                        'badge' => 1,
+                        'sound' => 'example.aiff',
+                        'actionLocKey' => 'Action button title!',
+                        'locKey' => 'localized key',
+                        'locArgs' => array(
+                            'localized args',
+                            'localized args',
+                        ),
+                        'launchImage' => 'image.jpg',
+                        'custom' => array('custom_data' => array(
+                            'session_id' => $session_id,
+                            'Tutor_Name' => $users->firstName." ".$users->lastName,
+                            'Class_Name' => $users->p_name,
+                            'Subject_Name' => $users->s_name,
+                            'Class_id' => $users->p_id,
+                            'Subject_id' => $users->s_id,
+                            'is_group' => $users->is_group,
+                            'tutor_is_home' => $users->t_is_home,
+                            'tutor_lat' => $users->latitude,
+                            'tutor_long' => $users->longitude,
+                            'student_lat' => $student->latitude,
+                            'student_long' => $student->longitude,
+                            'Profile_Image' => !empty($users->profileImage)?URL::to('/images').'/'.$users->profileImage:'',
+                        ))
+                    ));
+                //send student info
+    //            Queue::push(PushNotification::app('appStudentIOS')
+    //                ->to($device->token)
+    //                ->send($message));
+                PushNotification::app('appStudentIOS')
+                    ->to($device->token)
+                    ->send($message);
+
+                return [
+                    'status' => 'success',
+                    'messages' => 'Session booked successfully'
+                ];
+            }else{
+                return response()->json(
+                    [
+                        'status' => 'error',
+                        'message' => 'Unable to update session status'
+                    ], 422
+                );
+            }
 
         }
 
-        if($session){
-            return [
-                'status' => 'success',
-                'messages' => 'Session booked successfully'
-            ];
-        }else{
-            return response()->json(
-                [
-                    'status' => 'error',
-                    'message' => 'Unable to find tutor'
-                ], 422
-            );
-        }
+
 
     }
 
@@ -241,6 +268,7 @@ class SessionController extends Controller
      */
     public function sessionRejected(Request $request){
         $this->validate($request,[
+//            'session_id' => 'required', //TODO: this field will be required when mobile developer work on it.
             'tutor_id' => 'required',
             'student_id' => 'required',
             'class_id' => 'required',
@@ -248,12 +276,13 @@ class SessionController extends Controller
         ]);
         $data = $request->all();
         $data['status'] = 'reject';
+        
         $session = new Session();
-        $session = $session->saveSession($data);
+        $session = $session->updateSession(['id'=>$data['session_id']], ['status'=> $data['status']]);
         if($session){
             return [
                 'status' => 'success',
-                'messages' => 'Session with reject status created successfully'
+                'messages' => 'Session status updated successfully'
             ];
         }else{
             return response()->json(
@@ -287,6 +316,7 @@ class SessionController extends Controller
      */
     public function updateSessionStatus(Request $request){
         $this->validate($request,[
+//            'session_id' => 'required', //TODO: this field will be required when mobile developer work on it.
             'tutor_id' => 'required',
             'student_id' => 'required',
             'class_id' => 'required',
@@ -294,8 +324,9 @@ class SessionController extends Controller
             'status' => 'required'
         ]);
         $data = $request->all();
+        
         $session = new Session();
-        $session = $session->updateSession($data);
+        $session = $session->updateSession(['id'=>$data['session_id']], ['status'=> $data['status']]);
         if($session){
             return [
                 'status' => 'success',

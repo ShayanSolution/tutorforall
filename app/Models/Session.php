@@ -22,6 +22,8 @@ class Session extends Model
         'started_at',
         'ended_at',
         'duration',
+        'latitude',
+        'longitude'
     ];
 
     public function student()
@@ -53,6 +55,20 @@ class Session extends Model
     {
         return $this->hasOne('App\Models\Invoice');
     }
+
+
+    public function addSession($data){
+        $data['subscription_id']= 3;
+        $data['meeting_type_id']= 1;
+        
+        $session = Session::create($data);
+        return $session;
+    }
+
+    public function findSessionById($session_id){
+        return Session::find($session_id);
+    }
+    
 
     public function saveSession($data){
         $tutor_id = $data['tutor_id'];
@@ -159,7 +175,7 @@ class Session extends Model
     
     public function getStudentSessionDetail($student_id){
         $student_session_detail = User::select('users.*','sessions.created_at as Session_created_date','sessions.longitude','sessions.latitude','rate','duration'
-                                        ,'sessions.status as session_status','subjects.name as s_name','sessions.tutor_id as session_user_id','sessions.id as session_id')
+                                        ,'sessions.status as session_status','subjects.name as s_name', 'programmes.name as p_name','sessions.tutor_id as session_user_id','sessions.id as session_id')
                                     ->join('sessions','sessions.student_id','=','users.id')
                                     ->join('profiles','profiles.user_id','=','users.id')
                                     ->join('programmes','programmes.id','=','sessions.programme_id')
@@ -175,43 +191,10 @@ class Session extends Model
         return $student_session_detail;
     }
 
-
-
-    public function updateSession($data){
-        $tutor_id = $data['tutor_id'];
-        $student_id = $data['student_id'];
-        $programme_id = $data['class_id'];
-        $subject_id = $data['subject_id'];
-        $status = $data['status'];
-
-        //check if session already exist.
-        $session = Session::where(['tutor_id'=>$tutor_id, 'student_id'=>$student_id, 'programme_id'=>$programme_id, 'subject_id'=> $subject_id])->first();
-        if(!$session){
-            $session = new Session;
-        }
-
-        $session->tutor_id = $tutor_id;
-        $session->student_id = $student_id;
-        $session->programme_id = $programme_id;
-        $session->subject_id = $subject_id;
-        $session->status = $status;
-        $session->subscription_id = 3;
-        $session->meeting_type_id = 1;
-        if(isset($data['longitude'])){
-            $session->longitude = $data['longitude'];
-        }
-        if(isset($data['latitude'])){
-            $session->latitude = $data['latitude'];
-        }
-        if(isset($data['rate'])){
-            $session->rate = $data['rate'];
-        }
-        if(isset($data['duration'])){
-            $session->duration = $data['duration'];
-        }
-        $session->save();
+    public function updateSession($where, $update){
+        $session = self::where($where)->update($update);
         return $session;
     }
-
+    
 
 }
