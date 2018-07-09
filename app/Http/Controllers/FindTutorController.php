@@ -65,7 +65,7 @@ class FindTutorController extends Controller
                         . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
                 
                 $tutors = \DB::select($query);
-                dd($tutors);
+//                dd($tutors);
                 foreach($tutors as $tutor){
                     $tutorId = $tutor->id;
                     $notify = new Notify();
@@ -86,6 +86,7 @@ class FindTutorController extends Controller
         return response()->json(
             [
                 'status' => 'success',
+                'message'=> 'testing response'
             ]
         );
     }
