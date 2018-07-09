@@ -272,6 +272,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return self::where('id',$request['user_id'])->update(['device_token'=>$request['device_token']]);
     }
 
+    public static function updateWhere($where, $update){
+
+        return self::where($where)->update($update);
+    }
+
 
     public static function generateErrorResponse($validator){
         $response = null;

@@ -692,9 +692,15 @@ class UserController extends Controller
     }
 
 
-    public function getUser(){
+    public function getUser(Request $request){
 
+        $inputs = $request->all();
         $user = Auth::user();
+
+        if(isset($inputs['device_type'])){
+            $updateUser = new User();
+            $updateUser->updateWhere(['id'=>$user->id], ['device_type'=>$inputs['device_type']]);
+        }
 
         if($user){
             return response()->json(

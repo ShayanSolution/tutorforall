@@ -104,6 +104,9 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     Route::post('/get-user','UserController@getUser');
     //Update User Session Status
     Route::post('/update-session-status','SessionController@updateSessionStatus');
+
+    $router->group(['middleware' => ['tutor']], function () use ($router) {
+    });
     
 });
 
