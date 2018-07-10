@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\FindTutor;
 use App\Notify;
+use Illuminate\Support\Facades\Route;
 
 class FindTutorController extends Controller
 {
@@ -17,27 +18,30 @@ class FindTutorController extends Controller
             'is_group' => 'Required',
             'longitude'  => 'Required',
             'latitude' => 'Required',
+            'group_count' => 'Required'
         ]);
         
-        $findTutor = FindTutor::create([
-            
-            'student_id' => $request->student_id,
-            'class_id' => $request->class_id,
-            'subject_id' => $request->subject_id,
-            'is_group' => $request->is_group,
-            'longitude'  => $request->longitude,
-            'latitude' => $request->latitude,
-//            'status' => $status,
-            
-        ]);
+//        $findTutor = FindTutor::create([
+//            
+//            'student_id' => $request->student_id,
+//            'class_id' => $request->class_id,
+//            'subject_id' => $request->subject_id,
+//            'is_group' => $request->is_group,
+//            'longitude'  => $request->longitude,
+//            'latitude' => $request->latitude,
+////            'status' => $status,
+//            
+//        ]);
         
-        $studentTableId = \DB::getPdo()->lastInsertId();
+//        $studentTableId = \DB::getPdo()->lastInsertId();
 //        dd($studentTableId);
         $studentId = $request->student_id;
         $studentClassId = $request->class_id;
         $studentSubjectId = $request->subject_id;
         $studentLat = $request->longitude;
         $studentLong = $request->latitude;
+        $studentIsGroup = $request->is_group;
+        $studentGroupCount = $request->group_count;
         $distanceInKmMin = 0;
         $distanceInKmMax = 2;
         
@@ -45,9 +49,9 @@ class FindTutorController extends Controller
         for( $i=0; $i<=3; $i++){
             
             // Check if tutor has accepted so break loop
-            $findTutorStatus = \DB::table('find_tutors')->where('id', $studentTableId)->first();
+//            $findTutorStatus = \DB::table('find_tutors')->where('id', $studentTableId)->first();
 
-            if ($findTutorStatus->status == 0){
+//            if ($findTutorStatus->status == 0){
                 
                 // Query to find Tutors in range(KM)
                 //6371 = Kilometers
@@ -68,20 +72,36 @@ class FindTutorController extends Controller
 //                dd($tutors);
                 foreach($tutors as $tutor){
                     $tutorId = $tutor->id;
-                    $notify = new Notify();
-                    $message = "I am Tutor";
-                    $postData = [
-                        "action" => "Booked"
+//                    $notify = new Notify();
+//                    $message = "I am Tutor";
+//                    $postData = [
+//                        "action" => "Booked"
+//                    ];
+//
+//                    $notify->sendNotification($tutorId, "TutorForAll", $message, $postData);
+                    $params = [
+                        'student_id' => (int)$studentId,
+                        'tutor_id' => $tutorId,
+                        'subject_id' => (int)$studentSubjectId,
+                        'class_id' => (int)$studentClassId,
+                        'latitude' => floatval($studentLat),
+                        'longitude' => floatval($studentLong),
+                        'is_group'  => (int)$studentIsGroup,
+                        'group_members' => (int)$studentGroupCount
                     ];
+                    dd($params);
+                    $request->request->add($params);
+        
+                    $proxy = Request::create('/tutor-notification', 'POST');
 
-                    $notify->sendNotification($tutorId, "TutorForAll", $message, $postData);
+                    Route::dispatch($proxy);
                 } 
-            } else {
-                    dd("Seesion is already booked");
-            }
-        sleep(10);
-        $distanceInKmMin = $distanceInKmMin+2;
-        $distanceInKmMax = $distanceInKmMax+2;
+//            } else {
+//                    dd("Seesion is already booked");
+//            }
+            sleep(10);
+            $distanceInKmMin = $distanceInKmMin+2;
+            $distanceInKmMax = $distanceInKmMax+2;
         }
         return response()->json(
             [

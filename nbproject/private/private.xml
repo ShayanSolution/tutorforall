@@ -5,11 +5,11 @@
         <group>
             <file>file:/C:/wamp64/www/tutorforall/app/Http/Controllers/SessionController.php</file>
             <file>file:/C:/wamp64/www/tutorforall/app/Notify.php</file>
-            <file>file:/C:/wamp64/www/tutorforall/app/Http/Controllers/AuthenticationController.php</file>
             <file>file:/C:/wamp64/www/tutorforall/app/Http/Controllers/FindTutorController.php</file>
             <file>file:/C:/wamp64/www/tutorforall/app/Http/Controllers/UserController.php</file>
             <file>file:/C:/wamp64/www/tutorforall/app/Models/Session.php</file>
             <file>file:/C:/wamp64/www/tutorforall/routes/web.php</file>
+            <file>file:/C:/wamp64/www/tutorforall/config/push-notification.php</file>
         </group>
     </open-files>
 </project-private>
