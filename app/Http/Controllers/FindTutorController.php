@@ -94,12 +94,12 @@ class FindTutorController extends Controller
         
                     $proxy = Request::create('/tutor-notification', 'POST', $request->request->all());
                     
-                    dd( app()->dispatch($proxy));
+                    app()->dispatch($proxy);
                 } 
 //            } else {
 //                    dd("Seesion is already booked");
 //            }
-                break;
+//                break;
             sleep(10);
             $distanceInKmMin = $distanceInKmMin+2;
             $distanceInKmMax = $distanceInKmMax+2;
