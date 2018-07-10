@@ -24,7 +24,7 @@ class Sessions extends Migration
             $table->integer('meeting_type_id')->unsigned();
             $table->boolean('is_group');
             $table->integer('group_members');
-            $table->enum('status', ['booked', 'started', 'ended']);
+            $table->enum('status', ['booked','started','ended','reject','pending']);
             $table->timestamp('started_at');
             $table->timestamp('ended_at');
             $table->integer('duration');

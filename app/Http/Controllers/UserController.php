@@ -426,7 +426,11 @@ class UserController extends Controller
 //                    $job = new SendPushNotification($user->token,$user,$class,$subject,$user_age,$programme_id,$subject_id);
 //                    dispatch($job);
 //                    Log::info('Request Cycle with Queues Ends');
-                    PushNotification::app('appNameIOS')->to($user->token)->send($message);
+                    if($user->device_type == 'android') {
+                        PushNotification::app('appNameAndroid')->to($user->token)->send($message);
+                    }else{
+                        PushNotification::app('appNameIOS')->to($user->token)->send($message);
+                    }
 
                 }
             }
