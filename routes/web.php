@@ -111,9 +111,23 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
 });
 
 Route::get("notify", function(){
-    $notify = new \App\Notify();
-    $message = "I am Tutor";
-    $notify->sendNotification(53, "Tutor Notify", $message);
+    $userToken = "fI0b50hYRS4:APA91bFPdsH42J7ZRUJtFxU9vyIVwaEbg8jRDRXetI8ESWMegHvGUMWTFibxmejS0X9Ui9opKL_cBXvHws2B5-i81V_3Yk-AtmQaQH-qF0eln_4yVaWhPyHcl6dHAIgHevl-Co-up7ScCz3oVuSDZT45VvL7EnHfLQ";
+    $message = PushNotification::Message( 'Cero Team wants a session with you',
+    array(
+        'badge' => 1,
+        'sound' => 'example.aiff',
+        'actionLocKey' => 'Action button title!',
+        'locKey' => 'localized key',
+        'locArgs' => array(
+            'localized args',
+            'localized args',
+        ),
+        'launchImage' => 'image.jpg',
+        'custom' => array('custom_data' => array(
+
+        ))
+    ));
+    PushNotification::app('appNameAndroid')->to($userToken)->send($message);
 });
 
 
