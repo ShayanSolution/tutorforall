@@ -431,7 +431,6 @@ class UserController extends Controller
                     }else{
                         PushNotification::app('appNameIOS')->to($user->token)->send($message);
                     }
-
                 }
             }
 
