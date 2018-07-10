@@ -205,7 +205,7 @@ class SessionController extends Controller
             if($updated_session){
 
                 //get tutor device token
-                $device = User::where('id','=',$student_id)->select('device_token as token')->first();
+                $device = User::where('id','=',$student_id)->select('device_type', 'device_token as token')->first();
                 $message = PushNotification::Message(
                     $users->firstName.' '.$users->lastName.' accepted your request',
                     array(
@@ -238,9 +238,11 @@ class SessionController extends Controller
     //            Queue::push(PushNotification::app('appStudentIOS')
     //                ->to($device->token)
     //                ->send($message));
-                PushNotification::app('appStudentIOS')
-                    ->to($device->token)
-                    ->send($message);
+                if($device->device_type == 'android') {
+                    PushNotification::app('appNameAndroid')->to($device->token)->send($message);
+                }else{
+                    PushNotification::app('appStudentIOS')->to($device->token)->send($message);
+                }
 
                 return [
                     'status' => 'success',
