@@ -81,7 +81,7 @@ class FindTutorController extends Controller
 //                    $notify->sendNotification($tutorId, "TutorForAll", $message, $postData);
                     $params = [
                         'student_id' => (int)$studentId,
-                        'tutor_id' => $tutorId,
+                        'tutor_id' => json_encode([$tutorId]),
                         'subject_id' => (int)$studentSubjectId,
                         'class_id' => (int)$studentClassId,
                         'latitude' => floatval($studentLat),
@@ -89,16 +89,17 @@ class FindTutorController extends Controller
                         'is_group'  => (int)$studentIsGroup,
                         'group_members' => (int)$studentGroupCount
                     ];
-                    dd($params);
+//                    dd($params);
                     $request->request->add($params);
         
-                    $proxy = Request::create('/tutor-notification', 'POST');
-
-                    Route::dispatch($proxy);
+                    $proxy = Request::create('/tutor-notification', 'POST', $request->request->all());
+                    
+                    dd( app()->dispatch($proxy));
                 } 
 //            } else {
 //                    dd("Seesion is already booked");
 //            }
+                break;
             sleep(10);
             $distanceInKmMin = $distanceInKmMin+2;
             $distanceInKmMax = $distanceInKmMax+2;
