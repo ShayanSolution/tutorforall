@@ -676,6 +676,12 @@ class UserController extends Controller
         if($response['code'] == 500){
             return $response;
         }
+        $inputs = $request->all();
+        if(isset($inputs['device_type'])){
+            $updateUser = new User();
+            $updateUser->updateWhere(['id'=>$inputs['user_id']], ['device_type'=>$inputs['device_type']]);
+        }
+
         $token = User::updateToken($request);
         if($token){
             return response()->json(
