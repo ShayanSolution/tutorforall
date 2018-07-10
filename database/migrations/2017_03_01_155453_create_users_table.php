@@ -33,8 +33,6 @@ class CreateUsersTable extends Migration
             $table->boolean('is_active');
             $table->string('profileImage')->nullable();
             $table->integer('role_id')->unsigned();
-            $table->text('device_token')->nullable();
-            $table->enum('device_type', ['ios', 'android'])->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
