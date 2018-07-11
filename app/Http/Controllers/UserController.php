@@ -363,7 +363,6 @@ class UserController extends Controller
                     ->where('users.role_id','=',3)
                     ->where('users.id','=',$student_id)
                     ->first();
-
         
         if($student){
             
