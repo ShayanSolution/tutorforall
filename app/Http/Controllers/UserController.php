@@ -365,7 +365,6 @@ class UserController extends Controller
                     ->first();
 
         
-        
         if($student){
             
             //send student info to tutor
