@@ -364,6 +364,10 @@ class UserController extends Controller
                     ->where('users.id','=',$student_id)
                     ->first();
 
+        //send student info to tutor
+        $job = new SendPushNotification($tutors_ids);
+        dispatch($job);
+        
         if($student){
             $user_age = Carbon::parse($student->dob)->age;
             for($j=0;$j<count($tutors_ids);$j++){
@@ -421,11 +425,6 @@ class UserController extends Controller
                             ))
                         ));
 
-                    //send student info to tutor
-//                    Log::info("Request Cycle with Queues Begins");
-//                    $job = new SendPushNotification($user->token,$user,$class,$subject,$user_age,$programme_id,$subject_id);
-//                    dispatch($job);
-//                    Log::info('Request Cycle with Queues Ends');
                     if($user->device_type == 'android') {
                         PushNotification::app('appNameAndroid')->to($user->token)->send($message);
                     }else{
