@@ -28,6 +28,9 @@ class SendPushNotification extends Job
      */
     public function handle()
     {
-        Log::info($this->tutorsIds);
+        foreach($this->tutorsIds as $tutorId){
+            Log::info('Tutor ID: '. $tutorId);
+        }
+
     }
 }
