@@ -104,6 +104,7 @@ class SessionController extends Controller
             foreach ($user_session as $tutor){
                 $student = User::where('id',$tutor->session_user_id)->first();
                 $tutor_sessions[] = [
+                    'Session_id' => $tutor->session_id,
                     'TutorName' => $tutor->firstName.' '.$tutor->lastName,
                     'StudentName' => $student->firstName.' '.$student->lastName,
                     'StudentFirstName' => $student->firstName,
@@ -160,12 +161,12 @@ class SessionController extends Controller
         $data = $request->all();
         $this->validate($request,[
 //            'session_id' => 'required', //TODO: this field will be required when mobile developer work on it.
-            'student_id' => 'required',
-            'tutor_id' => 'required',
-            'subject_id' => 'required',
-            'class_id' => 'required',
-            'longitude' => 'required',
-            'latitude' => 'required',
+//            'student_id' => 'required',
+//            'tutor_id' => 'required',
+//            'subject_id' => 'required',
+//            'class_id' => 'required',
+//            'longitude' => 'required',
+//            'latitude' => 'required',
             'rate' => 'required'
         ]);
         $session_id = $data['session_id'];
