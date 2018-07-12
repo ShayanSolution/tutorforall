@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\URL;
 use Carbon\Carbon;
 
 class Session extends Model
@@ -166,7 +167,7 @@ class Session extends Model
             $session_detail[$index]['Price'] = $session->rate;
             $session_detail[$index]['Date'] = $session->Session_created_date;
             $session_detail[$index]['Age'] = Carbon::parse($session->dob)->age;
-            $session_detail[$index]['Profile_image'] = $session->profileImage;
+            $session_detail[$index]['Profile_image'] = !empty($student_detail->profileImage)?URL::to('/images').'/'.$student_detail->profileImage:'';
             $index++;
         }
        // echo "<pre>"; print_r($session_detail); dd();

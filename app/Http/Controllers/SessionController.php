@@ -131,7 +131,7 @@ class SessionController extends Controller
                     'Latitude' => $tutor->latitude,
                     'Longitude' => $tutor->longitude,
                     'Hour' => $tutor->duration,
-                    'Profile_image'=>!empty($tutor->profileImage)?URL::to('/images').'/'.$tutor->profileImage:''
+                    'Profile_image'=>!empty($student->profileImage)?URL::to('/images').'/'.$student->profileImage:''
                 ];
             }
 
