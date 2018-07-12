@@ -38,8 +38,8 @@ class FindTutorController extends Controller
         $studentId = $request->student_id;
         $studentClassId = $request->class_id;
         $studentSubjectId = $request->subject_id;
-        $studentLat = $request->longitude;
-        $studentLong = $request->latitude;
+        $studentLong = $request->longitude;
+        $studentLat = $request->latitude;
         $studentIsGroup = $request->is_group;
         $studentGroupCount = $request->group_count;
         $distanceInKmMin = 0;
@@ -58,10 +58,10 @@ class FindTutorController extends Controller
                 //3959 = Miles
                 $query = "SELECT id, firstName, role_id, latitude, longitude, device_token, "
                         . "( 6371 "
-                        . " * acos ( cos ( radians(". $studentLong .") )"
+                        . " * acos ( cos ( radians(". $studentLat .") )"
                         . " * cos( radians( `latitude` ) )"
-                        . " * cos( radians( `longitude` ) - radians(".  $studentLat .") )"
-                        . " + sin ( radians(". $studentLong .") )"
+                        . " * cos( radians( `longitude` ) - radians(".  $studentLong .") )"
+                        . " + sin ( radians(". $studentLat .") )"
                         . " * sin( radians( `latitude` ) ) ) )"
                         . " AS `distance`"
                         . " FROM `Users`"
@@ -100,14 +100,15 @@ class FindTutorController extends Controller
 //                    dd("Seesion is already booked");
 //            }
 //                break;
+//            Forloop Sleep for  seconds
             sleep(10);
             $distanceInKmMin = $distanceInKmMin+2;
             $distanceInKmMax = $distanceInKmMax+2;
         }
         return response()->json(
             [
-                'status' => 'success',
-                'message'=> 'testing response'
+                'status' => 'Complete',
+                'message'=> 'Complete Process'
             ]
         );
     }
