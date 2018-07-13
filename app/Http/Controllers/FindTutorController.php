@@ -64,7 +64,7 @@ class FindTutorController extends Controller
                         . " + sin ( radians(". $studentLat .") )"
                         . " * sin( radians( `latitude` ) ) ) )"
                         . " AS `distance`"
-                        . " FROM `Users`"
+                        . " FROM `users`"
                         . " WHERE `role_id` = 2 "
                         . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
                 
