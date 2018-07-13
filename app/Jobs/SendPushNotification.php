@@ -38,13 +38,13 @@ class SendPushNotification extends Job
      */
     public function handle()
     {
-        $student_id = $this->data['student_id'];
-        $programme_id = $this->data['class_id'];
-        $subject_id = $this->data['subject_id'];
+        $studentId = $this->data['student_id'];
+        $programmeId = $this->data['class_id'];
+        $subjectId = $this->data['subject_id'];
 
         $deviceTokenArray = array();
-        $class = Programme::find($programme_id);
-        $subject = Subject::find($subject_id);
+        $class = Programme::find($programmeId);
+        $subject = Subject::find($subjectId);
 
 
         $userAge = Carbon::parse($this->student->dob)->age;
@@ -55,24 +55,24 @@ class SendPushNotification extends Job
             $user = User::where('id','=',$this->tutorsIds[$j])->select('users.*','device_token as token')->first();
             if(!empty($user->token)){
                 //save session record
-                $session_data['tutor_id'] =  $this->tutorsIds[$j];
-                $session_data['student_id'] =  $student_id;
-                $session_data['programme_id'] =  $programme_id;
-                $session_data['subject_id'] =  $subject_id;
-                $session_data['status'] =  'pending';
-                $session_data['latitude'] =  $this->data['latitude'];
-                $session_data['longitude'] =  $this->data['longitude'];
-                $session_data['is_group'] = $this->data['is_group'];
+                $sessionData['tutor_id'] =  $this->tutorsIds[$j];
+                $sessionData['student_id'] =  $studentId;
+                $sessionData['programme_id'] =  $programmeId;
+                $sessionData['subject_id'] =  $subjectId;
+                $sessionData['status'] =  'pending';
+                $sessionData['latitude'] =  $this->data['latitude'];
+                $sessionData['longitude'] =  $this->data['longitude'];
+                $sessionData['is_group'] = $this->data['is_group'];
                 if(isset($this->data['group_members'])){
-                    $session_data['group_members'] = $this->data['group_members'];
+                    $sessionData['group_members'] = $this->data['group_members'];
                 }else{
-                    $session_data['group_members'] = 0;
+                    $sessionData['group_members'] = 0;
                 }
-                $session_data['started_at'] = TimeZoneHelper::timeConversion(Carbon::now(), 0);
+                $sessionData['started_at'] = TimeZoneHelper::timeConversion(Carbon::now(), 0);
 
 
                 $session = new Session();
-                $session_request = $session->addSession($session_data);
+                $sessionRequest = $session->addSession($sessionData);
 
                 $deviceTokenArray[] = $user->token;
                 //notification message
@@ -89,16 +89,16 @@ class SendPushNotification extends Job
                         ),
                         'launchImage' => 'image.jpg',
                         'custom' => array('custom_data' => array(
-                            'session_id' => $session_request->id,
+                            'session_id' => $sessionRequest->id,
                             'Student_Name' => $this->student->firstName." ".$this->student->lastName,
                             'Student_id' => $this->student->id,
                             'Class_Name' => isset($class->name)?$class->name:'',
                             'Subject_Name' => isset($subject->name)?$subject->name:'',
-                            'Class_id' => $programme_id,
-                            'Subject_id' => $subject_id,
+                            'Class_id' => $programmeId,
+                            'Subject_id' => $subjectId,
                             'IS_Group' => $this->student->is_group,
-                            'Longitude' => $this->student->longitude,
-                            'Latitude' => $this->student->latitude,
+                            'Longitude' =>  $sessionData['longitude'],
+                            'Latitude' => $sessionData['latitude'],
                             'Datetime' => Carbon::now()->toDateTimeString(),
                             'Age' => $userAge>0?$userAge:'',
                             'Profile_Image' => !empty($this->student->profileImage)?URL::to('/images').'/'.$this->student->profileImage:'',

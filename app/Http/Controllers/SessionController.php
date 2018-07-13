@@ -169,9 +169,9 @@ class SessionController extends Controller
 //            'latitude' => 'required',
             'rate' => 'required'
         ]);
-        $session_id = $data['session_id'];
+        $sessionId = $data['session_id'];
         //get session by id
-        $session = Session::find($session_id);
+        $session = Session::find($sessionId);
 
         if(!$session){
             return [
@@ -187,26 +187,26 @@ class SessionController extends Controller
                 'messages' => 'Session already booked!'
             ];
         }else{
-            $tutor_id = $session->tutor_id;
-            $student_id = $session->student_id;
+            $tutorId = $session->tutor_id;
+            $studentId = $session->student_id;
 
             //get tutor profile
             $user = new User();
-            $users = $user->findBookedUser($tutor_id);
+            $users = $user->findBookedUser($tutorId);
             //get student profile
-            $student = User::where('id','=',$student_id)->first();
+            $student = User::where('id','=',$studentId)->first();
 
             //get package rate
             $package_id = $data['rate'];
             $package = new Package();
             $package_rate = $package->getPackageRate($package_id, $session->is_group, $session->group_members);
 
-            $updated_session = $session->updateSession(['id'=>$session_id], ['status'=>'booked', 'rate'=> $package_rate]);
+            $updated_session = $session->updateSession(['id'=>$sessionId], ['status'=>'booked', 'rate'=> $package_rate]);
 
             if($updated_session){
 
                 //get tutor device token
-                $device = User::where('id','=',$student_id)->select('device_type', 'device_token as token')->first();
+                $device = User::where('id','=',$studentId)->select('device_type', 'device_token as token')->first();
                 $message = PushNotification::Message(
                     $users->firstName.' '.$users->lastName.' accepted your request',
                     array(
@@ -220,7 +220,7 @@ class SessionController extends Controller
                         ),
                         'launchImage' => 'image.jpg',
                         'custom' => array('custom_data' => array(
-                            'session_id' => $session_id,
+                            'session_id' => $sessionId,
                             'Tutor_Name' => $users->firstName." ".$users->lastName,
                             'Class_Name' => $users->p_name,
                             'Subject_Name' => $users->s_name,
@@ -232,6 +232,8 @@ class SessionController extends Controller
                             'tutor_long' => $users->longitude,
                             'student_lat' => $student->latitude,
                             'student_long' => $student->longitude,
+                            'session_lat' => $session->latitude,
+                            'session_long' => $session->longitude,
                             'Profile_Image' => !empty($users->profileImage)?URL::to('/images').'/'.$users->profileImage:'',
                         ))
                     ));
