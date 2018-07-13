@@ -47,9 +47,9 @@ class SessionController extends Controller
             foreach ($user_session as $user){
                 $user_details = User::where('id',$user->session_user_id)->first();
                 $tutor_sessions[] = [
-                    'FullName' => $user->firstName.' '.$user->lastName,
-                    'FirstName' => $user->firstName,
-                    'LastName' => $user->lastName,
+                    'FullName' => $user_details->firstName.' '.$user_details->lastName,
+                    'FirstName' => $user_details->firstName,
+                    'LastName' => $user_details->lastName,
                     'Date' => $user->Session_created_date,
                     'Lat' => $user->latitude,
                     'Long' => $user->longitude,
