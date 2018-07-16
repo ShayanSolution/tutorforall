@@ -122,9 +122,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 ->select('users.*','programmes.name as p_name','subjects.name as s_name'
                     ,'programmes.id as p_id','subjects.id as s_id','profiles.is_group',
                     'profiles.is_home as t_is_home')
+                ->join('sessions','sessions.tutor_id','=','users.id')
                 ->leftjoin('profiles','profiles.user_id','=','users.id')
-                ->leftjoin('programmes','programmes.id','=','profiles.programme_id')
-                ->leftjoin('subjects','subjects.id','=','profiles.subject_id')
+                ->leftjoin('programmes','programmes.id','=','sessions.programme_id')
+                ->leftjoin('subjects','subjects.id','=','sessions.subject_id')
                 ->where('users.role_id','=',2)
                 ->where('users.id','=',$tutor_id)
                 ->first();
