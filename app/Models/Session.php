@@ -136,6 +136,7 @@ class Session extends Model
                     $q->where('sessions.status','=','pending')
                     ->orWhere('sessions.status','=','reject');
                 })
+                ->orderBy('sessions.updated_at', 'Desc')
                 ->get();
     }
 
