@@ -63,6 +63,7 @@ class SessionController extends Controller
                     'Hour' => $user->duration,
                     'Price' => $user->rate,
                     'Session_id' => $user->session_id,
+                    'session_status' => $user->session_status,
                     'Age' => Carbon::parse($user->dob)->age,
                     'Profile_image'=>!empty($user_details->profileImage)?URL::to('/images').'/'.$user_details->profileImage:''
                 ];
