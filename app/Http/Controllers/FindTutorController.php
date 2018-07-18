@@ -20,20 +20,6 @@ class FindTutorController extends Controller
             'latitude' => 'Required',
             'group_count' => 'Required'
         ]);
-        
-//        $findTutor = FindTutor::create([
-//            
-//            'student_id' => $request->student_id,
-//            'class_id' => $request->class_id,
-//            'subject_id' => $request->subject_id,
-//            'is_group' => $request->is_group,
-//            'longitude'  => $request->longitude,
-//            'latitude' => $request->latitude,
-////            'status' => $status,
-//            
-//        ]);
-        
-//        $studentTableId = \DB::getPdo()->lastInsertId();
 //        dd($studentTableId);
         $studentId = $request->student_id;
         $studentClassId = $request->class_id;
@@ -47,60 +33,46 @@ class FindTutorController extends Controller
         
         
         for( $i=0; $i<=3; $i++){
-            
-            // Check if tutor has accepted so break loop
-//            $findTutorStatus = \DB::table('find_tutors')->where('id', $studentTableId)->first();
+                
+            // Query to find Tutors in range(KM)
+            //6371 = Kilometers
+            //3959 = Miles
+            $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, "
+                    . "( 6371 "
+                    . " * acos ( cos ( radians(". $studentLat .") )"
+                    . " * cos( radians( `latitude` ) )"
+                    . " * cos( radians( `longitude` ) - radians(".  $studentLong .") )"
+                    . " + sin ( radians(". $studentLat .") )"
+                    . " * sin( radians( `latitude` ) ) ) )"
+                    . " AS `distance`"
+                    . " FROM `users`"
+                    . " JOIN  `profiles` ON users.id = profiles.user_id"
+                    . " WHERE `role_id` = 2 "
+                    . " AND `programme_id` = '$studentClassId' "
+                    . " AND `subject_id` = '$studentSubjectId' "
+                    . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
 
-//            if ($findTutorStatus->status == 0){
-                
-                // Query to find Tutors in range(KM)
-                //6371 = Kilometers
-                //3959 = Miles
-                $query = "SELECT id, firstName, role_id, latitude, longitude, device_token, "
-                        . "( 6371 "
-                        . " * acos ( cos ( radians(". $studentLat .") )"
-                        . " * cos( radians( `latitude` ) )"
-                        . " * cos( radians( `longitude` ) - radians(".  $studentLong .") )"
-                        . " + sin ( radians(". $studentLat .") )"
-                        . " * sin( radians( `latitude` ) ) ) )"
-                        . " AS `distance`"
-                        . " FROM `users`"
-                        . " WHERE `role_id` = 2 "
-                        . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
-                
-                $tutors = \DB::select($query);
+            $tutors = \DB::select($query);
 //                dd($tutors);
-                foreach($tutors as $tutor){
-                    $tutorId = $tutor->id;
-//                    $notify = new Notify();
-//                    $message = "I am Tutor";
-//                    $postData = [
-//                        "action" => "Booked"
-//                    ];
-//
-//                    $notify->sendNotification($tutorId, "TutorForAll", $message, $postData);
-                    $params = [
-                        'student_id' => (int)$studentId,
-                        'tutor_id' => json_encode([$tutorId]),
-                        'subject_id' => (int)$studentSubjectId,
-                        'class_id' => (int)$studentClassId,
-                        'latitude' => floatval($studentLat),
-                        'longitude' => floatval($studentLong),
-                        'is_group'  => (int)$studentIsGroup,
-                        'group_members' => (int)$studentGroupCount
-                    ];
+            foreach($tutors as $tutor){
+                $tutorId = $tutor->id;
+                $params = [
+                    'student_id' => (int)$studentId,
+                    'tutor_id' => json_encode([$tutorId]),
+                    'subject_id' => (int)$studentSubjectId,
+                    'class_id' => (int)$studentClassId,
+                    'latitude' => floatval($studentLat),
+                    'longitude' => floatval($studentLong),
+                    'is_group'  => (int)$studentIsGroup,
+                    'group_members' => (int)$studentGroupCount
+                ];
 //                    dd($params);
-                    $request->request->add($params);
-        
-                    $proxy = Request::create('/tutor-notification', 'POST', $request->request->all());
-                    
-                    app()->dispatch($proxy);
-                } 
-//            } else {
-//                    dd("Seesion is already booked");
-//            }
-//                break;
-//            Forloop Sleep for  seconds
+                $request->request->add($params);
+
+                $proxy = Request::create('/tutor-notification', 'POST', $request->request->all());
+
+                app()->dispatch($proxy);
+            }
             sleep(10);
             $distanceInKmMin = $distanceInKmMin+2;
             $distanceInKmMax = $distanceInKmMax+2;
