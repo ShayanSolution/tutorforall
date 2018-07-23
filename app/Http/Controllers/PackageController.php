@@ -17,7 +17,6 @@ class PackageController extends Controller
         $this->validate($request,[
             'category_id' => 'required',
             'is_group' => 'required',
-            'is_group' => 'required',
             'group_count' => 'required',
         ]);
 

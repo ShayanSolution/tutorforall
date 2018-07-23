@@ -24,7 +24,8 @@ class Session extends Model
         'ended_at',
         'duration',
         'latitude',
-        'longitude'
+        'longitude',
+        'session_location'
     ];
 
     public function student()
