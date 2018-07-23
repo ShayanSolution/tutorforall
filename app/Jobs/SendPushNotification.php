@@ -71,7 +71,10 @@ class SendPushNotification extends Job
                 $sessionData['started_at'] = TimeZoneHelper::timeConversion(Carbon::now(), 0);
 
                 if(isset($this->data['session_location'])){
+
                     $sessionData['session_location'] = $this->data['session_location'];
+                }else{
+                    $sessionData['session_location'] = '';
                 }
 
                 $session = new Session();
@@ -102,7 +105,7 @@ class SendPushNotification extends Job
                             'IS_Group' => $this->student->is_group,
                             'Longitude' =>  $sessionData['longitude'],
                             'Latitude' => $sessionData['latitude'],
-                            'Session_Location' => $this->data['session_location'],
+                            'Session_Location' => $sessionData['session_location'],
                             'Datetime' => Carbon::now()->toDateTimeString(),
                             'Age' => $userAge>0?$userAge:'',
                             'Profile_Image' => !empty($this->student->profileImage)?URL::to('/images').'/'.$this->student->profileImage:'',
