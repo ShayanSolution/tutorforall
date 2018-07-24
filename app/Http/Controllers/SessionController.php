@@ -60,6 +60,7 @@ class SessionController extends Controller
                     'Program' => $user->p_name,
                     'Student_Longitude' => $user->longitude,
                     'Student_Latitude' => $user->latitude,
+                    'Session_Location' => is_null($user->session_location)?'':$user->session_location,
                     'Hour' => $user->duration,
                     'Price' => $user->rate,
                     'Session_id' => $user->session_id,
