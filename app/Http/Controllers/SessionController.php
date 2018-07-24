@@ -131,7 +131,7 @@ class SessionController extends Controller
                     'Datetime' => Carbon::now()->toDateTimeString(),
                     'Latitude' => $tutor->latitude,
                     'Longitude' => $tutor->longitude,
-                    'SessionLocation' => $tutor->session_location,
+                    'SessionLocation' => is_null($tutor->session_location)?'':$tutor->session_location,
                     'Hour' => $tutor->duration,
                     'Profile_image'=>!empty($student->profileImage)?URL::to('/images').'/'.$student->profileImage:''
                 ];
