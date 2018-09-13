@@ -13,6 +13,7 @@ use Laravel\Lumen\Routing\Router;
 */
 /** @var \Laravel\Lumen\Routing\Router $router */
 $router->get('/', function () {
+    dd('die to test');
     return app()->version();
 });
 
