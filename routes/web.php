@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\File\File;
 */
 /** @var \Laravel\Lumen\Routing\Router $router */
 $router->get('/', function () {
+    dd('for testing on dev');
     return app()->version();
 });
 
