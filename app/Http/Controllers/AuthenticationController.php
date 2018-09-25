@@ -214,8 +214,8 @@ class AuthenticationController extends Controller
 
         $this->validate($request,[
             'email' => 'required|email|unique:users',
-//            'phone' => 'required|digits_between:11,20|unique:users',
-            'code' => 'required|digits:4',
+            'phone' => 'required|digits_between:11,20|unique:users',
+//            'code' => 'required|digits:4',
             'device_token' => 'required',
         ]);
 //        $confirmation_code = str_random(30);
