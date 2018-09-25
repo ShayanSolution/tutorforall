@@ -15,6 +15,7 @@
         "illuminate/mail": "5.5.*",
         "flipbox/lumen-generator": "^5.6",
         "darkaonline/swagger-lume": "5.5.*",
+        "twilio/sdk": "^5.19",
         "davibennun/laravel-push-notification": "dev-laravel5"
     },
     "require-dev": {
