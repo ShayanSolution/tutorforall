@@ -214,7 +214,7 @@ class AuthenticationController extends Controller
 
         $this->validate($request,[
             'email' => 'required|email|unique:users',
-            'phone' => 'required|digits_between:11,20|unique:users',
+//            'phone' => 'required|digits_between:11,20|unique:users',
             'code' => 'required|digits:4',
             'device_token' => 'required',
         ]);
@@ -229,11 +229,11 @@ class AuthenticationController extends Controller
 
         $email = $request->email;
         $phone = $request->phone;
-        $code = $request->code;
+//        $code = $request->code;
         $device_token = $request->device_token;
 
         $code = PhoneCode::where('phone', $phone)
-            ->where('code', $code)
+//            ->where('code', $code)
             ->where('verified', 1)
             ->where('created_at', '>=', Carbon::today()) //TODO: This check can disabled if we need to validate code not generated on same day
             ->orderBy('id')
