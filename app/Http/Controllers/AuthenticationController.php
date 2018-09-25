@@ -232,14 +232,14 @@ class AuthenticationController extends Controller
 //        $code = $request->code;
         $device_token = $request->device_token;
 
-        $code = PhoneCode::where('phone', $phone)
-//            ->where('code', $code)
-            ->where('verified', 1)
-            ->where('created_at', '>=', Carbon::today()) //TODO: This check can disabled if we need to validate code not generated on same day
-            ->orderBy('id')
-            ->first();
+//        $code = PhoneCode::where('phone', $phone)
+////            ->where('code', $code)
+//            ->where('verified', 1)
+//            ->where('created_at', '>=', Carbon::today()) //TODO: This check can disabled if we need to validate code not generated on same day
+//            ->orderBy('id')
+//            ->first();
 
-        if($code){
+//        if($code){
             $confirmation_code = str_random(30);
             $password = str_random(6);
             $user = User::create([
@@ -275,16 +275,16 @@ class AuthenticationController extends Controller
                 );
             }
 
-        } else {
-
-            return response()->json(
-                [
-                    'status' => 'error',
-                    'message' => 'Invalid or expired phone verification'
-                ], 422
-            );
-
-        }
+//        } else {
+//
+//            return response()->json(
+//                [
+//                    'status' => 'error',
+//                    'message' => 'Invalid or expired phone verification'
+//                ], 422
+//            );
+//
+//        }
     }
 
 
