@@ -58,14 +58,15 @@ class AuthenticationController extends Controller
         }
 
         $phoneCode = PhoneCode::getPhoneNumber($phone);
-        if ($phoneCode && $phoneCode->verified == 1){
-            return JsonResponse::generateResponse(
-                [
-                    'status' => 'error',
-                    'message' => 'Phone number already verified.'
-                ],500
-            );
-        }else{
+//        if ($phoneCode){
+//            return JsonResponse::generateResponse(
+//                [
+//                    'status' => 'error',
+//                    'message' => 'Phone number already verified.'
+//                ],500
+//            );
+//        }else
+            {
                 $code = $this->generateRandomCode();
                 $toNumber = $this->sanitizePhoneNumber($phone);
 //                // Use the client to do fun stuff like send text messages!
@@ -74,7 +75,11 @@ class AuthenticationController extends Controller
                     if ($phoneCode && $phoneCode->verified == 0){
                         $phoneCode->code = $code;
                         $phoneCode->save();
-                    }else{
+                    }elseif ($phoneCode && $phoneCode->verified == 1){
+                        $phoneCode->code = $code;
+                        $phoneCode->verified = 0;
+                        $phoneCode->save();
+                    } else{
                         $phoneCode = new PhoneCode();
                         $phoneCode->phone  = $toNumber;
                         $phoneCode->code = $code;
