@@ -102,7 +102,7 @@ class SendPushNotification extends Job
                             'Subject_Name' => isset($subject->name)?$subject->name:'',
                             'Class_id' => $programmeId,
                             'Subject_id' => $subjectId,
-                            'IS_Group' => $this->student->is_group,
+                            'IS_Group' => $sessionData['is_group'],
                             'Longitude' =>  $sessionData['longitude'],
                             'Latitude' => $sessionData['latitude'],
                             'Session_Location' => $sessionData['session_location'],

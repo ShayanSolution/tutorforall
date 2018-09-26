@@ -237,6 +237,7 @@ class SessionController extends Controller
                             'student_long' => $student->longitude,
                             'session_lat' => $session->latitude,
                             'session_long' => $session->longitude,
+                            'session_location' => $session->session_location,
                             'Profile_Image' => !empty($users->profileImage)?URL::to('/images').'/'.$users->profileImage:'',
                         ))
                     ));
