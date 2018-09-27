@@ -410,7 +410,7 @@ class UserController extends Controller
                 $file = $request->file('profileImage');
                 $file_name = str_random('12').'.'.$file->getClientOriginalExtension();
                 $destinationPath = base_path().'/public/images';
-                $file->move($destinationPath,$file->getClientOriginalName());
+                $file->move($destinationPath,$file_name);
                 User::updateProfileImage($student_id,$file_name,$role_id);
             }
             //update student profile
