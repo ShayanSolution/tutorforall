@@ -389,7 +389,20 @@ class SessionController extends Controller
                     $totalCostAccordingToHours += $percentage;
                     break;
             }
-            return $totalCostAccordingToHours;
+            return response()->json(
+                [
+                    'status'   => 'success',
+                    'totalCost' => $totalCostAccordingToHours
+                ]
+            );
+        }
+        else{
+            return response()->json(
+                [
+                    'status'   => 'success',
+                    'totalCost' => $totalCostAccordingToHours
+                ]
+            );
         }
     }
 
