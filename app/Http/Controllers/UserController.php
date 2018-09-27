@@ -408,7 +408,7 @@ class UserController extends Controller
             //upload file and update user profile image
             if(isset($data['profileImage'])){
                 $file = $request->file('profileImage');
-                $file_name = $file->getClientOriginalName();
+                $file_name = str_random('12').'.'.$file->getClientOriginalExtension();
                 $destinationPath = base_path().'/public/images';
                 $file->move($destinationPath,$file->getClientOriginalName());
                 User::updateProfileImage($student_id,$file_name,$role_id);
@@ -453,7 +453,7 @@ class UserController extends Controller
             //upload file
             if(isset($data['profileImage'])){
                 $file = $request->file('profileImage');
-                $file_name = $file->getClientOriginalName();
+                $file_name = str_random('12').'.'.$file->getClientOriginalExtension();
                 $destinationPath = base_path().'/public/images';
                 $file->move($destinationPath,$file_name);
                 User::updateProfileImage($tutor_id,$file_name,$role_id);
@@ -555,7 +555,8 @@ class UserController extends Controller
     public function getProfileUpdatedValues($data){
         $update_array = array();
 
-        $is_home = isset($data['is_home'])?$data['is_home']:'';$is_group = isset($data['is_group'])?$data['is_group']:'';
+        $is_home = isset($data['is_home'])?$data['is_home']:'';
+        $is_group = isset($data['is_group'])?$data['is_group']:'';
         $is_mentor = isset($data['is_mentor'])?$data['is_mentor']:'';
         $programme_id = isset($data['programme_id'])?$data['programme_id']:'';
         $subject_id = isset($data['subject_id'])?$data['subject_id']:'';
