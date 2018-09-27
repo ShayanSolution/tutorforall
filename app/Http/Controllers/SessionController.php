@@ -237,6 +237,7 @@ class SessionController extends Controller
                             'student_long' => $student->longitude,
                             'session_lat' => $session->latitude,
                             'session_long' => $session->longitude,
+                            'session_location' => $session->session_location,
                             'Profile_Image' => !empty($users->profileImage)?URL::to('/images').'/'.$users->profileImage:'',
                         ))
                     ));
@@ -349,6 +350,60 @@ class SessionController extends Controller
             );
         }
 
+    }
+    public function sessionCalculationCost(Request $request){
+        $this->validate($request,[
+            'session_id' => 'required',
+            'duration' => 'required'
+        ]);
+        $findSession = Session::find($request->session_id);
+        $duration = $request->duration;
+        $group_members = $findSession->group_members;
+
+        $twentyPercent = 20/100;
+        $thirtyPercent = 30/100;
+        $fortyPercent  = 40/100;
+        $fiftyPercent  = 50/100;
+
+        $duration = Carbon::parse($duration);
+        $durationMinutes=$duration->format('i');
+        $durationInHour = $durationMinutes > 0 ? $duration->addHour(1)->format('h') : $duration->format('h');
+        $costPerHour = 400;
+        $totalCostAccordingToHours = $costPerHour * $durationInHour;
+        if ($group_members != 0){
+            switch ($group_members){
+                case '2':
+                    $percentage = $totalCostAccordingToHours * $twentyPercent;
+                    $totalCostAccordingToHours += $percentage;
+                    break;
+                case '3':
+                    $percentage = $totalCostAccordingToHours * $thirtyPercent;
+                    $totalCostAccordingToHours += $percentage;
+                    break;
+                case '4':
+                    $percentage = $totalCostAccordingToHours * $fortyPercent;
+                    $totalCostAccordingToHours += $percentage;
+                    break;
+                case '5':
+                    $percentage = $totalCostAccordingToHours * $fiftyPercent;
+                    $totalCostAccordingToHours += $percentage;
+                    break;
+            }
+            return response()->json(
+                [
+                    'status'   => 'success',
+                    'totalCost' => $totalCostAccordingToHours
+                ]
+            );
+        }
+        else{
+            return response()->json(
+                [
+                    'status'   => 'success',
+                    'totalCost' => $totalCostAccordingToHours
+                ]
+            );
+        }
     }
 
 }

@@ -61,7 +61,7 @@ $app->configure('user-constants');
 $app->configure('database');
 // load push notification configurations
 $app->configure('push-notification');
-
+$app->configure('twilio');
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -83,7 +83,8 @@ $app->configure('push-notification');
      'scopes'   => \Laravel\Passport\Http\Middleware\CheckScopes::class,
      'scope'    => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
      'student' => App\Http\Middleware\CheckStudent::class,
-     'tutor' => App\Http\Middleware\CheckTutor::class
+     'tutor' => App\Http\Middleware\CheckTutor::class,
+     'admin' => App\Http\Middleware\CheckAdmin::class
  ]);
 
 /*

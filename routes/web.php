@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\File\File;
 */
 /** @var \Laravel\Lumen\Routing\Router $router */
 $router->get('/', function () {
+    dd('for testing on dev');
     return app()->version();
 });
 
@@ -62,6 +63,7 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     $router->post('/update-student-profile','UserController@updateStudentProfile');
     $router->post('/tutor-notification','UserController@tutorSessionInfo');
     $router->post('/package-cost', 'PackageController@packageCost');
+    $router->post('/session-calculation-cost', 'SessionController@sessionCalculationCost');
     Route::post('/session-rejected','SessionController@sessionRejected');
     $router->get('get-students', [
         'uses'       => 'UserController@getStudents',

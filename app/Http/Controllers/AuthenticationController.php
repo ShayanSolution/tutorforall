@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\TwilioHelper;
 use App\Models\PhoneCode;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Helpers\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Profile;
@@ -12,6 +14,7 @@ use App\Location;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use DB;
+use Twilio\Rest\Client;
 
 class AuthenticationController extends Controller
 {
@@ -42,32 +45,69 @@ class AuthenticationController extends Controller
         $this->validate($request,[
             'phone' => 'required|digits_between:11,20'
         ]);
-
         $phone = $request->phone;
+        $user = new User;
+        $phoneExist = $user->findByPhoneNumber($phone);
+        if ($phoneExist){
+            return JsonResponse::generateResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'phone number already exists.'
+                ],500
+            );
+        }
 
-        $code = PhoneCode::where('phone', $phone)
-            ->where('verified', 0)
-            ->where('created_at', '>=', Carbon::today())
-            ->orderBy('id')
-            ->first();
-
-        if(!$code){
-            $record = [
-                'phone' => $phone,
-                'code' => $this->generateRandomCode(),
-            ];
-            PhoneCode::create($record);
-            unset($record['phone']);
-            return $record;
-        }else{
-            return [
-                'code' => "$code->code"
-            ];
+        $phoneCode = PhoneCode::getPhoneNumber($phone);
+//        if ($phoneCode){
+//            return JsonResponse::generateResponse(
+//                [
+//                    'status' => 'error',
+//                    'message' => 'Phone number already verified.'
+//                ],500
+//            );
+//        }else
+            {
+                $code = $this->generateRandomCode();
+                $toNumber = $this->sanitizePhoneNumber($phone);
+//                // Use the client to do fun stuff like send text messages!
+                $response = TwilioHelper::sendCodeSms($toNumber, $code);
+                if ($response){
+                    if ($phoneCode && $phoneCode->verified == 0){
+                        $phoneCode->code = $code;
+                        $phoneCode->save();
+                    }elseif ($phoneCode && $phoneCode->verified == 1){
+                        $phoneCode->code = $code;
+                        $phoneCode->verified = 0;
+                        $phoneCode->save();
+                    } else{
+                        $phoneCode = new PhoneCode();
+                        $phoneCode->phone  = $toNumber;
+                        $phoneCode->code = $code;
+                        $phoneCode->save();
+                    }
+                   return JsonResponse::generateResponse(
+                    [
+                        'status' => 'success',
+                        'message' => 'Phone code created successfully'
+                    ],200
+                );
+                }else{
+                    return JsonResponse::generateResponse(
+                        [
+                            'status' => 'error',
+                            'message' => 'Unable to send SMS.'
+                        ],500
+                    );
+                }
         }
     }
 
     public function generateRandomCode($digits = 4){
         return rand(pow(10, $digits-1), pow(10, $digits)-1);
+    }
+    public function sanitizePhoneNumber($number)
+    {
+        return '+'.$number;
     }
 
     /**
@@ -111,34 +151,20 @@ class AuthenticationController extends Controller
             'code' => 'required_without:|digits:4',
         ]);
         $request = $request->all();
-        if(is_array($request)){
-            $phone = $request['phone'];
-            $code = $request['code'];
-        }else{
-            $phone = $request->phone;
-            $code = $request->code;
-        }
-
-        $code = PhoneCode::where('phone', $phone)
-            ->where('code', $code)
-            ->where('verified', 0)
-            ->where('created_at', '>=', Carbon::today())
-            ->orderBy('id')
-            ->first();
-
-        if($code){
-            $code->verified = 1;
-            $code->save();
-            return [
-                'status' => 'success',
-                'message' => 'Phone code has been verified'
-            ];
-        }else{
-            return response()->json(
+        $phone_code = new PhoneCode();
+        $phone_verified = $phone_code->verifyPhoneCode($request);
+        if ($phone_verified){
+            return JsonResponse::generateResponse(
                 [
-                    'status' => 'error',
-                    'message' => 'Invalid or expired phone code'
-                ], 422
+                    'status' => 'success',
+                ],200
+            );
+        }else{
+            return JsonResponse::generateResponse(
+                [
+                    'status' => 'Error',
+                    'Error' => 'Unable to verify phone number'
+                ],500
             );
         }
     }
@@ -189,7 +215,7 @@ class AuthenticationController extends Controller
         $this->validate($request,[
             'email' => 'required|email|unique:users',
             'phone' => 'required|digits_between:11,20|unique:users',
-            'code' => 'required|digits:4',
+//            'code' => 'required|digits:4',
             'device_token' => 'required',
         ]);
 //        $confirmation_code = str_random(30);
@@ -203,17 +229,17 @@ class AuthenticationController extends Controller
 
         $email = $request->email;
         $phone = $request->phone;
-        $code = $request->code;
+//        $code = $request->code;
         $device_token = $request->device_token;
 
-        $code = PhoneCode::where('phone', $phone)
-            ->where('code', $code)
-            ->where('verified', 1)
-            ->where('created_at', '>=', Carbon::today()) //TODO: This check can disabled if we need to validate code not generated on same day
-            ->orderBy('id')
-            ->first();
+//        $code = PhoneCode::where('phone', $phone)
+////            ->where('code', $code)
+//            ->where('verified', 1)
+//            ->where('created_at', '>=', Carbon::today()) //TODO: This check can disabled if we need to validate code not generated on same day
+//            ->orderBy('id')
+//            ->first();
 
-        if($code){
+//        if($code){
             $confirmation_code = str_random(30);
             $password = str_random(6);
             $user = User::create([
@@ -249,16 +275,16 @@ class AuthenticationController extends Controller
                 );
             }
 
-        } else {
-
-            return response()->json(
-                [
-                    'status' => 'error',
-                    'message' => 'Invalid or expired phone verification'
-                ], 422
-            );
-
-        }
+//        } else {
+//
+//            return response()->json(
+//                [
+//                    'status' => 'error',
+//                    'message' => 'Invalid or expired phone verification'
+//                ], 422
+//            );
+//
+//        }
     }
 
 
