@@ -665,4 +665,13 @@ class UserController extends Controller
 
     }
 
+    public function logout()
+    {
+        if (Auth::check()) {
+            $user_id =  Auth::user()->id;
+            User::where('id', $user_id)->update(['device_token'=>'']);
+            Auth::user()->AauthAcessToken()->delete();
+        }
+    }
+
 }

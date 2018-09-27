@@ -109,6 +109,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
 
     $router->group(['middleware' => ['tutor']], function () use ($router) {
     });
+
+    Route::post('logout','UserController@logout');
     
 });
 
