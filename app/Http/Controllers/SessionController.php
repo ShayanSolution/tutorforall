@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 
-use App\Wallet;
 use Illuminate\Http\Request;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Illuminate\Support\Facades\URL;
@@ -425,13 +424,6 @@ class SessionController extends Controller
             }else{
                 PushNotification::app('appStudentIOS')->to($user->device_token)->send($message);
             }
-                $wallet = new Wallet();
-                $wallet->session_id     = $findSession->id;
-                $wallet->amount         = $totalCostAccordingToHours;
-                $wallet->type           = 'debit';
-                $wallet->from_user_id   =  $findSession->student_id;
-                $wallet->to_user_id     =  $findSession->tutor_id;
-                $wallet->save();
             return response()->json(
                 [
                     'status'   => 'success',

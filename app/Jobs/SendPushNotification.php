@@ -101,7 +101,7 @@ class SendPushNotification extends Job
                         ),
                         'launchImage' => 'image.jpg',
                         'custom' => array('custom_data' => array(
-                            'session_id' => (int)$sessionRequest->id,
+                            'session_id' => (string)$sessionRequest->id,
                             'Student_Name' => $this->student->firstName." ".$this->student->lastName,
                             'Student_id' => $this->student->id,
                             'Class_Name' => isset($class->name)?$class->name:'',
