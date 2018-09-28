@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Wallet;
 use Illuminate\Http\Request;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Illuminate\Support\Facades\URL;
@@ -412,6 +413,13 @@ class SessionController extends Controller
         $findSession->status = 'ended';
         $findSession->duration = $originalDuration;
         $findSession->save();
+        $wallet                   =   new Wallet();
+        $wallet->session_id       =   $findSession->id;
+        $wallet->amount           =   $totalCostAccordingToHours;
+        $wallet->type             =   'debit';
+        $wallet->from_user_id     =   $findSession->student_id;
+        $wallet->to_user_id       =   $findSession->tutor_id;
+        $wallet->save();
         $message = PushNotification::Message(
             'Your total cost is '. $totalCostAccordingToHours,
             array(
