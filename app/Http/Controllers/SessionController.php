@@ -50,6 +50,7 @@ class SessionController extends Controller
                     'FullName' => $user_details->firstName.' '.$user_details->lastName,
                     'FirstName' => $user_details->firstName,
                     'LastName' => $user_details->lastName,
+                    'Experience' => (int)$user_details->experience,
                     'Date' => $user->Session_created_date,
                     'Lat' => $user->latitude,
                     'Long' => $user->longitude,
@@ -163,7 +164,7 @@ class SessionController extends Controller
     public function bookedTutor(Request $request){
         $data = $request->all();
         $this->validate($request,[
-//            'session_id' => 'required', //TODO: this field will be required when mobile developer work on it.
+            'session_id' => 'required', //TODO: this field will be required when mobile developer work on it.
 //            'student_id' => 'required',
 //            'tutor_id' => 'required',
 //            'subject_id' => 'required',
