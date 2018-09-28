@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\URL;
 use Log;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
+use App\Jobs\BookLaterTutorNotification;
+use App\Jobs\BookLaterStudentNotification;
 
 //Models
 use App\Models\Profile;
@@ -251,6 +253,9 @@ class SessionController extends Controller
                 }else{
                     PushNotification::app('appStudentIOS')->to($device->token)->send($message);
                 }
+
+                ProcessPodcast::dispatch($session)
+                    ->delay(now()->addMinutes(10));
 
                 return [
                     'status' => 'success',

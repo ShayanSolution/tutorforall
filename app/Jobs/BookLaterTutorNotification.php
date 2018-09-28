@@ -1,34 +1,17 @@
 <?php
 
 namespace App\Jobs;
-use Davibennun\LaravelPushNotification\Facades\PushNotification;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\URL;
-use Log;
-//helpers
-use TimeZoneHelper;
-//Models
-use App\Models\Session;
-use App\Models\User;
-use App\Models\Programme;
-use App\Models\Subject;
 
-class SendPushNotification extends Job
+class BookLaterTutorNotification extends Job
 {
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    protected $tutorsIds;
-    protected $data;
-    protected $student;
-
-    public function __construct($data, $tutorsIds, $student)
+    public function __construct()
     {
-        $this->tutorsIds = $tutorsIds;
-        $this->data = $data;
-        $this->student = $student;
+        //
     }
 
     /**
@@ -101,7 +84,7 @@ class SendPushNotification extends Job
                         ),
                         'launchImage' => 'image.jpg',
                         'custom' => array('custom_data' => array(
-                            'session_id' => (int)$sessionRequest->id,
+                            'session_id' => $sessionRequest->id,
                             'Student_Name' => $this->student->firstName." ".$this->student->lastName,
                             'Student_id' => $this->student->id,
                             'Class_Name' => isset($class->name)?$class->name:'',
