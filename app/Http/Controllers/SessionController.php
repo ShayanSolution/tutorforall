@@ -3,19 +3,21 @@
 namespace App\Http\Controllers;
 
 
-use App\Wallet;
 use Illuminate\Http\Request;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Illuminate\Support\Facades\URL;
 use Log;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
+use App\Jobs\BookLaterTutorNotification;
+use App\Jobs\BookLaterStudentNotification;
 
 //Models
 use App\Models\Profile;
 use App\Models\Session;
 use App\Models\User;
 use App\Package;
+use phpDocumentor\Reflection\Types\Null_;
 
 /**
  * Class SessionController
@@ -253,6 +255,17 @@ class SessionController extends Controller
                     PushNotification::app('appStudentIOS')->to($device->token)->send($message);
                 }
 
+                if($session->book_later_at != "null"){
+                    $book_later_at = Carbon::parse($session->book_later_at);
+                    $now = Carbon::now();
+                    $delay = $book_later_at->diffInMinutes($now) - 60; //Subtract 1 hour
+
+                    $job = (new BookLaterTutorNotification($session))->delay($delay*60);
+                    dispatch($job);
+                }
+                
+
+                
                 return [
                     'status' => 'success',
                     'messages' => 'Session booked successfully'
@@ -420,13 +433,6 @@ class SessionController extends Controller
             }else{
                 PushNotification::app('appStudentIOS')->to($user->device_token)->send($message);
             }
-                $wallet = new Wallet();
-                $wallet->session_id     = $findSession->id;
-                $wallet->amount         = $totalCostAccordingToHours;
-                $wallet->type           = 'debit';
-                $wallet->from_user_id   =  $findSession->student_id;
-                $wallet->to_user_id     =  $findSession->tutor_id;
-                $wallet->save();
             return response()->json(
                 [
                     'status'   => 'success',

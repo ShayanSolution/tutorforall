@@ -343,6 +343,7 @@ class UserController extends Controller
             'class_id' => 'required',
             'latitude' => 'required',
             'longitude' => 'required',
+//            'session_location' => 'required', //TODO: Required when android developer is ready.
             'is_group'  => 'required',
             'group_members' => 'required_if:is_group,==,1',
         ]);
