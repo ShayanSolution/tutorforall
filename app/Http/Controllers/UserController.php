@@ -460,18 +460,18 @@ class UserController extends Controller
             }
             //update tutor profile
             User::updateUserProfile($tutor_id,$update_array,$role_id);
-            $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
-            if($tutor_profile){
-                $update_profile_values = $this->getProfileUpdatedValues($data);
-                $update_user_values = $this->getUserUpdatedValues($data);
-                User::updateUserValues($data['tutor_id'],$update_user_values);
-                Profile::updateUserProfile($data['tutor_id'],$update_profile_values);
-            }else{
-                $update_profile_values = $this->getProfileUpdatedValues($data);
-                $update_user_values = $this->getUserUpdatedValues($data);
-                User::updateUserValues($data['tutor_id'],$update_user_values);
-                Profile::createUserProfile($data['tutor_id'],$update_profile_values);
-            }
+//            $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
+//            if($tutor_profile){
+//                $update_profile_values = $this->getProfileUpdatedValues($data);
+//                $update_user_values = $this->getUserUpdatedValues($data);
+//                User::updateUserValues($data['tutor_id'],$update_user_values);
+//                Profile::updateUserProfile($data['tutor_id'],$update_profile_values);
+//            }else{
+//                $update_profile_values = $this->getProfileUpdatedValues($data);
+//                $update_user_values = $this->getUserUpdatedValues($data);
+//                User::updateUserValues($data['tutor_id'],$update_user_values);
+//                Profile::createUserProfile($data['tutor_id'],$update_profile_values);
+//            }
             //get student profile image
             $tutor_info = User::where('id','=',$tutor_id)->first();
             return [
@@ -578,6 +578,38 @@ class UserController extends Controller
         if(!empty($call_student) || ($call_student == 0)){$update_array['call_student'] = $call_student;}
         return $update_array;
         
+    }
+
+    public function updateTutorProfileSetting(Request $request)
+    {
+        $this->validate($request, [
+            'tutor_id' => 'Required|numeric',
+            'is_home' => 'numeric',
+            'is_group' => 'numeric',
+            'is_mentor' => 'numeric',
+            'programme_id' => 'numeric',
+            'subject_id' => 'numeric',
+            'call_student' => 'numeric',
+        ]);
+        $data = $request->all();
+        $profile = new Profile();
+        $profile_setting = $profile->setProfileSettingArray($data);
+        $update_profile = $profile->updateUserProfile($data['tutor_id'], $profile_setting);
+        if($update_profile){
+            return response()->json(
+                [
+                    'status' => 'success',
+                    'message' => 'Profile settings updated successfully.'
+                ], 200
+            );
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Error in profile setting updates.'
+                ], 422
+            );
+        }
     }
 
     public function getTutors(){
