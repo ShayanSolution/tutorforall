@@ -111,6 +111,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     });
 
     Route::post('logout','UserController@logout');
+
+    Route::post('add-rating','RatingController@save');
     
 });
 
