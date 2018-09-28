@@ -12,10 +12,15 @@ use Illuminate\Support\Facades\DB;
 class WalletController extends Controller
 {
     public function receivePayment(Request $request){
+        $this->validate($request,[
+            'session_id' => 'required',
+            'amount' => 'required',
+        ]);
         $session = Session::find($request->session_id);
+        $amount  = $request->amount;
             $wallet                   =   new Wallet();
             $wallet->session_id       =   $session->id;
-            $wallet->amount           =   $session->rate;
+            $wallet->amount           =   $amount;
             $wallet->type             =   'credit';
             $wallet->from_user_id     =   $session->tutor_id;
             $wallet->to_user_id       =   $session->student_id;
@@ -52,6 +57,9 @@ class WalletController extends Controller
     }
 
             public function walletStudent(Request $request){
+                $this->validate($request,[
+                    'student_id' => 'required',
+                ]);
                 $student_id = $request->student_id;
                 $debit = Wallet::where('type', 'debit')
                 ->where(function ($query) use ($student_id) {
