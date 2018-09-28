@@ -590,11 +590,35 @@ class UserController extends Controller
         $students =  User::getStudents();
         return $students;
     }
-    
+
+    //Remove user account
     public function removeUser($id){
-        $id = User::find($id); $id ->delete();
-        //User::withTrashed()->where('id', $id)->restore();
-        return User::getStudents();
+        $user = User::find($id);
+        if($user){
+            if($user->delete()){
+                return response()->json(
+                    [
+                        'status' => 'success',
+                        'message' => 'User account deleted successfully'
+                    ], 200
+                );
+            }else{
+                return response()->json(
+                    [
+                        'status' => 'error',
+                        'message' => 'Unable to delete user account'
+                    ], 422
+                );
+            }
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to find user account'
+                ], 422
+            );
+        }
+
     }
 
     public function userProfile($id){
