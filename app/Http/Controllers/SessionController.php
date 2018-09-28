@@ -360,6 +360,7 @@ class SessionController extends Controller
         $student_id  = $findSession->student_id;
         $user = User::find($student_id);
         $duration = $request->duration;
+        $originalDuration = $request->duration;
         $group_members = $findSession->group_members;
 
         $twentyPercent = 20/100;
@@ -392,6 +393,10 @@ class SessionController extends Controller
                     break;
             }
         }
+        $findSession->rate = $totalCostAccordingToHours;
+        $findSession->status = 'ended';
+        $findSession->duration = $originalDuration;
+        $findSession->save();
         $message = PushNotification::Message(
             'Your total cost is '. $totalCostAccordingToHours,
             array(
@@ -417,7 +422,7 @@ class SessionController extends Controller
                 [
                     'status'   => 'success',
                     'totalCost' => $totalCostAccordingToHours,
-                    'costPerHour' => $costPerHour
+                    'hourly_rate' => $costPerHour
                 ]
             );
     }
