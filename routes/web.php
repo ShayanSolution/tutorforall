@@ -60,6 +60,7 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     $router->get('get-class-subjects', 'ProgrammeSubjectController@getProgrammeSubjects');
     $router->get('request-sessions', 'SessionController@requestSessions');
     $router->post('/update-tutor-profile','UserController@updateTutorProfile');
+    $router->post('/update-tutor-profile-setting','UserController@updateTutorProfileSetting');
     $router->post('/update-student-profile','UserController@updateStudentProfile');
     $router->post('/tutor-notification','UserController@tutorSessionInfo');
     $router->post('/package-cost', 'PackageController@packageCost');
@@ -113,6 +114,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     });
 
     Route::post('logout','UserController@logout');
+
+    Route::post('add-rating','RatingController@save');
     
 });
 
