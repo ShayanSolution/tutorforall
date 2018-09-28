@@ -17,6 +17,7 @@ use App\Models\Profile;
 use App\Models\Session;
 use App\Models\User;
 use App\Package;
+use phpDocumentor\Reflection\Types\Null_;
 
 /**
  * Class SessionController
@@ -254,9 +255,17 @@ class SessionController extends Controller
                     PushNotification::app('appStudentIOS')->to($device->token)->send($message);
                 }
 
-                ProcessPodcast::dispatch($session)
-                    ->delay(now()->addMinutes(10));
+                if($session->book_later_at != "null"){
+                    $book_later_at = Carbon::parse($session->book_later_at);
+                    $now = Carbon::now();
+                    $delay = $book_later_at->diffInMinutes($now) - 60; //Subtract 1 hour
 
+                    $job = (new BookLaterTutorNotification($session))->delay($delay*60);
+                    dispatch($job);
+                }
+                
+
+                
                 return [
                     'status' => 'success',
                     'messages' => 'Session booked successfully'
