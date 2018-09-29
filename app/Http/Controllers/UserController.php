@@ -351,9 +351,6 @@ class UserController extends Controller
             'is_group'  => 'required',
             'group_members' => 'required_if:is_group,==,1',
         ]);
-
-//        $book_later_at = $data['book_later_date'].' '.date("H:i", strtotime($data['book_later_time']));
-//        dd(Carbon::parse($book_later_at));
         
         $student_id = $data['student_id'];
         $programme_id = $data['class_id'];
