@@ -264,8 +264,8 @@ class SessionController extends Controller
                     $tutorNotificationJob = (new BookLaterTutorNotification($session->id))->delay($delay*60);
                     dispatch($tutorNotificationJob);
 
-//                    $studentNotificationJob = (new BookLaterStudentNotification($session->id))->delay($delay*60);
-//                    dispatch($studentNotificationJob);
+                    $studentNotificationJob = (new BookLaterStudentNotification($session->id))->delay($delay*60);
+                    dispatch($studentNotificationJob);
 
                 }
 

@@ -70,9 +70,9 @@ class BookLaterStudentNotification extends Job
                     ))
                 ));
             if($student->device_type == 'android') {
-                PushNotification::app('appNameAndroid')->to($student->token)->send($message);
+                PushNotification::app('appNameAndroid')->to($student->device_token)->send($message);
             }else{
-                PushNotification::app('appStudentIOS')->to($student->token)->send($message);
+                PushNotification::app('appStudentIOS')->to($student->device_token)->send($message);
             }
         }
     }
