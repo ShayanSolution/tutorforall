@@ -69,7 +69,6 @@ class AuthenticationController extends Controller
             {
                 $code = $this->generateRandomCode();
                 $toNumber = $this->sanitizePhoneNumber($phone);
-                dd($toNumber);
 //                // Use the client to do fun stuff like send text messages!
                 $response = TwilioHelper::sendCodeSms($toNumber, $code);
                 if ($response){
