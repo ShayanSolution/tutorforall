@@ -64,6 +64,7 @@ class SendPushNotification extends Job
                 $sessionData['longitude'] =  $this->data['longitude'];
                 $sessionData['is_group'] = $this->data['is_group'];
                 $sessionDateTime = Carbon::now()->toDateTimeString();
+                $dateTime = explode(" ",$sessionDateTime);
                 if(isset($this->data['group_members'])){
                     $sessionData['group_members'] = $this->data['group_members'];
                 }else{
@@ -81,6 +82,7 @@ class SendPushNotification extends Job
                 if(isset($this->data['book_later_time']) && isset($this->data['book_later_date'])){
                     $sessionData['book_later_at'] = $this->data['book_later_date'].' '.date("H:i", strtotime($this->data['book_later_time']));
                     $sessionDateTime = $sessionData['book_later_at'];
+                    $dateTime = explode(" ",$sessionDateTime);
                 }
 
                 $session = new Session();
@@ -114,6 +116,8 @@ class SendPushNotification extends Job
                             'Latitude' => $sessionData['latitude'],
                             'Session_Location' => $sessionData['session_location'],
                             'Datetime' => $sessionDateTime,
+                            'date' => $dateTime[0],
+                            'time' => $dateTime[1],
                             'Age' => $userAge>0?$userAge:'',
                             'Profile_Image' => !empty($this->student->profileImage)?URL::to('/images').'/'.$this->student->profileImage:'',
                         ))
