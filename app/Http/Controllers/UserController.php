@@ -465,18 +465,18 @@ class UserController extends Controller
             }
             //update tutor profile
             User::updateUserProfile($tutor_id,$update_array,$role_id);
-//            $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
-//            if($tutor_profile){
-//                $update_profile_values = $this->getProfileUpdatedValues($data);
-//                $update_user_values = $this->getUserUpdatedValues($data);
-//                User::updateUserValues($data['tutor_id'],$update_user_values);
-//                Profile::updateUserProfile($data['tutor_id'],$update_profile_values);
-//            }else{
-//                $update_profile_values = $this->getProfileUpdatedValues($data);
-//                $update_user_values = $this->getUserUpdatedValues($data);
-//                User::updateUserValues($data['tutor_id'],$update_user_values);
-//                Profile::createUserProfile($data['tutor_id'],$update_profile_values);
-//            }
+            $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
+            if($tutor_profile){
+                $update_profile_values = $this->getProfileUpdatedValues($data);
+                $update_user_values = $this->getUserUpdatedValues($data);
+                User::updateUserValues($data['tutor_id'],$update_user_values);
+                Profile::updateUserProfile($data['tutor_id'],$update_profile_values);
+            }else{
+                $update_profile_values = $this->getProfileUpdatedValues($data);
+                $update_user_values = $this->getUserUpdatedValues($data);
+                User::updateUserValues($data['tutor_id'],$update_user_values);
+                Profile::createUserProfile($data['tutor_id'],$update_profile_values);
+            }
             //get student profile image
             $tutor_info = User::where('id','=',$tutor_id)->first();
             return [
@@ -560,27 +560,27 @@ class UserController extends Controller
     public function getProfileUpdatedValues($data){
         $update_array = array();
 
-        $is_home = isset($data['is_home'])?$data['is_home']:'';
-        $is_group = isset($data['is_group'])?$data['is_group']:'';
-        $is_mentor = isset($data['is_mentor'])?$data['is_mentor']:'';
+//        $is_home = isset($data['is_home'])?$data['is_home']:'';
+//        $is_group = isset($data['is_group'])?$data['is_group']:'';
+//        $is_mentor = isset($data['is_mentor'])?$data['is_mentor']:'';
         $programme_id = isset($data['programme_id'])?$data['programme_id']:'';
         $subject_id = isset($data['subject_id'])?$data['subject_id']:'';
-        $tutor_id = isset($data['tutor_id'])?$data['tutor_id']:'';
-        $student_id = isset($data['student_id'])?$data['student_id']:'';
-        $one_on_one = isset($data['one_on_one'])?$data['one_on_one']:'';
-        $call_tutor = isset($data['call_tutor'])?$data['call_tutor']:'';
-        $call_student = isset($data['call_student'])?$data['call_student']:'';
+//        $tutor_id = isset($data['tutor_id'])?$data['tutor_id']:'';
+//        $student_id = isset($data['student_id'])?$data['student_id']:'';
+//        $one_on_one = isset($data['one_on_one'])?$data['one_on_one']:'';
+//        $call_tutor = isset($data['call_tutor'])?$data['call_tutor']:'';
+//        $call_student = isset($data['call_student'])?$data['call_student']:'';
 
         if(!empty($subject_id)){$update_array['subject_id'] = $subject_id;}
         if(!empty($programme_id)){$update_array['programme_id'] = $programme_id;}
-        if(!empty($is_home) || ($is_home == 0) ){$update_array['is_home'] = $is_home;}
-        if(!empty($is_group) || ($is_group == 0)){$update_array['is_group'] = $is_group;}
-        if(!empty($is_mentor) || ($is_mentor == 0)){$update_array['is_mentor'] = $is_mentor;}
-        //if(!empty($tutor_id)){$update_array['user_id'] = $tutor_id;}
-        if(!empty($student_id)){$update_array['user_id'] = $student_id;}
-        if(!empty($one_on_one) || ($one_on_one == 0) ){$update_array['one_on_one'] = $one_on_one;}
-        if(!empty($call_tutor) || ($call_tutor == 0)){$update_array['call_tutor'] = $call_tutor;}
-        if(!empty($call_student) || ($call_student == 0)){$update_array['call_student'] = $call_student;}
+//        if(!empty($is_home) || ($is_home == 0) ){$update_array['is_home'] = $is_home;}
+//        if(!empty($is_group) || ($is_group == 0)){$update_array['is_group'] = $is_group;}
+//        if(!empty($is_mentor) || ($is_mentor == 0)){$update_array['is_mentor'] = $is_mentor;}
+//        //if(!empty($tutor_id)){$update_array['user_id'] = $tutor_id;}
+//        if(!empty($student_id)){$update_array['user_id'] = $student_id;}
+//        if(!empty($one_on_one) || ($one_on_one == 0) ){$update_array['one_on_one'] = $one_on_one;}
+//        if(!empty($call_tutor) || ($call_tutor == 0)){$update_array['call_tutor'] = $call_tutor;}
+//        if(!empty($call_student) || ($call_student == 0)){$update_array['call_student'] = $call_student;}
         return $update_array;
         
     }
@@ -592,8 +592,8 @@ class UserController extends Controller
             'is_home' => 'numeric',
             'is_group' => 'numeric',
             'is_mentor' => 'numeric',
-            'programme_id' => 'numeric',
-            'subject_id' => 'numeric',
+//            'programme_id' => 'numeric',
+//            'subject_id' => 'numeric',
             'call_student' => 'numeric',
         ]);
         $data = $request->all();

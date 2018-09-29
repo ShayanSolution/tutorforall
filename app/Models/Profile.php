@@ -84,12 +84,12 @@ class Profile extends Model
         if(isset($array['is_mentor'])){
             $profile_settings['is_mentor'] = $array['is_mentor'];
         }
-        if(isset($array['programme_id'])){
-            $profile_settings['programme_id'] = $array['programme_id'];
-        }
-        if(isset($array['subject_id'])){
-            $profile_settings['subject_id'] = $array['subject_id'];
-        }
+//        if(isset($array['programme_id'])){
+//            $profile_settings['programme_id'] = $array['programme_id'];
+//        }
+//        if(isset($array['subject_id'])){
+//            $profile_settings['subject_id'] = $array['subject_id'];
+//        }
         if(isset($array['call_student'])){
             $profile_settings['call_student'] = $array['call_student'];
         }
