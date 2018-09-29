@@ -264,18 +264,19 @@ class SessionController extends Controller
                     PushNotification::app('appStudentIOS')->to($device->token)->send($message);
                 }
 
-                if($session->book_later_at != null || $session->book_later_at != ''){
-                    $bookLaterAt = Carbon::parse($session->book_later_at);
-                    $now = Carbon::now();
-                    $delay = $bookLaterAt->diffInMinutes($now) - 60; //Subtract 1 hour
-
-                    $tutorNotificationJob = (new BookLaterTutorNotification($session->id))->delay($delay*60);
-                    dispatch($tutorNotificationJob);
-
-                    $studentNotificationJob = (new BookLaterStudentNotification($session->id))->delay($delay*60);
-                    dispatch($studentNotificationJob);
-
-                }
+                //Book later notifications.
+//                if($session->book_later_at != null || $session->book_later_at != ''){
+//                    $bookLaterAt = Carbon::parse($session->book_later_at);
+//                    $now = Carbon::now();
+//                    $delay = $bookLaterAt->diffInMinutes($now) - 60; //Subtract 1 hour
+//
+//                    $tutorNotificationJob = (new BookLaterTutorNotification($session->id))->delay($delay*60);
+//                    dispatch($tutorNotificationJob);
+//
+//                    $studentNotificationJob = (new BookLaterStudentNotification($session->id))->delay($delay*60);
+//                    dispatch($studentNotificationJob);
+//
+//                }
 
 
                 
