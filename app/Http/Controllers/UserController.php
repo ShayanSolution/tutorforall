@@ -629,8 +629,8 @@ class UserController extends Controller
     }
 
     //Remove user account
-    public function removeUser($id){
-        $user = User::find($id);
+    public function removeUser(){
+        $user = User::find(Auth::user()->id);
         if($user){
             if($user->delete()){
                 return response()->json(

@@ -39,7 +39,7 @@ $router->get('/register/verify/{confirmationCode}', 'AuthenticationController@co
 $router->get('/user/session/{userid}', 'SessionController@getUserSession');
 $router->get('/user/deserve/{id}', 'SessionController@updateDeserveStudentStatus');
 $router->get('/user/active/{id}', 'UserController@updateUserActiveStatus');
-$router->get('/user/remove/{id}', 'UserController@removeUser');
+$router->get('/user/remove', 'UserController@removeUser');
 $router->get('/user/profile/{id}', 'UserController@userProfile');
 $router->post('/update-user', 'AuthenticationController@updateUser');
 
