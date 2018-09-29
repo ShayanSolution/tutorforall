@@ -64,6 +64,7 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     $router->post('/update-student-profile','UserController@updateStudentProfile');
     $router->post('/tutor-notification','UserController@tutorSessionInfo');
     $router->post('/package-cost', 'PackageController@packageCost');
+    $router->post('/session-start', 'SessionController@sessionStart');
     $router->post('/session-calculation-cost', 'SessionController@sessionCalculationCost');
     $router->post('/receive_payment', 'WalletController@receivePayment');
     $router->post('/wallet_student', 'WalletController@walletStudent');

@@ -75,7 +75,6 @@ class SessionController extends Controller
                     'Price' => $user->rate,
                     'Session_id' => $user->session_id,
                     'session_status' => $user->session_status,
-                    'session_duration' => $user->duration,
                     'paid_amount' => isset($paidAmount) ? $paidAmount : 0,
                     'Age' => Carbon::parse($user->dob)->age,
                     'Profile_image'=>!empty($user_details->profileImage)?URL::to('/images').'/'.$user_details->profileImage:''
@@ -379,6 +378,21 @@ class SessionController extends Controller
         }
 
     }
+
+    public function sessionStart(Request $request)
+    {
+        $this->validate($request, [
+            'session_id' => 'required'
+        ]);
+
+        $updateSession = new Session();
+        $updateSession->updateSession(['id'=>$request->session_id], ['started_at'=>Carbon::now()]);
+        return [
+            'status' => 'success',
+            'messages' => 'Session updated successfully'
+        ];
+    }
+    
     public function sessionCalculationCost(Request $request){
         $this->validate($request,[
             'session_id' => 'required',
