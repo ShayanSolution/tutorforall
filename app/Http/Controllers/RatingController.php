@@ -30,6 +30,7 @@ class RatingController extends Controller
         if($rating){
             return response()->json(
                 [
+                    'status' => 'success',
                     'rating' => $rating,
                 ], 200
             );

@@ -163,7 +163,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 ->where('profiles.is_home','=',$data['is_home'])
                 ->where('profiles.is_group','=',$data['is_group'])
                 ->where('profiles.call_student','=',$data['call_student'])
-                ->where('users.role_id','=',2)
+                ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
                 ->get();
         }
         return Self::select('users.*')
@@ -173,7 +173,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 ->where('profiles.is_home','=',$data['is_home'])
                 ->where('profiles.is_group','=',$data['is_group'])
                 ->where('profiles.call_student','=',$data['call_student'])
-                ->where('users.role_id','=',2)
+                ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
                 ->get();
     }
     

@@ -50,6 +50,10 @@ class SessionController extends Controller
             $tutor_sessions = [];
             foreach ($user_session as $user){
                 $user_details = User::where('id',$user->session_user_id)->first();
+                $wallet = Wallet::where(['session_id'=>$user->session_id, 'type'=>'credit'])->first();
+                if($wallet){
+                    $paidAmount =  $wallet->amount;
+                }
                 $tutor_sessions[] = [
                     'FullName' => $user_details->firstName.' '.$user_details->lastName,
                     'FirstName' => $user_details->firstName,
@@ -70,9 +74,12 @@ class SessionController extends Controller
                     'Price' => $user->rate,
                     'Session_id' => $user->session_id,
                     'session_status' => $user->session_status,
+                    'session_duration' => $user->duration,
+                    'paid_amount' => isset($paidAmount) ? $paidAmount : 0,
                     'Age' => Carbon::parse($user->dob)->age,
                     'Profile_image'=>!empty($user_details->profileImage)?URL::to('/images').'/'.$user_details->profileImage:''
                 ];
+
             }
 
             return response()->json(
