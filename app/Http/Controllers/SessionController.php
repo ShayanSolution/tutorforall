@@ -235,6 +235,7 @@ class SessionController extends Controller
                         ),
                         'launchImage' => 'image.jpg',
                         'custom' => array('custom_data' => array(
+                            'notification_type' => 'session_booked',
                             'session_id' => $sessionId,
                             'Tutor_Name' => $users->firstName." ".$users->lastName,
                             'Class_Name' => $users->p_name,
@@ -459,6 +460,7 @@ class SessionController extends Controller
                 ),
                 'launchImage' => 'image.jpg',
                 'custom' => array('custom_data' => array(
+                    'notification_type' => 'session_ended',
                     'session_id' => $request->session_id
                 ))
             ));

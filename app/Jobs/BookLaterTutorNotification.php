@@ -59,6 +59,7 @@ class BookLaterTutorNotification extends Job
                     ),
                     'launchImage' => 'image.jpg',
                     'custom' => array('custom_data' => array(
+                        'notification_type' => 'tutor_session_start',
                         'session_id' => $this->sessionId,
                         'student_name' => $student->firstName." ".$student->lastName,
                         'student_id' => $student->id,
