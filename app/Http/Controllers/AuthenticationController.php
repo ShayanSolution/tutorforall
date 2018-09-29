@@ -107,7 +107,12 @@ class AuthenticationController extends Controller
     }
     public function sanitizePhoneNumber($number)
     {
-        return '+'.$number;
+        if (substr($number,0,2) == 92){
+            return '+'.$number;
+        }elseif(substr($number,0,1) == 0){
+            $number = substr_replace($number, '+92', 0, 1);
+            return $number;
+        }
     }
 
     /**
