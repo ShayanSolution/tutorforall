@@ -412,9 +412,15 @@ class SessionController extends Controller
         $fortyPercent  = 40/100;
         $fiftyPercent  = 50/100;
 
-        $duration = Carbon::parse($duration);
-        $durationMinutes=$duration->format('i');
-        $durationInHour = $durationMinutes > 0 ? $duration->addHour(1)->format('h') : $duration->format('h');
+        $date = Carbon::parse($findSession->started_at);
+        $now = Carbon::now();
+
+        $durationInHour = $date->diffInDays($now);
+
+//        $duration = Carbon::parse($duration);
+//        $durationMinutes=$duration->format('i');
+//        $durationInHour = $durationMinutes > 0 ? $duration->addHour(1)->format('h') : $duration->format('h');
+//        dd($duration->format('h'));
         $costPerHour = 400;
         $totalCostAccordingToHours = $costPerHour * $durationInHour;
         if ($group_members != 0){
