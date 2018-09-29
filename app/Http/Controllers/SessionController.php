@@ -443,6 +443,7 @@ class SessionController extends Controller
                     break;
             }
         }
+        $findSession->ended_at = $now;
         $findSession->rate = $totalCostAccordingToHours;
         $findSession->status = 'ended';
         $findSession->duration = $originalDuration;
