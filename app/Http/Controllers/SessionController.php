@@ -415,11 +415,11 @@ class SessionController extends Controller
         $date = Carbon::parse($findSession->started_at);
         $now = Carbon::now();
 
-        $durationInHour = $date->diffInDays($now);
+        $duration = $date->diffInHours($now);
 
 //        $duration = Carbon::parse($duration);
 //        $durationMinutes=$duration->format('i');
-//        $durationInHour = $durationMinutes > 0 ? $duration->addHour(1)->format('h') : $duration->format('h');
+        $durationInHour = $duration > 0 ? $duration : $duration+1;
 //        dd($duration->format('h'));
         $costPerHour = 400;
         $totalCostAccordingToHours = $costPerHour * $durationInHour;
