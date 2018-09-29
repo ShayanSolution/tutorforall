@@ -154,6 +154,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             $group = $data['is_group'];
             Profile::updateStudentGroup($student_id,$group);
         }
+        if($data['is_deserving'] == 1){
+            return Self::select('users.*')
+                ->join('profiles','profiles.user_id','=','users.id')
+                ->where('profiles.is_mentor','=', 1)
+                ->where('profiles.programme_id','=',$data['class_id'])
+                ->where('profiles.subject_id','=',$data['subject_id'])
+                ->where('profiles.is_home','=',$data['is_home'])
+                ->where('profiles.is_group','=',$data['is_group'])
+                ->where('profiles.call_student','=',$data['call_student'])
+                ->where('users.role_id','=',2)
+                ->get();
+        }
         return Self::select('users.*')
                 ->join('profiles','profiles.user_id','=','users.id')
                 ->where('profiles.programme_id','=',$data['class_id'])

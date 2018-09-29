@@ -319,8 +319,12 @@ class UserController extends Controller
             'is_group' => 'required',
             'call_student' => 'required',
         ]);
+        $userProfile = Profile::where('user_id', Auth::user()->id)->first();
+        $data['is_deserving'] = $userProfile->is_deserving;
         $user = new User();
         $users = $user->getTutorProfile($data);
+        
+
         if($users){
             return response()->json(['data' => $users]);
         }else{
