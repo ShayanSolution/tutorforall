@@ -69,6 +69,7 @@ class AuthenticationController extends Controller
             {
                 $code = $this->generateRandomCode();
                 $toNumber = $this->sanitizePhoneNumber($phone);
+                dd($toNumber);
 //                // Use the client to do fun stuff like send text messages!
                 $response = TwilioHelper::sendCodeSms($toNumber, $code);
                 if ($response){
@@ -109,7 +110,15 @@ class AuthenticationController extends Controller
     {
         if (substr($number,0,2) == 92){
             return '+'.$number;
-        }elseif(substr($number,0,1) == 0){
+        }elseif((substr($number,0,1) == '0') && substr($number,0,3) == '092'){
+            if ((substr($number,0,3) == '092')){
+                $number = substr_replace($number, '+', 0, 1);
+                return $number;
+            }else{
+                $number = substr_replace($number, '+92', 0, 1);
+                return $number;
+            }
+        }elseif((substr($number,0,1) == '0') && substr($number,0,2) != 92){
             $number = substr_replace($number, '+92', 0, 1);
             return $number;
         }
