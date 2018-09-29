@@ -56,29 +56,37 @@ class WalletController extends Controller
             );
     }
 
-            public function walletStudent(Request $request){
-                $this->validate($request,[
-                    'student_id' => 'required',
-                ]);
-                $student_id = $request->student_id;
-                $debit = Wallet::where('type', 'debit')
-                ->where(function ($query) use ($student_id) {
-                    $query->where('from_user_id', '=', $student_id)
-                        ->orWhere('to_user_id', '=', $student_id);
-                })->sum('amount');
+    public function walletStudent(Request $request){
+        $this->validate($request,[
+            'student_id' => 'required',
+        ]);
+        $student_id = $request->student_id;
+        $debit = Wallet::where('type', 'debit')
+        ->where(function ($query) use ($student_id) {
+            $query->where('from_user_id', '=', $student_id)
+                ->orWhere('to_user_id', '=', $student_id);
+        })->sum('amount');
 
-                $credit = Wallet::where('type', 'credit')
-                    ->where(function ($query) use ($student_id) {
-                        $query->where('from_user_id', '=', $student_id)
-                            ->orWhere('to_user_id', '=', $student_id);
-                    })->sum('amount');
-                $totalAmount = $credit - $debit;
-                return response()->json(
-                    [
-                        'status'        =>  'success',
-                        'total_amount'  =>  $totalAmount
-                    ]
-                );
-
-            }
+        $credit = Wallet::where('type', 'credit')
+            ->where(function ($query) use ($student_id) {
+                $query->where('from_user_id', '=', $student_id)
+                    ->orWhere('to_user_id', '=', $student_id);
+            })->sum('amount');
+        if($credit && $debit) {
+            $totalAmount = $credit - $debit;
+            return response()->json(
+                [
+                    'status' => 'success',
+                    'total_amount' => $totalAmount
+                ]
+            );
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Wallet does not exist.'
+                ]
+            );
+        }
+    }
 }
