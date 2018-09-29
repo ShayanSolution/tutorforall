@@ -263,7 +263,7 @@ class SessionController extends Controller
                     PushNotification::app('appStudentIOS')->to($device->token)->send($message);
                 }
 
-                if($session->book_later_at != "null"){
+                if($session->book_later_at != null || $session->book_later_at != ''){
                     $bookLaterAt = Carbon::parse($session->book_later_at);
                     $now = Carbon::now();
                     $delay = $bookLaterAt->diffInMinutes($now) - 60; //Subtract 1 hour
