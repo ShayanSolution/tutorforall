@@ -117,7 +117,7 @@ class SendPushNotification extends Job
                             'Session_Location' => $sessionData['session_location'],
                             'Datetime' => $sessionDateTime,
                             'date' => $dateTime[0],
-                            'time' => $dateTime[1],
+                            'time' => date("g:i a", strtotime($dateTime[1])),
                             'Age' => $userAge>0?$userAge:'',
                             'Profile_Image' => !empty($this->student->profileImage)?URL::to('/images').'/'.$this->student->profileImage:'',
                         ))
