@@ -26,7 +26,8 @@ class Session extends Model
         'duration',
         'latitude',
         'longitude',
-        'session_location'
+        'session_location',
+        'book_later_at'
     ];
 
     public function student()
