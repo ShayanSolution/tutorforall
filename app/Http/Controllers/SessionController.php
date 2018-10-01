@@ -492,6 +492,28 @@ class SessionController extends Controller
             $findSession->status = 'ended';
             $findSession->duration = $originalDuration;
             $findSession->save();
+            $message = PushNotification::Message(
+                'Your total cost is ' . $totalCostAccordingToHours,
+                array(
+                    'badge' => 1,
+                    'sound' => 'example.aiff',
+                    'actionLocKey' => 'Action button title!',
+                    'locKey' => 'localized key',
+                    'locArgs' => array(
+                        'localized args',
+                        'localized args',
+                    ),
+                    'launchImage' => 'image.jpg',
+                    'custom' => array('custom_data' => array(
+                        'notification_type' => 'session_ended',
+                        'session_id' => $request->session_id
+                    ))
+                ));
+            if ($user->device_type == 'android') {
+                PushNotification::app('appNameAndroid')->to($user->device_token)->send($message);
+            } else {
+                PushNotification::app('appStudentIOS')->to($user->device_token)->send($message);
+            }
             return response()->json(
                 [
                     'status' => 'success',
