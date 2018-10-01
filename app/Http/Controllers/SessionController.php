@@ -443,46 +443,62 @@ class SessionController extends Controller
                     break;
             }
         }
-        $findSession->ended_at = $now;
-        $findSession->rate = $totalCostAccordingToHours;
-        $findSession->status = 'ended';
-        $findSession->duration = $originalDuration;
-        $findSession->save();
-        $wallet                   =   new Wallet();
-        $wallet->session_id       =   $findSession->id;
-        $wallet->amount           =   $totalCostAccordingToHours;
-        $wallet->type             =   'debit';
-        $wallet->from_user_id     =   $findSession->student_id;
-        $wallet->to_user_id       =   $findSession->tutor_id;
-        $wallet->save();
-        $message = PushNotification::Message(
-            'Your total cost is '. $totalCostAccordingToHours,
-            array(
-                'badge' => 1,
-                'sound' => 'example.aiff',
-                'actionLocKey' => 'Action button title!',
-                'locKey' => 'localized key',
-                'locArgs' => array(
-                    'localized args',
-                    'localized args',
-                ),
-                'launchImage' => 'image.jpg',
-                'custom' => array('custom_data' => array(
-                    'notification_type' => 'session_ended',
-                    'session_id' => $request->session_id
-                ))
-            ));
-            if($user->device_type == 'android') {
+        if($findSession->student->profile->is_deserving == 0) {
+            $findSession->ended_at = $now;
+            $findSession->rate = $totalCostAccordingToHours;
+            $findSession->status = 'ended';
+            $findSession->duration = $originalDuration;
+            $findSession->save();
+            $wallet = new Wallet();
+            $wallet->session_id = $findSession->id;
+            $wallet->amount = $totalCostAccordingToHours;
+            $wallet->type = 'debit';
+            $wallet->from_user_id = $findSession->student_id;
+            $wallet->to_user_id = $findSession->tutor_id;
+            $wallet->save();
+            $message = PushNotification::Message(
+                'Your total cost is ' . $totalCostAccordingToHours,
+                array(
+                    'badge' => 1,
+                    'sound' => 'example.aiff',
+                    'actionLocKey' => 'Action button title!',
+                    'locKey' => 'localized key',
+                    'locArgs' => array(
+                        'localized args',
+                        'localized args',
+                    ),
+                    'launchImage' => 'image.jpg',
+                    'custom' => array('custom_data' => array(
+                        'notification_type' => 'session_ended',
+                        'session_id' => $request->session_id
+                    ))
+                ));
+            if ($user->device_type == 'android') {
                 PushNotification::app('appNameAndroid')->to($user->device_token)->send($message);
-            }else{
+            } else {
                 PushNotification::app('appStudentIOS')->to($user->device_token)->send($message);
             }
             return response()->json(
                 [
-                    'status'   => 'success',
+                    'status' => 'success',
                     'totalCost' => $totalCostAccordingToHours,
                     'hourly_rate' => $costPerHour
                 ]
             );
+        }
+        else{
+            $findSession->ended_at = $now;
+            $findSession->rate = 0;
+            $findSession->status = 'ended';
+            $findSession->duration = $originalDuration;
+            $findSession->save();
+            return response()->json(
+                [
+                    'status' => 'success',
+                    'totalCost' => 0,
+                    'hourly_rate' => $costPerHour
+                ]
+            );
+        }
     }
 }
