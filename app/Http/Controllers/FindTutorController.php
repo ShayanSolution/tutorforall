@@ -56,7 +56,7 @@ class FindTutorController extends Controller
                     . " WHERE `role_id` = 2 "
                     . " AND `programme_id` = '$studentClassId' "
                     . " AND `subject_id` = '$studentSubjectId' "
-                    . " AND `profiles.is_mentor` = '0' "
+                    . " AND profiles.is_mentor = '0' "
                     . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
             }else{
                 $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, profiles.is_mentor,"
@@ -72,7 +72,7 @@ class FindTutorController extends Controller
                     . " WHERE `role_id` = 2 "
                     . " AND `programme_id` = '$studentClassId' "
                     . " AND `subject_id` = '$studentSubjectId' "
-                    . " AND `profiles.is_mentor` = '1' "
+                    . " AND profiles.is_mentor = '1' "
                     . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
             }
 
