@@ -161,9 +161,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 ->where('profiles.is_mentor','=', 1)
                 ->where('profiles.programme_id','=',$data['class_id'])
                 ->where('profiles.subject_id','=',$data['subject_id'])
-                ->where('profiles.is_home','=',$data['is_home'])
                 ->where('profiles.is_group','=',$data['is_group'])
-                ->where('profiles.call_student','=',$data['call_student'])
+                ->where(function ($query) use ($data){
+                    $query->where('profiles.is_home','=',$data['is_home'])
+                        ->orWhere('profiles.call_student','=',$data['call_student']);
+                })
                 ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
                 ->get();
         }
@@ -171,9 +173,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 ->join('profiles','profiles.user_id','=','users.id')
                 ->where('profiles.programme_id','=',$data['class_id'])
                 ->where('profiles.subject_id','=',$data['subject_id'])
-                ->where('profiles.is_home','=',$data['is_home'])
+                ->where(function ($query) use ($data){
+                    $query->where('profiles.is_home','=',$data['is_home'])
+                    ->orWhere('profiles.call_student','=',$data['call_student']);
+                })
                 ->where('profiles.is_group','=',$data['is_group'])
-                ->where('profiles.call_student','=',$data['call_student'])
                 ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
                 ->get();
     }
