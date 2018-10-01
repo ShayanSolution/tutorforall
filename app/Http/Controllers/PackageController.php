@@ -30,6 +30,7 @@ class PackageController extends Controller
                 $hourly_rate = $package->hourly_rate + $package->extra_percentage_for_group_of_two;
                 return response()->json(
                     [
+                        'status' => 'success',
                         'hourly_rate' => $hourly_rate
                     ]
                 );
@@ -37,6 +38,7 @@ class PackageController extends Controller
                 $hourly_rate = $package->hourly_rate + $package->extra_percentage_for_group_of_three;
                 return response()->json(
                     [
+                        'status' => 'success',
                         'hourly_rate' => $hourly_rate
                     ]
                 );
@@ -44,6 +46,7 @@ class PackageController extends Controller
                 $hourly_rate = $package->hourly_rate + $package->extra_percentage_for_group_of_four;
                 return response()->json(
                     [
+                        'status' => 'success',
                         'hourly_rate' => $hourly_rate
                     ]
                 );
@@ -60,6 +63,7 @@ class PackageController extends Controller
             $hourly_rate = $package->hourly_rate;
             return response()->json(
                 [
+                    'status' => 'success',
                     'hourly_rate' => $hourly_rate
                 ]
             );
@@ -86,6 +90,7 @@ class PackageController extends Controller
             }
             return response()->json(
                 [
+                    'status' => 'success',
                     'data' => $package_categories
                 ]
             );
