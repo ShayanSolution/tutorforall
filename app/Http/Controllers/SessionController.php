@@ -421,7 +421,7 @@ class SessionController extends Controller
 //        $durationMinutes=$duration->format('i');
         $durationInHour = $duration > 0 ? $duration : $duration+1;
 //        dd($duration->format('h'));
-        $costPerHour = 400;
+        $costPerHour = $findSession->hourly_rate;
         $totalCostAccordingToHours = $costPerHour * $durationInHour;
         if ($group_members != 0){
             switch ($group_members){
