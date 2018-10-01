@@ -207,7 +207,7 @@ class SessionController extends Controller
 
             //get tutor profile
             $user = new User();
-            $users = $user->findBookedUser($tutorId);
+            $users = $user->findBookedUser($tutorId, $sessionId);
             //get student profile
             $student = User::where('id','=',$studentId)->first();
 
