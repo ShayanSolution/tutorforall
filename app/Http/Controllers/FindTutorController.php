@@ -43,7 +43,7 @@ class FindTutorController extends Controller
             //6371 = Kilometers
             //3959 = Miles
             if($studentProfile->is_deserving == 0) {
-                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, "
+                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, profiles.is_mentor,"
                     . "( 6371 "
                     . " * acos ( cos ( radians(" . $studentLat . ") )"
                     . " * cos( radians( `latitude` ) )"
@@ -59,7 +59,7 @@ class FindTutorController extends Controller
                     . " AND `profiles.is_mentor` = '0' "
                     . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
             }else{
-                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, "
+                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, profiles.is_mentor,"
                     . "( 6371 "
                     . " * acos ( cos ( radians(" . $studentLat . ") )"
                     . " * cos( radians( `latitude` ) )"
