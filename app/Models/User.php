@@ -175,6 +175,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
         return Self::select('users.*')
                 ->join('profiles','profiles.user_id','=','users.id')
+                ->where('profiles.is_mentor','=', 0)
                 ->where('profiles.programme_id','=',$data['class_id'])
                 ->where('profiles.subject_id','=',$data['subject_id'])
                 ->where(function ($query) use ($data){
