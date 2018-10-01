@@ -423,26 +423,26 @@ class SessionController extends Controller
 //        dd($duration->format('h'));
         $costPerHour = $findSession->hourly_rate;
         $totalCostAccordingToHours = $costPerHour * $durationInHour;
-        if ($group_members != 0){
-            switch ($group_members){
-                case '2':
-                    $percentage = $totalCostAccordingToHours * $twentyPercent;
-                    $totalCostAccordingToHours += $percentage;
-                    break;
-                case '3':
-                    $percentage = $totalCostAccordingToHours * $thirtyPercent;
-                    $totalCostAccordingToHours += $percentage;
-                    break;
-                case '4':
-                    $percentage = $totalCostAccordingToHours * $fortyPercent;
-                    $totalCostAccordingToHours += $percentage;
-                    break;
-                case '5':
-                    $percentage = $totalCostAccordingToHours * $fiftyPercent;
-                    $totalCostAccordingToHours += $percentage;
-                    break;
-            }
-        }
+//        if ($group_members != 0){
+//            switch ($group_members){
+//                case '2':
+//                    $percentage = $totalCostAccordingToHours * $twentyPercent;
+//                    $totalCostAccordingToHours += $percentage;
+//                    break;
+//                case '3':
+//                    $percentage = $totalCostAccordingToHours * $thirtyPercent;
+//                    $totalCostAccordingToHours += $percentage;
+//                    break;
+//                case '4':
+//                    $percentage = $totalCostAccordingToHours * $fortyPercent;
+//                    $totalCostAccordingToHours += $percentage;
+//                    break;
+//                case '5':
+//                    $percentage = $totalCostAccordingToHours * $fiftyPercent;
+//                    $totalCostAccordingToHours += $percentage;
+//                    break;
+//            }
+//        }
         if($findSession->student->profile->is_deserving == 0) {
             $findSession->ended_at = $now;
             $findSession->rate = $totalCostAccordingToHours;
