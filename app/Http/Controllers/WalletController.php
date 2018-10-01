@@ -39,6 +39,7 @@ class WalletController extends Controller
                     ),
                     'launchImage' => 'image.jpg',
                     'custom' => array('custom_data' => array(
+                        'notification_type' => 'session_paid',
                         'session_id' => $request->session_id
                     ))
                 ));
