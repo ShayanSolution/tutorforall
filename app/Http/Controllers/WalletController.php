@@ -78,7 +78,7 @@ class WalletController extends Controller
             return response()->json(
                 [
                     'status' => 'success',
-                    'total_amount' => $totalAmount
+                    'total_amount' => (string)$totalAmount
                 ]
             );
         }else{
