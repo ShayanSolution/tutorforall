@@ -27,7 +27,8 @@ class PackageController extends Controller
         $package = Package::where('category_id',$category_id)->where('is_active',1)->first();
         if($is_group && !empty($package)){
             if ($group_count == 2) {
-                $hourly_rate = $package->hourly_rate + $package->extra_percentage_for_group_of_two;
+                $extraPercentage = ($package->extra_percentage_for_group_of_two/100) * $package->hourly_rate;
+                $hourly_rate = $package->hourly_rate + $extraPercentage;
                 return response()->json(
                     [
                         'status' => 'success',
@@ -35,7 +36,8 @@ class PackageController extends Controller
                     ]
                 );
             }else if($group_count == 3){
-                $hourly_rate = $package->hourly_rate + $package->extra_percentage_for_group_of_three;
+                $extraPercentage = ($package->extra_percentage_for_group_of_three/100) * $package->hourly_rate;
+                $hourly_rate = $package->hourly_rate + $extraPercentage;
                 return response()->json(
                     [
                         'status' => 'success',
@@ -43,7 +45,8 @@ class PackageController extends Controller
                     ]
                 );
             }else if($group_count == 4){
-                $hourly_rate = $package->hourly_rate + $package->extra_percentage_for_group_of_four;
+                $extraPercentage = ($package->extra_percentage_for_group_of_four/100) * $package->hourly_rate;
+                $hourly_rate = $package->hourly_rate + $extraPercentage;
                 return response()->json(
                     [
                         'status' => 'success',
