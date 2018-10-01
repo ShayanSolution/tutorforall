@@ -18,7 +18,8 @@ class FindTutorController extends Controller
             'is_group' => 'Required',
             'longitude'  => 'Required',
             'latitude' => 'Required',
-            'group_count' => 'Required'
+            'group_count' => 'Required',
+            'booking_type' => 'Required'
         ]);
 //        dd($studentTableId);
         $studentId = $request->student_id;

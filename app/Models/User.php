@@ -121,17 +121,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
     }
     
-    public function findBookedUser($tutor_id){
+    public function findBookedUser($tutorId, $sessionId){
         $user = User::select('users.*')
                 ->select('users.*','programmes.name as p_name','subjects.name as s_name'
-                    ,'programmes.id as p_id','subjects.id as s_id','profiles.is_group',
+                    ,'programmes.id as p_id','subjects.id as s_id','sessions.is_group',
                     'profiles.is_home as t_is_home')
                 ->join('sessions','sessions.tutor_id','=','users.id')
                 ->leftjoin('profiles','profiles.user_id','=','users.id')
                 ->leftjoin('programmes','programmes.id','=','sessions.programme_id')
                 ->leftjoin('subjects','subjects.id','=','sessions.subject_id')
                 ->where('users.role_id','=',2)
-                ->where('users.id','=',$tutor_id)
+                ->where('users.id','=',$tutorId)
+                ->where('sessions.id','=',$sessionId)
                 ->first();
         return $user;
     }
@@ -160,19 +161,31 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 ->where('profiles.is_mentor','=', 1)
                 ->where('profiles.programme_id','=',$data['class_id'])
                 ->where('profiles.subject_id','=',$data['subject_id'])
-                ->where('profiles.is_home','=',$data['is_home'])
-                ->where('profiles.is_group','=',$data['is_group'])
-                ->where('profiles.call_student','=',$data['call_student'])
+                ->where(function ($query) use ($data){
+                    $query->where('profiles.is_home','=',$data['is_home'])
+                        ->orWhere('profiles.call_student','=',$data['call_student']);
+
+                })
+                ->where(function ($query) use ($data){
+                    $query->where('profiles.is_group','=',$data['is_group'])
+                        ->orWhere('profiles.one_on_one','=',$data['one_on_one']);
+                })
                 ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
                 ->get();
         }
         return Self::select('users.*')
                 ->join('profiles','profiles.user_id','=','users.id')
+                ->where('profiles.is_mentor','=', 0)
                 ->where('profiles.programme_id','=',$data['class_id'])
                 ->where('profiles.subject_id','=',$data['subject_id'])
-                ->where('profiles.is_home','=',$data['is_home'])
-                ->where('profiles.is_group','=',$data['is_group'])
-                ->where('profiles.call_student','=',$data['call_student'])
+                ->where(function ($query) use ($data){
+                    $query->where('profiles.is_home','=',$data['is_home'])
+                        ->orWhere('profiles.call_student','=',$data['call_student']);
+                })
+                ->where(function ($query) use ($data){
+                    $query->where('profiles.is_group','=',$data['is_group'])
+                        ->orWhere('profiles.one_on_one','=',$data['one_on_one']);
+                })
                 ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
                 ->get();
     }
