@@ -90,6 +90,9 @@ class Profile extends Model
 //        if(isset($array['subject_id'])){
 //            $profile_settings['subject_id'] = $array['subject_id'];
 //        }
+        if(isset($array['one_on_one'])){
+            $profile_settings['one_on_one'] = $array['one_on_one'];
+        }
         if(isset($array['call_student'])){
             $profile_settings['call_student'] = $array['call_student'];
         }
