@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Profile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\FindTutor;
 use App\Notify;
 use Illuminate\Support\Facades\Route;
@@ -55,7 +56,7 @@ class FindTutorController extends Controller
                     . " WHERE `role_id` = 2 "
                     . " AND `programme_id` = '$studentClassId' "
                     . " AND `subject_id` = '$studentSubjectId' "
-                    . " AND `profiles.is_mentor` = 0 "
+                    . " AND `profiles.is_mentor` = '0' "
                     . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
             }else{
                 $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, "
@@ -71,9 +72,11 @@ class FindTutorController extends Controller
                     . " WHERE `role_id` = 2 "
                     . " AND `programme_id` = '$studentClassId' "
                     . " AND `subject_id` = '$studentSubjectId' "
-                    . " AND `profiles.is_mentor` = 1 "
+                    . " AND `profiles.is_mentor` = '1' "
                     . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
             }
+
+            Log::info($query);
 
             $tutors = \DB::select($query);
 //                dd($tutors);
