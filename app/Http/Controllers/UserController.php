@@ -387,7 +387,7 @@ class UserController extends Controller
             return response()->json(
                 [
                     'status' => 'error',
-                    'message' => 'Unable to find tutor'
+                    'message' => 'Unable to find student'
                 ], 422
             );
         }

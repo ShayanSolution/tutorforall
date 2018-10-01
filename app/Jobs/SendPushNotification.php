@@ -63,6 +63,7 @@ class SendPushNotification extends Job
                 $sessionData['latitude'] =  $this->data['latitude'];
                 $sessionData['longitude'] =  $this->data['longitude'];
                 $sessionData['is_group'] = $this->data['is_group'];
+                $sessionData['hourly_rate'] = $this->data['hourly_rate'];
                 $sessionDateTime = Carbon::now()->toDateTimeString();
                 $dateTime = explode(" ",$sessionDateTime);
                 if(isset($this->data['group_members'])){
