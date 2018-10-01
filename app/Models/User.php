@@ -166,7 +166,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                         ->orWhere('profiles.call_student','=',$data['call_student']);
 
                 })
-                ->where('profiles.is_group','=',$data['is_group'])
+                ->where(function ($query) use ($data){
+                    $query->where('profiles.is_group','=',$data['is_group'])
+                        ->orWhere('profiles.one_on_one','=',$data['one_on_one']);
+                })
                 ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
                 ->get();
         }
@@ -178,7 +181,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                     $query->where('profiles.is_home','=',$data['is_home'])
                         ->orWhere('profiles.call_student','=',$data['call_student']);
                 })
-                ->where('profiles.is_group','=',$data['is_group'])
+                ->where(function ($query) use ($data){
+                    $query->where('profiles.is_group','=',$data['is_group'])
+                        ->orWhere('profiles.one_on_one','=',$data['one_on_one']);
+                })
                 ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
                 ->get();
     }

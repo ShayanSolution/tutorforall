@@ -318,6 +318,7 @@ class UserController extends Controller
             'is_home' => 'required',
             'is_group' => 'required',
             'call_student' => 'required',
+            'one_on_one' => 'required'
         ]);
         $userProfile = Profile::where('user_id', Auth::user()->id)->first();
         $data['is_deserving'] = $userProfile->is_deserving;
