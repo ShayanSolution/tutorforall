@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
 use Illuminate\Http\Request;
 use App\FindTutor;
 use App\Notify;
@@ -32,19 +33,21 @@ class FindTutorController extends Controller
         $studentGroupCount = $request->group_count;
         $distanceInKmMin = 0;
         $distanceInKmMax = 2;
-        
+
+        $studentProfile = Profile::where('user_id', $request->student_id)->first();
         
         for( $i=0; $i<=3; $i++){
                 
             // Query to find Tutors in range(KM)
             //6371 = Kilometers
             //3959 = Miles
-            $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, "
+            if($studentProfile->is_deserving == 0) {
+                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, "
                     . "( 6371 "
-                    . " * acos ( cos ( radians(". $studentLat .") )"
+                    . " * acos ( cos ( radians(" . $studentLat . ") )"
                     . " * cos( radians( `latitude` ) )"
-                    . " * cos( radians( `longitude` ) - radians(".  $studentLong .") )"
-                    . " + sin ( radians(". $studentLat .") )"
+                    . " * cos( radians( `longitude` ) - radians(" . $studentLong . ") )"
+                    . " + sin ( radians(" . $studentLat . ") )"
                     . " * sin( radians( `latitude` ) ) ) )"
                     . " AS `distance`"
                     . " FROM `users`"
@@ -52,7 +55,25 @@ class FindTutorController extends Controller
                     . " WHERE `role_id` = 2 "
                     . " AND `programme_id` = '$studentClassId' "
                     . " AND `subject_id` = '$studentSubjectId' "
+                    . " AND `profiles.is_mentor` = 0 "
                     . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
+            }else{
+                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, "
+                    . "( 6371 "
+                    . " * acos ( cos ( radians(" . $studentLat . ") )"
+                    . " * cos( radians( `latitude` ) )"
+                    . " * cos( radians( `longitude` ) - radians(" . $studentLong . ") )"
+                    . " + sin ( radians(" . $studentLat . ") )"
+                    . " * sin( radians( `latitude` ) ) ) )"
+                    . " AS `distance`"
+                    . " FROM `users`"
+                    . " JOIN  `profiles` ON users.id = profiles.user_id"
+                    . " WHERE `role_id` = 2 "
+                    . " AND `programme_id` = '$studentClassId' "
+                    . " AND `subject_id` = '$studentSubjectId' "
+                    . " AND `profiles.is_mentor` = 1 "
+                    . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
+            }
 
             $tutors = \DB::select($query);
 //                dd($tutors);

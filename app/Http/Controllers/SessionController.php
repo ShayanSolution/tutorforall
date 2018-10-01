@@ -456,6 +456,7 @@ class SessionController extends Controller
             $wallet->from_user_id = $findSession->student_id;
             $wallet->to_user_id = $findSession->tutor_id;
             $wallet->save();
+            //TODO: Add in job
             $message = PushNotification::Message(
                 'Your total cost is ' . $totalCostAccordingToHours,
                 array(
@@ -492,6 +493,7 @@ class SessionController extends Controller
             $findSession->status = 'ended';
             $findSession->duration = $originalDuration;
             $findSession->save();
+            //TODO: Add in job
             $message = PushNotification::Message(
                 'Your total cost is ' . $totalCostAccordingToHours,
                 array(
