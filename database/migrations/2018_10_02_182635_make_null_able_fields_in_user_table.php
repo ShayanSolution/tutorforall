@@ -11,6 +11,10 @@ class MakeNullAbleFieldsInUserTable extends Migration
      *
      * @return void
      */
+    public function __construct()
+    {
+        DB::getDoctrineSchemaManager()->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
+    }
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
