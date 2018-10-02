@@ -15,6 +15,7 @@ class MakeNullAbleFieldsInUserTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('fatherName')->nullable()->change();
+            $table->string('cnic_no')->nullable()->change();
             $table->string('experience')->nullable()->change();
             $table->string('qualification')->nullable()->change();
             $table->string('latitude')->nullable()->change();
