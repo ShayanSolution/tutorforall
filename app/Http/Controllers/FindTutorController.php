@@ -22,7 +22,10 @@ class FindTutorController extends Controller
             'latitude' => 'Required',
             'group_count' => 'Required',
             'booking_type' => 'Required',
-            'hourly_rate' => 'required'
+            'hourly_rate' => 'required',
+            'is_home' => 'required',
+            'call_student' => 'required',
+            'one_on_one' => 'required'
         ]);
 //        dd($studentTableId);
         $studentId = $request->student_id;
@@ -32,6 +35,9 @@ class FindTutorController extends Controller
         $studentLat = $request->latitude;
         $studentIsGroup = $request->is_group;
         $studentGroupCount = $request->group_count;
+        $isHome = $request->is_home;
+        $callStudent = $request->call_student;
+        $oneOnOne = $request->one_on_one;
         $distanceInKmMin = 0;
         $distanceInKmMax = 2;
 
@@ -45,7 +51,7 @@ class FindTutorController extends Controller
             //6371 = Kilometers
             //3959 = Miles
             if($studentProfile->is_deserving == 0) {
-                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, profiles.is_mentor,"
+                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, profiles.is_mentor, profiles.is_home, profiles.call_student, profiles.is_group, profiles.one_on_one,"
                     . "( 6371 "
                     . " * acos ( cos ( radians(" . $studentLat . ") )"
                     . " * cos( radians( `latitude` ) )"
@@ -59,9 +65,11 @@ class FindTutorController extends Controller
                     . " AND `programme_id` = '$studentClassId' "
                     . " AND `subject_id` = '$studentSubjectId' "
                     . " AND profiles.is_mentor = '0' "
+                    . " AND (profiles.is_home = '$isHome' OR profiles.call_student = '$callStudent') "
+                    . " AND (profiles.is_group = '$studentIsGroup' OR profiles.one_on_one = '$oneOnOne') "
                     . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
             }else{
-                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, profiles.is_mentor,"
+                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, profiles.is_mentor, profiles.is_home, profiles.call_student, profiles.is_group, profiles.one_on_one,"
                     . "( 6371 "
                     . " * acos ( cos ( radians(" . $studentLat . ") )"
                     . " * cos( radians( `latitude` ) )"
@@ -75,6 +83,8 @@ class FindTutorController extends Controller
                     . " AND `programme_id` = '$studentClassId' "
                     . " AND `subject_id` = '$studentSubjectId' "
                     . " AND profiles.is_mentor = '1' "
+                    . " AND (profiles.is_home = '$isHome' OR profiles.call_student = '$callStudent') "
+                    . " AND (profiles.is_group = '$studentIsGroup' OR profiles.one_on_one = '$oneOnOne') "
                     . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
             }
 
