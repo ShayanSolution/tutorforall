@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Profile;
 use App\Package;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 
 class PackageController extends Controller
 {
@@ -19,6 +21,17 @@ class PackageController extends Controller
             'is_group' => 'required',
             'group_count' => 'required',
         ]);
+
+        $userId = Auth::user()->id;
+        $studentProfile = Profile::where('user_id', Auth::user()->id)->first();
+        if($studentProfile->is_deserving == 1){
+            return response()->json(
+                [
+                    'status' => 'success',
+                    'hourly_rate' => 0
+                ]
+            );
+        }
 
         $request = $request->all();
         $category_id = $request['category_id'];
