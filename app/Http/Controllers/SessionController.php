@@ -20,6 +20,7 @@ use App\Models\Profile;
 use App\Models\Session;
 use App\Models\User;
 use App\Package;
+use App\Models\Rating;
 use phpDocumentor\Reflection\Types\Null_;
 
 /**
@@ -537,18 +538,22 @@ class SessionController extends Controller
         $userId = Auth::user()->id;
         $roleId = Auth::user()->role_id;
         $session = '';
+        $rating = '';
         if($roleId == 2){
             $session = Session::where('tutor_id', $userId)->orderBy('updated_at', 'desc')->first();
+            $rating = Rating::where('session_id', $session->id)->first();
         }
         else{
             $session = Session::where('student_id', $userId)->orderBy('updated_at', 'desc')->first();
+            $rating = Rating::where('session_id', $session->id)->first();
         }
 
         if($session){
             return response()->json(
                 [
                     'status' => 'success',
-                    'session' => $session
+                    'session' => $session,
+                    'rating' => $rating
                 ]
             );
         }else{
