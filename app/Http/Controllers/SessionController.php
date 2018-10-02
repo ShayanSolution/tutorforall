@@ -9,9 +9,11 @@ use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Illuminate\Support\Facades\URL;
 use Log;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use App\Jobs\BookLaterTutorNotification;
 use App\Jobs\BookLaterStudentNotification;
+use App\Jobs\StartSessionNotification;
 
 //Models
 use App\Models\Profile;
@@ -388,7 +390,12 @@ class SessionController extends Controller
         ]);
 
         $updateSession = new Session();
-        $updateSession->updateSession(['id'=>$request->session_id], ['started_at'=>Carbon::now()]);
+        $updateSession->updateSession(['id'=>$request->session_id], ['status'=>'started','started_at'=>Carbon::now()]);
+
+        //send student info to tutor
+        $job = new StartSessionNotification($request->session_id);
+        dispatch($job);
+        
         return [
             'status' => 'success',
             'messages' => 'Session updated successfully'
@@ -525,4 +532,33 @@ class SessionController extends Controller
             );
         }
     }
+    
+    public function getLatestSession(){
+        $userId = Auth::user()->id;
+        $roleId = Auth::user()->role_id;
+        $session = '';
+        if($roleId == 2){
+            $session = Session::where('tutor_id', $userId)->orderBy('updated_at', 'desc')->first();
+        }
+        else{
+            $session = Session::where('student_id', $userId)->orderBy('updated_at', 'desc')->first();
+        }
+
+        if($session){
+            return response()->json(
+                [
+                    'status' => 'success',
+                    'session' => $session
+                ]
+            );
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to find session.'
+                ]
+            );
+        }
+    }
+    
 }

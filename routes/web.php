@@ -66,6 +66,7 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     $router->post('/package-cost', 'PackageController@packageCost');
     $router->post('/session-start', 'SessionController@sessionStart');
     $router->post('/session-calculation-cost', 'SessionController@sessionCalculationCost');
+    $router->post('/get-latest-session', 'SessionController@getLatestSession');
     $router->post('/receive_payment', 'WalletController@receivePayment');
     $router->post('/wallet_student', 'WalletController@walletStudent');
     Route::post('/session-rejected','SessionController@sessionRejected');
