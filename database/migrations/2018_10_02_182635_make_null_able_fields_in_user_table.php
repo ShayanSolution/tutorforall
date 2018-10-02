@@ -14,14 +14,14 @@ class MakeNullAbleFieldsInUserTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('fatherName')->nullable();
-            $table->string('experience')->nullable();
-            $table->string('qualification')->nullable();
-            $table->string('latitude')->nullable();
-            $table->string('longitude')->nullable();
-            $table->string('device_token')->nullable();
-            $table->string('confirmed')->nullable();
-            $table->string('confirmation_code')->nullable();
+            $table->string('fatherName')->nullable()->change();
+            $table->string('experience')->nullable()->change();
+            $table->string('qualification')->nullable()->change();
+            $table->string('latitude')->nullable()->change();
+            $table->string('longitude')->nullable()->change();
+            $table->string('device_token')->nullable()->change();
+            $table->string('confirmed')->nullable()->change();
+            $table->string('confirmation_code')->nullable()->change();
         });
     }
 
