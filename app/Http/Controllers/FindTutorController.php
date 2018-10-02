@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Conf
 use App\FindTutor;
 use App\Notify;
 use Illuminate\Support\Facades\Route;
@@ -37,7 +38,7 @@ class FindTutorController extends Controller
 
         $studentProfile = Profile::where('user_id', $request->student_id)->first();
 
-        $roleId = Config::get('user-constants.TUTOR_ROLE_ID');
+        $roleId = 2;
         
         for( $i=0; $i<=3; $i++){
                 
