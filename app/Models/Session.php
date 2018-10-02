@@ -164,7 +164,7 @@ class Session extends Model
         $index = 0;
         foreach ($tutor_session_detail as $session){
             $student_detail = User::where('id',$session->student_id)->first();
-            $wallet = Wallet::where(['session_id'=>$session->session_id, 'type'=>'credit'])->first();
+            $wallet = Wallet::where(['session_id'=>$session->session_id, 'type'=>'debit'])->first();
             if($wallet){
                 $receivedAmount = $wallet->amount;
             }

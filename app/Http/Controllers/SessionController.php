@@ -50,7 +50,7 @@ class SessionController extends Controller
             $tutor_sessions = [];
             foreach ($user_session as $user){
                 $user_details = User::where('id',$user->session_user_id)->first();
-                $wallet = Wallet::where(['session_id'=>$user->session_id, 'type'=>'credit'])->first();
+                $wallet = Wallet::where(['session_id'=>$user->session_id, 'type'=>'debit'])->first();
                 if($wallet){
                     $paidAmount =  $wallet->amount;
                 }
