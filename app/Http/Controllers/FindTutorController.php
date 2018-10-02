@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Conf
 use App\FindTutor;
 use App\Notify;
 use Illuminate\Support\Facades\Route;
