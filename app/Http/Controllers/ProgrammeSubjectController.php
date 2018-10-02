@@ -33,6 +33,7 @@ class ProgrammeSubjectController extends Controller
         if($programmes){
             return response()->json(
                 [
+                    'status' => 'success',
                     'programmes' => $programmes,
                 ], 200
             );
@@ -60,6 +61,7 @@ class ProgrammeSubjectController extends Controller
         if($programme){
             return response()->json(
                 [
+                    'status' => 'success',
                     'programme' => $programme,
                 ], 200
             );
@@ -80,6 +82,7 @@ class ProgrammeSubjectController extends Controller
         if($subjects){
             return response()->json(
                 [
+                    'status' => 'success',
                     'subjects' => $subjects,
                 ], 200
             );
@@ -128,6 +131,7 @@ class ProgrammeSubjectController extends Controller
         if($subjects){
             return response()->json(
                 [
+                    'status' => 'success',
                     'subjects' => $subjects,
                 ], 200
             );
@@ -152,6 +156,7 @@ class ProgrammeSubjectController extends Controller
         if($subject){
             return response()->json(
                 [
+                    'status' => 'success',
                     'subject' => $subject,
                 ], 200
             );
