@@ -714,6 +714,7 @@ class UserController extends Controller
         if($user){
             return response()->json(
                 [
+                    'status' => 'success',
                     'user' => $user,
                 ], 200
             );

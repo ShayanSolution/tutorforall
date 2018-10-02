@@ -36,6 +36,8 @@ class FindTutorController extends Controller
         $distanceInKmMax = 2;
 
         $studentProfile = Profile::where('user_id', $request->student_id)->first();
+
+        $roleId = Config::get('user-constants.TUTOR_ROLE_ID');
         
         for( $i=0; $i<=3; $i++){
                 
@@ -53,7 +55,7 @@ class FindTutorController extends Controller
                     . " AS `distance`"
                     . " FROM `users`"
                     . " JOIN  `profiles` ON users.id = profiles.user_id"
-                    . " WHERE `role_id` = 2 "
+                    . " WHERE `role_id` = '$roleId' "
                     . " AND `programme_id` = '$studentClassId' "
                     . " AND `subject_id` = '$studentSubjectId' "
                     . " AND profiles.is_mentor = '0' "
@@ -69,7 +71,7 @@ class FindTutorController extends Controller
                     . " AS `distance`"
                     . " FROM `users`"
                     . " JOIN  `profiles` ON users.id = profiles.user_id"
-                    . " WHERE `role_id` = 2 "
+                    . " WHERE `role_id` = '$roleId' "
                     . " AND `programme_id` = '$studentClassId' "
                     . " AND `subject_id` = '$studentSubjectId' "
                     . " AND profiles.is_mentor = '1' "
