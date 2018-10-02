@@ -57,12 +57,17 @@ class SessionController extends Controller
                 if($wallet){
                     $paidAmount =  $wallet->amount;
                 }
+                if($user->book_later_at != null || $user->book_later_at != ''){
+                    $sessionDate = $session->book_later_at;
+                }else{
+                    $sessionDate = $user->Session_created_date;
+                }
                 $tutor_sessions[] = [
                     'FullName' => $user_details->firstName.' '.$user_details->lastName,
                     'FirstName' => $user_details->firstName,
                     'LastName' => $user_details->lastName,
                     'Experience' => (int)$user_details->experience,
-                    'Date' => $user->Session_created_date,
+                    'Date' => $sessionDate,
                     'Lat' => $user->latitude,
                     'Long' => $user->longitude,
                     'User_Lat' => $user_details->latitude,
