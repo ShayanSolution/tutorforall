@@ -88,7 +88,7 @@ class SendPushNotification extends Job
 
                 //From Android
                 if(isset($this->data['book_type']) && $this->data['book_type'] == 'later'){
-                    $sessionData['book_later_at'] = $this->data['session_time '];
+                    $sessionData['book_later_at'] = $this->data['session_time'];
                     $dateTime = explode(" ",$sessionData['book_later_at']);
                 }
 
