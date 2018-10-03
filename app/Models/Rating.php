@@ -10,6 +10,7 @@ class Rating extends Model
         'rating',
         'review',
         'session_id',
+        'user_id'
     ];
 
     public function session()
