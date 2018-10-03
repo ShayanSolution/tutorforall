@@ -558,7 +558,9 @@ class SessionController extends Controller
         $data['tutor_name']   = $session->tutor->firstName." ".$session->tutor->lastName;
         $data['latitude']     = $session->tutor->latitude;
         $data['longitude']    = $session->tutor->longitude;
-        $data['profile_img']  = \url("images/".$session->tutor->profileImage);
+        $data['tutor_profile_img']  = \url("images/".$session->tutor->profileImage);
+        $data['student_name'] = $session->student->firstName." ".$session->student->lastName;
+        $data['student_profile_img']  = \url("images/".$session->student->profileImage);
         if($session){
             return response()->json(
                 [
