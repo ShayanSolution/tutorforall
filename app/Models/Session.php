@@ -217,7 +217,6 @@ class Session extends Model
                                     })
                                     ->orderBy('sessions.updated_at', 'DESC')
                                     ->get();
-        
         return $student_session_detail;
     }
 

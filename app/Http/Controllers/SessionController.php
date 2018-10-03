@@ -58,7 +58,7 @@ class SessionController extends Controller
                     $paidAmount =  $wallet->amount;
                 }
                 if($user->book_later_at != null || $user->book_later_at != ''){
-                    $sessionDate = $session->book_later_at;
+                    $sessionDate = $user->book_later_at;
                 }else{
                     $sessionDate = $user->Session_created_date;
                 }
