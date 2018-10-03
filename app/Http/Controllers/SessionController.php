@@ -544,6 +544,7 @@ class SessionController extends Controller
         $roleId = Auth::user()->role_id;
         $session = '';
         $rating = '';
+        $data = [];
         if($roleId == 2){
             $session = Session::where('tutor_id', $userId)->orderBy('updated_at', 'desc')->first();
             $rating = Rating::where('session_id', $session->id)->first();
@@ -552,13 +553,19 @@ class SessionController extends Controller
             $session = Session::where('student_id', $userId)->orderBy('updated_at', 'desc')->first();
             $rating = Rating::where('session_id', $session->id)->first();
         }
-
+        $data['program_name'] = $session->programme->name;
+        $data['subject_name'] = $session->subject->name;
+        $data['tutor_name']   = $session->tutor->firstName." ".$session->tutor->lastName;
+        $data['latitude']     = $session->tutor->latitude;
+        $data['longitude']    = $session->tutor->longitude;
+        $data['profile_img']  = \url("images/".$session->tutor->profileImage);
         if($session){
             return response()->json(
                 [
                     'status' => 'success',
                     'session' => $session,
-                    'rating' => $rating
+                    'rating' => $rating,
+                    'data'   => $data
                 ]
             );
         }else{
