@@ -196,7 +196,7 @@ class SessionController extends Controller
         ]);
         $sessionId = $data['session_id'];
         //get session by id
-        $session = Session::with('rating')->find($sessionId);
+        $session = Session::find($sessionId);
 
 
         if(!$session){
@@ -230,10 +230,9 @@ class SessionController extends Controller
             $updated_session = $session->updateSession(['id'=>$sessionId], ['status'=>'booked', 'rate'=> $package_rate]);
 
             //get session rating
-            $rating = '';
-            if($session->hourly_rate != 0 && $session->rating != null){
-                $rating = $session->rating->rating;
-            }
+            $rating_sessions = Session::where('tutor_id', $tutorId)->where('hourly_rate', '!=', 0)->pluck('id');
+            $rating = Rating::whereIn('session_id', $rating_sessions)->get();
+            $rating->avg('rating');
 
             if($updated_session){
 
@@ -268,7 +267,7 @@ class SessionController extends Controller
                             'session_lat' => $session->latitude,
                             'session_long' => $session->longitude,
                             'session_location' => $session->session_location,
-                            'session_rating' => (string)$rating,
+                            'session_rating' => number_format((float)$rating->avg('rating'), 1, '.', ''),
                             'Profile_Image' => !empty($users->profileImage)?URL::to('/images').'/'.$users->profileImage:'',
                         ))
                     ));
