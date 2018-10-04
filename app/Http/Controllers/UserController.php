@@ -290,7 +290,6 @@ class UserController extends Controller
                 'Expert Class'=>$user->p_name,
                 'Expert Subjects'=>$user->s_name,
                 'Gender'=>$user->g_name,
-                'Rating'=>$user->rating,
                 'Experience'=>$user->experience,
                 'Address'=>$user->address,
                 'User CNIC'=>$user->cnic_no,
