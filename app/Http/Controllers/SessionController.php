@@ -561,7 +561,7 @@ class SessionController extends Controller
             $session = Session::where('student_id', $userId)->orderBy('updated_at', 'desc')->first();
             $rating = Rating::where('session_id', $session->id)->first();
             //get tutor avg rating
-            $rating_sessions = Session::where('tutor_id', $session->tutor)->where('hourly_rate', '!=', 0)->pluck('id');
+            $rating_sessions = Session::where('tutor_id', $session->tutor_id)->where('hourly_rate', '!=', 0)->pluck('id');
             $tutor_rating = Rating::whereIn('session_id', $rating_sessions)->get();
         }
         $data['program_name'] = $session->programme->name;
