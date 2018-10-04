@@ -45,6 +45,10 @@ class Session extends Model
     {
         return $this->belongsTo('App\Models\Programme');
     }
+    public function subject()
+    {
+        return $this->belongsTo('App\Models\Subject');
+    }
 
     public function meetingType()
     {
@@ -218,7 +222,6 @@ class Session extends Model
                                     })
                                     ->orderBy('sessions.updated_at', 'DESC')
                                     ->get();
-        
         return $student_session_detail;
     }
 

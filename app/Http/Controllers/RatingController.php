@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
@@ -24,6 +25,8 @@ class RatingController extends Controller
             return $response;
         }
         $data = $request->all();
+        $session=Session::find($request->session_id);
+        $data['user_id'] = $session->tutor_id;
 
         $rating = Rating::create($data);
 

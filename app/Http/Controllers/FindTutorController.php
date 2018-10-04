@@ -21,7 +21,7 @@ class FindTutorController extends Controller
             'longitude'  => 'Required',
             'latitude' => 'Required',
             'group_count' => 'Required',
-            'booking_type' => 'Required',
+            'book_type' => 'Required',
             'hourly_rate' => 'required',
             'is_home' => 'required',
             'call_student' => 'required',
