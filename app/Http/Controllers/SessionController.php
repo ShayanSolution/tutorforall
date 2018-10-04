@@ -83,6 +83,7 @@ class SessionController extends Controller
                     'Price' => $user->rate,
                     'Session_id' => $user->session_id,
                     'session_status' => $user->session_status,
+                    'session_rating' => is_null($user->session_rating)?'':(string)$user->session_rating,
                     'paid_amount' => isset($paidAmount) ? $paidAmount : 0,
                     'Age' => Carbon::parse($user->dob)->age,
                     'Profile_image'=>!empty($user_details->profileImage)?URL::to('/images').'/'.$user_details->profileImage:''
@@ -194,7 +195,8 @@ class SessionController extends Controller
         ]);
         $sessionId = $data['session_id'];
         //get session by id
-        $session = Session::find($sessionId);
+        $session = Session::with('rating')->find($sessionId);
+
 
         if(!$session){
             return [
@@ -225,6 +227,12 @@ class SessionController extends Controller
             $package_rate = $package->getPackageRate($package_id, $session->is_group, $session->group_members);
 
             $updated_session = $session->updateSession(['id'=>$sessionId], ['status'=>'booked', 'rate'=> $package_rate]);
+
+            //get session rating
+            $rating = '';
+            if($session->hourly_rate != 0 && $session->rating != null){
+                $rating = $session->rating->rating;
+            }
 
             if($updated_session){
 
@@ -259,6 +267,7 @@ class SessionController extends Controller
                             'session_lat' => $session->latitude,
                             'session_long' => $session->longitude,
                             'session_location' => $session->session_location,
+                            'session_rating' => (string)$rating,
                             'Profile_Image' => !empty($users->profileImage)?URL::to('/images').'/'.$users->profileImage:'',
                         ))
                     ));

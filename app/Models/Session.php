@@ -146,12 +146,14 @@ class Session extends Model
 
     public function getTutorSessionDetail($tutor_id){
         $tutor_session_detail = User::select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name', 'sessions.id as session_id', 'sessions.student_id'
-                                    ,'sessions.book_later_at','sessions.longitude','sessions.latitude','sessions.session_location','rate','sessions.duration' ,'sessions.status as session_status',
-                                    'subjects.name as s_name','sessions.student_id as session_user_id')
+                                    ,'sessions.book_later_at','sessions.longitude','sessions.latitude','sessions.session_location','rate','sessions.duration' ,'sessions.status as session_status'
+                                    ,'subjects.name as s_name','sessions.student_id as session_user_id'
+                                    ,'ratings.rating as session_rating')
                                 ->join('sessions','sessions.tutor_id','=','users.id')
                                 ->join('profiles','profiles.user_id','=','users.id')
                                 ->join('programmes','programmes.id','=','sessions.programme_id')
                                 ->join('subjects','subjects.id','=','sessions.subject_id')
+                                ->leftJoin('ratings','ratings.session_id','=','sessions.id')
                                 ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
                                 ->where('users.id','=',$tutor_id)
                                 ->where(function($q){
@@ -176,6 +178,7 @@ class Session extends Model
             $session_detail[$index]['session_id'] = $session->session_id;
             $session_detail[$index]['session_status'] = $session->session_status;
             $session_detail[$index]['session_duration'] = $session->duration;
+            $session_detail[$index]['session_rating'] = is_null($session->session_rating)?'':(string)$session->session_rating;
             $session_detail[$index]['received_amount'] = isset($receivedAmount) ? $receivedAmount : 0;
             $session_detail[$index]['s_name'] = $session->s_name;
             $session_detail[$index]['p_name'] = $session->p_name;
@@ -200,11 +203,13 @@ class Session extends Model
     
     public function getStudentSessionDetail($student_id){
         $student_session_detail = User::select('users.*', 'sessions.created_at as Session_created_date','sessions.longitude','sessions.latitude','sessions.session_location','rate','sessions.duration'
-                                        ,'sessions.book_later_at','sessions.status as session_status','subjects.name as s_name', 'programmes.name as p_name','sessions.tutor_id as session_user_id','sessions.id as session_id')
+                                        ,'sessions.book_later_at','sessions.status as session_status','subjects.name as s_name', 'programmes.name as p_name','sessions.tutor_id as session_user_id','sessions.id as session_id'
+                                        ,'ratings.rating as session_rating')
                                     ->join('sessions','sessions.student_id','=','users.id')
                                     ->join('profiles','profiles.user_id','=','users.id')
                                     ->join('programmes','programmes.id','=','sessions.programme_id')
                                     ->join('subjects','subjects.id','=','sessions.subject_id')
+                                    ->leftJoin('ratings','ratings.session_id','=','sessions.id')
                                     ->where('users.role_id','=',Config::get('user-constants.STUDENT_ROLE_ID'))
                                     ->where('users.id','=',$student_id)
                                     ->where(function($q){
