@@ -83,7 +83,8 @@ class SessionController extends Controller
                     'Price' => $user->rate,
                     'Session_id' => $user->session_id,
                     'session_status' => $user->session_status,
-                    'session_rating' => is_null($user->session_rating)?'':(string)$user->session_rating,
+                    'session_rating' => is_null($user->session_rating)?'':number_format((float)$user->session_rating, 1, '.', ''),
+                    'session_review' => is_null($user->session_review)?'':(string)$user->session_review,
                     'paid_amount' => isset($paidAmount) ? $paidAmount : 0,
                     'Age' => Carbon::parse($user->dob)->age,
                     'Profile_image'=>!empty($user_details->profileImage)?URL::to('/images').'/'.$user_details->profileImage:''
