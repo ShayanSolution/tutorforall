@@ -274,7 +274,6 @@ class UserController extends Controller
             $user_rating = 0;
             if($user->role_id == 2){
                 $rating_sessions = Session::where('tutor_id', $user_id)->where('hourly_rate', '!=', 0)->pluck('id');
-
                 $rating = Rating::whereIn('session_id', $rating_sessions)->get();
                 $user_rating = $rating->avg('rating');
             }
