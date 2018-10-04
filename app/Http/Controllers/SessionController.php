@@ -232,7 +232,6 @@ class SessionController extends Controller
             //get session rating
             $rating_sessions = Session::where('tutor_id', $tutorId)->where('hourly_rate', '!=', 0)->pluck('id');
             $rating = Rating::whereIn('session_id', $rating_sessions)->get();
-            $rating->avg('rating');
 
             if($updated_session){
 

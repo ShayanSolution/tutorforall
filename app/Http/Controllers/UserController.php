@@ -8,6 +8,7 @@ use App\Models\Session;
 use App\Models\User;
 use App\Models\Programme;
 use App\Models\Subject;
+use App\Models\Rating;
 //helpers
 use TimeZoneHelper;
 
@@ -267,7 +268,17 @@ class UserController extends Controller
         $user_id = $user_id['user_id'];
         $user = new User();
         $user = $user->userProfile($user_id);
+
         if($user){
+            //get tutor rating
+            $user_rating = 0;
+            if($user->role_id == 2){
+                $rating_sessions = Session::where('tutor_id', $user_id)->where('hourly_rate', '!=', 0)->pluck('id');
+
+                $rating = Rating::whereIn('session_id', $rating_sessions)->get();
+                $user_rating = $rating->avg('rating');
+            }
+
             $profile = array(
                 'Full Name'=>$user->firstName.' '.$user->lastName,
                 'Email'=>$user->email,
@@ -294,6 +305,7 @@ class UserController extends Controller
                 'Meeting Type Id'=>$user->meeting_type_id,
                 'Programme Id'=>$user->programme_id,
                 'Subject Id'=>$user->subject_id,
+                'Rating' => number_format((float)$user_rating, 1, '.', ''),
                 'Profile_Image' => URL::to('/images').'/'.$user->profileImage,
 
             );
