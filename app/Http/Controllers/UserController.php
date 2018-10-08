@@ -692,21 +692,33 @@ class UserController extends Controller
             $updateUser->updateWhere(['id'=>$inputs['user_id']], ['device_type'=>$inputs['device_type']]);
         }
 
-        $token = User::updateToken($request);
-        if($token){
-            return response()->json(
-                [
-                    'status' => 'Device token updated successfully',
-                ], 200
-            );
-        }else{
+        try{
+            $token = User::updateToken($request);
+            if($token){
+                return response()->json(
+                    [
+                        'status' => 'Device token updated successfully',
+                    ], 200
+                );
+            }else{
+                return response()->json(
+                    [
+                        'status' => 'success',
+                        'message' => 'device token already updated.'
+                    ], 200
+                );
+            }
+        }catch (Exception $e){
             return response()->json(
                 [
                     'status' => 'error',
-                    'message' => 'Unable to update device token'
+                    'message' => 'Unable to update device token.'
                 ], 422
             );
         }
+        
+        
+        
 
     }
 
