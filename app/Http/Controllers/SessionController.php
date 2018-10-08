@@ -555,14 +555,33 @@ class SessionController extends Controller
         $data = [];
         if($roleId == 2){
             $session = Session::where('tutor_id', $userId)->orderBy('updated_at', 'desc')->first();
-            $rating = Rating::where('session_id', $session->id)->first();
+            if($session){
+                $rating = Rating::where('session_id', $session->id)->first();
+            }else{
+                return response()->json(
+                    [
+                        'status' => 'error',
+                        'message' => 'Session not found.'
+                    ]
+                );
+            }
+            
         }
         else{
             $session = Session::where('student_id', $userId)->orderBy('updated_at', 'desc')->first();
-            $rating = Rating::where('session_id', $session->id)->first();
-            //get tutor avg rating
-            $rating_sessions = Session::where('tutor_id', $session->tutor_id)->where('hourly_rate', '!=', 0)->pluck('id');
-            $tutor_rating = Rating::whereIn('session_id', $rating_sessions)->get();
+            if($session) {
+                $rating = Rating::where('session_id', $session->id)->first();
+                //get tutor avg rating
+                $rating_sessions = Session::where('tutor_id', $session->tutor_id)->where('hourly_rate', '!=', 0)->pluck('id');
+                $tutor_rating = Rating::whereIn('session_id', $rating_sessions)->get();
+            }else{
+                return response()->json(
+                    [
+                        'status' => 'error',
+                        'message' => 'Session not found.'
+                    ]
+                );
+            }
         }
         $data['program_name'] = $session->programme->name;
         $data['subject_name'] = $session->subject->name;

@@ -39,7 +39,7 @@ $router->get('/register/verify/{confirmationCode}', 'AuthenticationController@co
 $router->get('/user/session/{userid}', 'SessionController@getUserSession');
 $router->get('/user/deserve/{id}', 'SessionController@updateDeserveStudentStatus');
 $router->get('/user/active/{id}', 'UserController@updateUserActiveStatus');
-$router->get('/user/remove', 'UserController@removeUser');
+
 $router->get('/user/profile/{id}', 'UserController@userProfile');
 $router->post('/update-user', 'AuthenticationController@updateUser');
 
@@ -119,6 +119,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
 
     Route::post('add-rating','RatingController@save');
     
+    //Delete user account
+    Route::get('/user/remove', 'UserController@removeUser');
 });
 
 Route::get("notify", function(){
