@@ -259,6 +259,8 @@ class SessionController extends Controller
                             'Class_id' => $users->p_id,
                             'Subject_id' => $users->s_id,
                             'is_group' => $users->is_group,
+                            'is_home' => $users->s_is_home,
+                            'hourly_rate' => $users->hourly_rate,
                             'tutor_is_home' => $users->t_is_home,
                             'tutor_lat' => $users->latitude,
                             'tutor_long' => $users->longitude,
