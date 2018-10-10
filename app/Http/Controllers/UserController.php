@@ -361,7 +361,8 @@ class UserController extends Controller
 //            'session_location' => 'required', //TODO: Required when android developer is ready.
             'is_group'  => 'required',
             'group_members' => 'required_if:is_group,==,1',
-            'hourly_rate' => 'required'
+            'hourly_rate' => 'required',
+            'is_home'  => 'required'
         ]);
         
         $student_id = $data['student_id'];

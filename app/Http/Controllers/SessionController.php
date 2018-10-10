@@ -155,6 +155,7 @@ class SessionController extends Controller
                     'Latitude' => $tutor->latitude,
                     'Longitude' => $tutor->longitude,
                     'SessionLocation' => is_null($tutor->session_location)?'':$tutor->session_location,
+                    'HourlyRate' => $tutor->hourly_rate,
                     'Hour' => $tutor->duration,
                     'Profile_image'=>!empty($student->profileImage)?URL::to('/images').'/'.$student->profileImage:''
                 ];
@@ -438,32 +439,11 @@ class SessionController extends Controller
 
         $duration = $date->diffInHours($now);
 
-//        $duration = Carbon::parse($duration);
-//        $durationMinutes=$duration->format('i');
         $durationInHour = $duration > 0 ? $duration : $duration+1;
-//        dd($duration->format('h'));
+
         $costPerHour = $findSession->hourly_rate;
         $totalCostAccordingToHours = $costPerHour * $durationInHour;
-//        if ($group_members != 0){
-//            switch ($group_members){
-//                case '2':
-//                    $percentage = $totalCostAccordingToHours * $twentyPercent;
-//                    $totalCostAccordingToHours += $percentage;
-//                    break;
-//                case '3':
-//                    $percentage = $totalCostAccordingToHours * $thirtyPercent;
-//                    $totalCostAccordingToHours += $percentage;
-//                    break;
-//                case '4':
-//                    $percentage = $totalCostAccordingToHours * $fortyPercent;
-//                    $totalCostAccordingToHours += $percentage;
-//                    break;
-//                case '5':
-//                    $percentage = $totalCostAccordingToHours * $fiftyPercent;
-//                    $totalCostAccordingToHours += $percentage;
-//                    break;
-//            }
-//        }
+
         if($findSession->student->profile->is_deserving == 0) {
             $findSession->ended_at = $now;
             $findSession->rate = $totalCostAccordingToHours;
@@ -492,7 +472,8 @@ class SessionController extends Controller
                     'launchImage' => 'image.jpg',
                     'custom' => array('custom_data' => array(
                         'notification_type' => 'session_ended',
-                        'session_id' => $request->session_id
+                        'session_id' => $request->session_id,
+                        'session_cost' => $totalCostAccordingToHours
                     ))
                 ));
             if ($user->device_type == 'android') {

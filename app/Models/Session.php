@@ -132,7 +132,7 @@ class Session extends Model
     
     public function findRequestSession($tutor_id){
         return User::select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name','profiles.is_group','sessions.duration'
-                    ,'profiles.programme_id','profiles.subject_id','sessions.rate','sessions.duration','sessions.longitude','sessions.latitude','sessions.session_location'
+                    ,'profiles.programme_id','profiles.subject_id','sessions.rate','sessions.hourly_rate','sessions.duration','sessions.longitude','sessions.latitude','sessions.session_location'
                     ,'sessions.status as session_status','subjects.name as s_name','sessions.student_id as session_user_id','sessions.id as session_id')
                 ->join('sessions','sessions.tutor_id','=','users.id')
                 ->join('profiles','profiles.user_id','=','users.id')

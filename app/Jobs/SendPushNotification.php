@@ -119,6 +119,7 @@ class SendPushNotification extends Job
                             'Class_id' => $programmeId,
                             'Subject_id' => $subjectId,
                             'IS_Group' => (int)$sessionData['is_group'],
+                            'IS_Home' => (int)$this->data['is_home'],
                             'Longitude' =>  $sessionData['longitude'],
                             'Latitude' => $sessionData['latitude'],
                             'Session_Location' => $sessionData['session_location'],
