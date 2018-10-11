@@ -60,8 +60,16 @@ class SendPushNotification extends Job
                 $sessionData['programme_id'] =  $programmeId;
                 $sessionData['subject_id'] =  $subjectId;
                 $sessionData['status'] =  'pending';
-                $sessionData['latitude'] =  $this->data['latitude'];
-                $sessionData['longitude'] =  $this->data['longitude'];
+
+                if($this->data['is_home'] == 0){
+                    $sessionData['latitude'] =  $user->latitude;
+                    $sessionData['longitude'] =  $user->longitude;
+                }
+                else{
+                    $sessionData['latitude'] =  $this->data['latitude'];
+                    $sessionData['longitude'] =  $this->data['longitude'];
+                }
+
                 $sessionData['is_group'] = $this->data['is_group'];
                 $sessionData['hourly_rate'] = $this->data['hourly_rate'];
                 $sessionData['is_home'] = $this->data['is_home'];
