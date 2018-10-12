@@ -157,9 +157,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         if($data['is_deserving'] == 1){
             return Self::select('users.*')
                 ->join('profiles','profiles.user_id','=','users.id')
+                ->join('program_subject','program_subject.user_id','=','users.id')
                 ->where('profiles.is_mentor','=', 1)
-                ->where('profiles.programme_id','=',$data['class_id'])
-                ->where('profiles.subject_id','=',$data['subject_id'])
+                ->where('program_subject.program_id','=',$data['class_id'])
+                ->where('program_subject.subject_id','=',$data['subject_id'])
                 ->where(function ($query) use ($data){
                     $query->where('profiles.is_home','=',$data['is_home'])
                         ->orWhere('profiles.call_student','=',$data['call_student']);
@@ -174,9 +175,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
         return Self::select('users.*')
                 ->join('profiles','profiles.user_id','=','users.id')
+                ->join('program_subject','program_subject.user_id','=','users.id')
                 ->where('profiles.is_mentor','=', 0)
-                ->where('profiles.programme_id','=',$data['class_id'])
-                ->where('profiles.subject_id','=',$data['subject_id'])
+                ->where('program_subject.program_id','=',$data['class_id'])
+                ->where('program_subject.subject_id','=',$data['subject_id'])
                 ->where(function ($query) use ($data){
                     $query->where('profiles.is_home','=',$data['is_home'])
                         ->orWhere('profiles.call_student','=',$data['call_student']);

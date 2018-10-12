@@ -51,7 +51,7 @@ class FindTutorController extends Controller
             //6371 = Kilometers
             //3959 = Miles
             if($studentProfile->is_deserving == 0) {
-                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, profiles.is_mentor, profiles.is_home, profiles.call_student, profiles.is_group, profiles.one_on_one,"
+                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, profiles.is_mentor, profiles.is_home, profiles.call_student, profiles.is_group, profiles.one_on_one, program_subject.program_id as t_program_id, program_subject.subject_id as t_subject_id,"
                     . "( 6371 "
                     . " * acos ( cos ( radians(" . $studentLat . ") )"
                     . " * cos( radians( `latitude` ) )"
@@ -61,15 +61,16 @@ class FindTutorController extends Controller
                     . " AS `distance`"
                     . " FROM `users`"
                     . " JOIN  `profiles` ON users.id = profiles.user_id"
+                    . " JOIN  `program_subject` ON users.id = program_subject.user_id"
                     . " WHERE `role_id` = '$roleId' "
-                    . " AND `programme_id` = '$studentClassId' "
-                    . " AND `subject_id` = '$studentSubjectId' "
+                    . " AND `t_program_id` = '$studentClassId' "
+                    . " AND `t_subject_id` = '$studentSubjectId' "
                     . " AND profiles.is_mentor = '0' "
                     . " AND (profiles.is_home = '$isHome' OR profiles.call_student = '$callStudent') "
                     . " AND (profiles.is_group = '$studentIsGroup' OR profiles.one_on_one = '$oneOnOne') "
                     . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
             }else{
-                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, profiles.is_mentor, profiles.is_home, profiles.call_student, profiles.is_group, profiles.one_on_one,"
+                $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, profiles.is_mentor, profiles.is_home, profiles.call_student, profiles.is_group, profiles.one_on_one, program_subject.program_id as t_program_id, program_subject.subject_id as t_subject_id,"
                     . "( 6371 "
                     . " * acos ( cos ( radians(" . $studentLat . ") )"
                     . " * cos( radians( `latitude` ) )"
@@ -79,9 +80,10 @@ class FindTutorController extends Controller
                     . " AS `distance`"
                     . " FROM `users`"
                     . " JOIN  `profiles` ON users.id = profiles.user_id"
+                    . " JOIN  `program_subject` ON users.id = program_subject.user_id"
                     . " WHERE `role_id` = '$roleId' "
-                    . " AND `programme_id` = '$studentClassId' "
-                    . " AND `subject_id` = '$studentSubjectId' "
+                    . " AND `t_program_id` = '$studentClassId' "
+                    . " AND `t_subject_id` = '$studentSubjectId' "
                     . " AND profiles.is_mentor = '1' "
                     . " AND (profiles.is_home = '$isHome' OR profiles.call_student = '$callStudent') "
                     . " AND (profiles.is_group = '$studentIsGroup' OR profiles.one_on_one = '$oneOnOne') "

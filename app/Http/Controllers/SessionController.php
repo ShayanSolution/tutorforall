@@ -186,7 +186,7 @@ class SessionController extends Controller
     public function bookedTutor(Request $request){
         $data = $request->all();
         $this->validate($request,[
-            'session_id' => 'required', //TODO: this field will be required when mobile developer work on it.
+            'session_id' => 'required',
 //            'student_id' => 'required',
 //            'tutor_id' => 'required',
 //            'subject_id' => 'required',

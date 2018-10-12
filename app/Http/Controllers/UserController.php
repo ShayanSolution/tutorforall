@@ -478,18 +478,18 @@ class UserController extends Controller
             }
             //update tutor profile
             User::updateUserProfile($tutor_id,$update_array,$role_id);
-            $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
-            if($tutor_profile){
-                $update_profile_values = $this->getProfileUpdatedValues($data);
-                $update_user_values = $this->getUserUpdatedValues($data);
-                User::updateUserValues($data['tutor_id'],$update_user_values);
-                Profile::updateUserProfile($data['tutor_id'],$update_profile_values);
-            }else{
-                $update_profile_values = $this->getProfileUpdatedValues($data);
-                $update_user_values = $this->getUserUpdatedValues($data);
-                User::updateUserValues($data['tutor_id'],$update_user_values);
-                Profile::createUserProfile($data['tutor_id'],$update_profile_values);
-            }
+//            $tutor_profile = Profile::where('user_id','=',$tutor_id)->first();
+//            if($tutor_profile){
+//                $update_profile_values = $this->getProfileUpdatedValues($data);
+//                $update_user_values = $this->getUserUpdatedValues($data);
+//                User::updateUserValues($data['tutor_id'],$update_user_values);
+//                Profile::updateUserProfile($data['tutor_id'],$update_profile_values);
+//            }else{
+//                $update_profile_values = $this->getProfileUpdatedValues($data);
+//                $update_user_values = $this->getUserUpdatedValues($data);
+//                User::updateUserValues($data['tutor_id'],$update_user_values);
+//                Profile::createUserProfile($data['tutor_id'],$update_profile_values);
+//            }
             //get student profile image
             $tutor_info = User::where('id','=',$tutor_id)->first();
             return [
