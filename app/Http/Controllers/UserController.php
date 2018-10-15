@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use App\Models\Profile;
+use App\Models\ProgramSubject;
 use App\Models\Session;
 use App\Models\User;
 use App\Models\Programme;
@@ -272,10 +273,13 @@ class UserController extends Controller
         if($user){
             //get tutor rating
             $user_rating = 0;
+            $subjectList = '';
             if($user->role_id == 2){
                 $rating_sessions = Session::where('tutor_id', $user_id)->where('hourly_rate', '!=', 0)->pluck('id');
                 $rating = Rating::whereIn('session_id', $rating_sessions)->get();
                 $user_rating = $rating->avg('rating');
+                $subject = new ProgramSubject;
+                $subjectList = $subject->getSubjectsDetail($user_id);
             }
 
             $profile = array(
@@ -302,7 +306,7 @@ class UserController extends Controller
                 'Is Group'=>$user->is_group,
                 'Meeting Type Id'=>$user->meeting_type_id,
                 'Programme Id'=>$user->programme_id,
-                'Subject Id'=>$user->subject_id,
+                'Subject Id'=>$subjectList,
                 'Rating' => number_format((float)$user_rating, 1, '.', ''),
                 'Profile_Image' => URL::to('/images').'/'.$user->profileImage,
 
