@@ -64,10 +64,12 @@ class SendPushNotification extends Job
                 if($this->data['is_home'] == 0){
                     $sessionData['latitude'] =  $user->latitude;
                     $sessionData['longitude'] =  $user->longitude;
+                    $sessionData['session_location'] = $user->address;
                 }
                 else{
                     $sessionData['latitude'] =  $this->data['latitude'];
                     $sessionData['longitude'] =  $this->data['longitude'];
+                    $sessionData['session_location'] = $this->data['session_location'];
                 }
 
                 $sessionData['is_group'] = $this->data['is_group'];
@@ -82,12 +84,12 @@ class SendPushNotification extends Job
                 }
                 $sessionData['started_at'] = TimeZoneHelper::timeConversion(Carbon::now(), 0);
 
-                if(isset($this->data['session_location'])){
-
-                    $sessionData['session_location'] = $this->data['session_location'];
-                }else{
-                    $sessionData['session_location'] = '';
-                }
+//                if(isset($this->data['session_location'])){
+//
+//                    $sessionData['session_location'] = $this->data['session_location'];
+//                }else{
+//                    $sessionData['session_location'] = '';
+//                }
 
                 if(isset($this->data['book_later_time']) && isset($this->data['book_later_date'])){
                     $sessionData['book_later_at'] = $this->data['book_later_date'].' '.date("H:i:s", strtotime($this->data['book_later_time']));

@@ -313,10 +313,14 @@ class AuthenticationController extends Controller
         $longitude = $request->longitude;
         $latitude = $request->latitude;
         $user_id = $request->user_id;
+        $address = '';
+        if(isset($request->address) && $request->address != ''){
+            $address = $request->address;
+        }
 
         $user = User::where('id', '=', $user_id)->first();
         if($user){
-            $location = User::updateTutorLocation($user_id,$longitude,$latitude);
+            $location = User::updateTutorLocation($user_id,$longitude,$latitude, $address);
         }else{
 
             return response()->json(
