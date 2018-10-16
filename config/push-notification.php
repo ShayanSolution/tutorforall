@@ -3,14 +3,16 @@
 return array(
 
     'appNameIOS'     => array(
-        'environment' =>'development',
-        'certificate' =>base_path().'/TutorPortal.pem',
+//        'environment' =>'development',
+        'environment' => 'production',
+        'certificate' => public_path().'/pem/TutorPortalProduction.pem',
         'passPhrase'  =>'password',
         'service'     =>'apns'
     ),
     'appStudentIOS'     => array(
-        'environment' =>'development',
-        'certificate' =>base_path().'/Tutor4All.pem',
+//        'environment' =>'development',
+        'environment' => 'production',
+        'certificate' => public_path().'/pem/Tutor4All.pem',
         'passPhrase'  =>'password',
         'service'     =>'apns'
     ),

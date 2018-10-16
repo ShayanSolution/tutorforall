@@ -38,7 +38,7 @@ class SendPushNotification extends Job
      */
     public function handle()
     {
-        Log::info('Tutor request push notification called at '.Carbon::now(). ' Sending to tutor_id => ');
+        Log::info('Tutor request push notification called at '.Carbon::now());
         $studentId = $this->data['student_id'];
         $programmeId = $this->data['class_id'];
         $subjectId = $this->data['subject_id'];
