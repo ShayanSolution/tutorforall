@@ -309,13 +309,13 @@ class AuthenticationController extends Controller
             'latitude' => 'required',
             'user_id' => 'required',
         ]);
-
-        $longitude = $request->longitude;
-        $latitude = $request->latitude;
-        $user_id = $request->user_id;
+        $data = $request->all();
+        $longitude = $data['longitude'];
+        $latitude = $data['latitude'];
+        $user_id = $data['user_id'];
         $address = '';
-        if($request->address && $request->address != ''){
-            $address = $request->address;
+        if(isset($data['address']) && $data['address'] != ''){
+            $address = $data['address'];
         }
 
         $user = User::where('id', '=', $user_id)->first();
