@@ -71,7 +71,12 @@ class SendPushNotification extends Job
                 else{
                     $sessionData['latitude'] =  $this->data['latitude'];
                     $sessionData['longitude'] =  $this->data['longitude'];
-                    $sessionData['session_location'] = $this->data['session_location'];
+                    if(isset($this->data['session_location'])) {
+                        $sessionData['session_location'] = $this->data['session_location'];
+                    }
+                    else{
+                        $sessionData['session_location'] = '';
+                    }
                 }
 
                 $sessionData['is_group'] = $this->data['is_group'];
