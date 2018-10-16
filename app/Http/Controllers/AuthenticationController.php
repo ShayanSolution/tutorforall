@@ -314,7 +314,7 @@ class AuthenticationController extends Controller
         $latitude = $request->latitude;
         $user_id = $request->user_id;
         $address = '';
-        if(isset($request->address) && $request->address != ''){
+        if($request->address && $request->address != ''){
             $address = $request->address;
         }
 

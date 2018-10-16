@@ -5,14 +5,26 @@ return array(
     'appNameIOS'     => array(
 //        'environment' =>'development',
         'environment' => 'production',
-        'certificate' => base_path().'/public/pem/TutorPortalProduction.pem',
+        'certificate' => base_path().'/storage/pem/TutorPortalProduction.pem',
+        'passPhrase'  =>'password',
+        'service'     =>'apns'
+    ),
+    'appNameIOSProduction'     => array(
+        'environment' => 'production',
+        'certificate' => base_path().'/storage/pem/TutorPortalProduction.pem',
         'passPhrase'  =>'password',
         'service'     =>'apns'
     ),
     'appStudentIOS'     => array(
 //        'environment' =>'development',
         'environment' => 'production',
-        'certificate' => base_path().'/public/pem/Tutor4All.pem',
+        'certificate' => base_path().'/storage/pem/TutorForAllProduction.pem',
+        'passPhrase'  =>'password',
+        'service'     =>'apns'
+    ),
+    'appStudentIOSProduction'     => array(
+        'environment' => 'production',
+        'certificate' => base_path().'/storage/pem/Tutor4All.pem',
         'passPhrase'  =>'password',
         'service'     =>'apns'
     ),
