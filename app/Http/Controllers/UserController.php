@@ -306,7 +306,8 @@ class UserController extends Controller
                 'Is Group'=>$user->is_group,
                 'Meeting Type Id'=>$user->meeting_type_id,
                 'Programme Id'=>$user->programme_id,
-                'Subject Id'=>$subjectList,
+                'Subject Id'=>$user->subject_id,
+                'Subjects List'=>$subjectList,
                 'Rating' => number_format((float)$user_rating, 1, '.', ''),
                 'Profile_Image' => URL::to('/images').'/'.$user->profileImage,
 
