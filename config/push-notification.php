@@ -5,14 +5,14 @@ return array(
     'appNameIOS'     => array(
 //        'environment' =>'development',
         'environment' => 'production',
-        'certificate' => public_path().'/pem/TutorPortalProduction.pem',
+        'certificate' => base_path().'/public/pem/TutorPortalProduction.pem',
         'passPhrase'  =>'password',
         'service'     =>'apns'
     ),
     'appStudentIOS'     => array(
 //        'environment' =>'development',
         'environment' => 'production',
-        'certificate' => public_path().'/pem/Tutor4All.pem',
+        'certificate' => base_path().'/public/pem/Tutor4All.pem',
         'passPhrase'  =>'password',
         'service'     =>'apns'
     ),
