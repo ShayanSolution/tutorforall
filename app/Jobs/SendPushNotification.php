@@ -4,7 +4,7 @@ namespace App\Jobs;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
-use Log;
+use Illuminate\Support\Facades\Log;
 //helpers
 use TimeZoneHelper;
 //Models
@@ -38,6 +38,7 @@ class SendPushNotification extends Job
      */
     public function handle()
     {
+        Log::info('Tutor request push notification called at '.Carbon::now());
         $studentId = $this->data['student_id'];
         $programmeId = $this->data['class_id'];
         $subjectId = $this->data['subject_id'];
@@ -146,6 +147,7 @@ class SendPushNotification extends Job
                 if($user->device_type == 'android') {
                     PushNotification::app('appNameAndroid')->to($user->token)->send($message);
                 }else{
+                    Log::info('Tutor request push notification sent at '.Carbon::now());
                     PushNotification::app('appNameIOS')->to($user->token)->send($message);
                 }
             }
