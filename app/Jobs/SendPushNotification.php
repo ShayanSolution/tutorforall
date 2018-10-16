@@ -38,7 +38,7 @@ class SendPushNotification extends Job
      */
     public function handle()
     {
-        Log::info('Tutor request push notification called at '.Carbon::now());
+        Log::info('Tutor request push notification called at '.Carbon::now(). ' Sending to tutor_id => ');
         $studentId = $this->data['student_id'];
         $programmeId = $this->data['class_id'];
         $subjectId = $this->data['subject_id'];
@@ -52,6 +52,7 @@ class SendPushNotification extends Job
 
 
         for($j=0;$j<count($this->tutorsIds);$j++){
+            Log::info('Sending to tutor_id => '. $this->tutorsIds[$j]);
             //get tutor device token to send notification
             $user = User::where('id','=',$this->tutorsIds[$j])->select('users.*','device_token as token')->first();
             if(!empty($user->token)){
@@ -145,9 +146,10 @@ class SendPushNotification extends Job
                     ));
 
                 if($user->device_type == 'android') {
+                    Log::info('Tutor request push notification sent at '.Carbon::now(). ' to android device');
                     PushNotification::app('appNameAndroid')->to($user->token)->send($message);
                 }else{
-                    Log::info('Tutor request push notification sent at '.Carbon::now());
+                    Log::info('Tutor request push notification sent at '.Carbon::now(). ' to IOS device');
                     PushNotification::app('appNameIOS')->to($user->token)->send($message);
                 }
             }
