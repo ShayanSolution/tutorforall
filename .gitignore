@@ -8,3 +8,4 @@ Homestead.yaml
 /nbproject
 /public/images/
 composer.lock
+/storage/pem/
