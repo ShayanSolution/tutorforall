@@ -48,7 +48,7 @@ class AuthenticationController extends Controller
         $phone = $request->phone;
         $user = new User;
         $phoneExist = $user->findByPhoneNumber($phone);
-        
+
         if ($phoneExist && $phoneExist->deleted_at){
 
             $phoneExist->restore();
@@ -249,7 +249,6 @@ class AuthenticationController extends Controller
                 ])->id;
 
             if ($user) {
-                dd($user);
                 Profile::registerUserProfile($user);
                 $user = User::where('id', $user)->first();
 
