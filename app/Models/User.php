@@ -325,6 +325,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
     public static function findByPhoneNumber($phone){
         $phoneWithoutCode = substr($phone,-10);
-        return self::where('phone','like','%'.$phoneWithoutCode)->first();
+        return self::where('phone','like','%'.$phoneWithoutCode)->withTrashed()->first();
     }
 }

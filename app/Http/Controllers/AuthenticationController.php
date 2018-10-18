@@ -48,13 +48,10 @@ class AuthenticationController extends Controller
         $phone = $request->phone;
         $user = new User;
         $phoneExist = $user->findByPhoneNumber($phone);
-        if ($phoneExist){
-            return JsonResponse::generateResponse(
-                [
-                    'status' => 'error',
-                    'message' => 'phone number already exists.'
-                ],500
-            );
+        
+        if ($phoneExist && $phoneExist->deleted_at){
+
+            $phoneExist->restore();
         }
 
         $phoneCode = PhoneCode::getPhoneNumber($phone);
@@ -226,60 +223,43 @@ class AuthenticationController extends Controller
     public function postRegisterStudent(Request $request){
 
         $this->validate($request,[
-            'email' => 'required|email|unique:users',
-            'phone' => 'required|digits_between:11,20|unique:users',
-//            'code' => 'required|digits:4',
+            'email' => 'required|email',
+            'phone' => 'required|digits_between:11,20',
             'device_token' => 'required',
         ]);
-//        $confirmation_code = str_random(30);
-//        $password = str_random(6);
-//        $user = User::where('id',10)->first();
-//        $user_detail = ['confirmation_code'=>$confirmation_code,'firstName'=>$user['firstName'],'phone'=>$user['phone'],'password'=>$password];
-//        Mail::send('emails.welcome', ['confirmation_code'=>$confirmation_code,'user'=>$user_detail], function($message) use($user) {
-//            $message->to($user['email'], $user['firstName'])->subject('Verify your email address');
-//            $message->from('info@tutor4all.com','Tutor4all');
-//        });dd();
+
 
         $email = $request->email;
         $phone = $request->phone;
 //        $code = $request->code;
         $device_token = $request->device_token;
 
-//        $code = PhoneCode::where('phone', $phone)
-////            ->where('code', $code)
-//            ->where('verified', 1)
-//            ->where('created_at', '>=', Carbon::today()) //TODO: This check can disabled if we need to validate code not generated on same day
-//            ->orderBy('id')
-//            ->first();
+        $confirmation_code = str_random(30);
+        $password = str_random(6);
+        try {
+            $user = User::updateOrCreate(['phone' => $phone],
+                [
+                    'email' => $email,
+                    'phone' => $phone,
+                    'password' => Hash::make($password),
+                    'uid' => md5(microtime()),
+                    'role_id' => 3,
+                    'device_token' => $device_token,
+                    'confirmation_code' => $confirmation_code,
+                ])->id;
 
-//        if($code){
-            $confirmation_code = str_random(30);
-            $password = str_random(6);
-            $user = User::create([
-                'email' => $email,
-                'phone' => $phone,
-                'password' => Hash::make($password),
-                'uid' => md5(microtime()),
-                'role_id' => 3,
-                'device_token' => $device_token,
-                'confirmation_code' => $confirmation_code,
-            ])->id;
-
-            if($user){
+            if ($user) {
+                dd($user);
                 Profile::registerUserProfile($user);
-                $user = User::where('id',$user)->first();
-                $user_detail = ['confirmation_code'=>$confirmation_code,'firstName'=>$user['firstName'],'phone'=>$user['phone'],'password'=>$password];
-//                Mail::send('emails.welcome', ['confirmation_code'=>$confirmation_code,'user'=>$user_detail], function($message) use($user) {
-//                    $message->to($user['email'], $user['firstName'])->subject('Verify your email address');
-//                    $message->from('info@tutor4all.com','Tutor4all');
-//                });
+                $user = User::where('id', $user)->first();
+
                 return [
                     'status' => 'success',
                     'password' => $password,
                     'user_id' => $user,
                     'messages' => 'Student has been created'
                 ];
-            }else{
+            } else {
                 return response()->json(
                     [
                         'status' => 'error',
@@ -287,17 +267,17 @@ class AuthenticationController extends Controller
                     ], 422
                 );
             }
-
-//        } else {
-//
-//            return response()->json(
-//                [
-//                    'status' => 'error',
-//                    'message' => 'Invalid or expired phone verification'
-//                ], 422
-//            );
-//
-//        }
+        }catch (\Exception $e){
+            $errorCode = $e->errorInfo[1];
+            if($errorCode == 1062){
+                return response()->json(
+                    [
+                        'status' => 'error',
+                        'message' => 'Email already exist.'
+                    ], 422
+                );
+            }
+        }
     }
 
 
