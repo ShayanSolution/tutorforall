@@ -39,17 +39,17 @@ class AccessTokenController extends Controller
     {
         $inputs = $request->all();
 
-        $user = new User();
-        $isActive = $user->isActive($inputs['username']);
-        
-        if(!$isActive){
-            return response()->json(
-                [
-                    'status' => 'error',
-                    'message' => 'User is inactive.'
-                ], 422
-            );
-        }
+//        $user = new User();
+//        $isActive = $user->isActive($inputs['username']);
+//
+//        if(!$isActive){
+//            return response()->json(
+//                [
+//                    'status' => 'error',
+//                    'message' => 'User is inactive.'
+//                ], 422
+//            );
+//        }
 
         //Set default scope with full access
         if (!isset($inputs['scope']) || empty($inputs['scope'])) {
