@@ -244,6 +244,7 @@ class AuthenticationController extends Controller
                     'password' => Hash::make($password),
                     'uid' => md5(microtime()),
                     'role_id' => 3,
+                    'is_active' => 1,
                     'device_token' => $device_token,
                     'confirmation_code' => $confirmation_code,
                 ])->id;
