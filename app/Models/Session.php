@@ -151,7 +151,7 @@ class Session extends Model
 
     public function getTutorSessionDetail($tutor_id){
         $tutor_session_detail = User::select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name', 'sessions.id as session_id', 'sessions.student_id'
-                                    ,'sessions.book_later_at','sessions.longitude','sessions.latitude','sessions.session_location','rate','sessions.duration' ,'sessions.status as session_status'
+                                    ,'sessions.book_later_at','sessions.longitude','sessions.latitude','sessions.session_location','rate','sessions.duration' ,'sessions.status as session_status', 'sessions.is_home as session_is_home'
                                     ,'subjects.name as s_name','sessions.student_id as session_user_id'
                                     ,'ratings.rating as session_rating','ratings.review as session_review')
                                 ->join('sessions','sessions.tutor_id','=','users.id')
@@ -192,6 +192,7 @@ class Session extends Model
             $session_detail[$index]['firstName'] = !empty($student_detail->firstName)?$student_detail->firstName:'';
             $session_detail[$index]['lastName'] = !empty($student_detail->lastName)?$student_detail->lastName:'';
             $session_detail[$index]['id'] = $session->id;
+            $session_detail[$index]['is_home'] = $session->session_is_home;
             $session_detail[$index]['Student_Longitude'] = $session->longitude;
             $session_detail[$index]['Student_Latitude'] = $session->latitude;
             $session_detail[$index]['Session_Location'] = is_null($session->session_location)?'':$session->session_location;
@@ -209,7 +210,7 @@ class Session extends Model
     
     public function getStudentSessionDetail($student_id){
         $student_session_detail = User::select('users.*', 'sessions.created_at as Session_created_date','sessions.longitude','sessions.latitude','sessions.session_location','rate','sessions.duration'
-                                        ,'sessions.book_later_at','sessions.status as session_status','subjects.name as s_name', 'programmes.name as p_name','sessions.tutor_id as session_user_id','sessions.id as session_id'
+                                        ,'sessions.book_later_at','sessions.status as session_status','subjects.name as s_name', 'programmes.name as p_name','sessions.tutor_id as session_user_id','sessions.id as session_id', 'sessions.is_home as session_is_home'
                                         ,'ratings.rating as session_rating','ratings.review as session_review')
                                     ->join('sessions','sessions.student_id','=','users.id')
                                     ->join('profiles','profiles.user_id','=','users.id')

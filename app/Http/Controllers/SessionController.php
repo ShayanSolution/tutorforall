@@ -81,6 +81,7 @@ class SessionController extends Controller
                     'Session_Duration' => $user->duration,
                     'Hour' => $user->duration,
                     'Price' => $user->rate,
+                    'is_home' => $user->session_is_home,
                     'Session_id' => $user->session_id,
                     'session_status' => $user->session_status,
                     'session_rating' => is_null($user->session_rating)?'':number_format((float)$user->session_rating, 1, '.', ''),
