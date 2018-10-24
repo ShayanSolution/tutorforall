@@ -213,7 +213,7 @@ class Session extends Model
     }
     
     public function getStudentSessionDetail($student_id){
-        $student_session_detail = User::select('users.*', 'sessions.created_at as Session_created_date','sessions.longitude','sessions.latitude','sessions.session_location','rate','sessions.duration'
+        $student_session_detail = User::select('users.*', 'sessions.created_at as Session_created_date','sessions.longitude','sessions.latitude','sessions.hourly_rate','sessions.session_location','rate','sessions.duration'
                                         ,'sessions.book_later_at','sessions.status as session_status','subjects.name as s_name', 'programmes.name as p_name','sessions.tutor_id as session_user_id','sessions.id as session_id', 'sessions.is_home as session_is_home'
                                         ,'ratings.rating as session_rating','ratings.review as session_review')
                                     ->join('sessions','sessions.student_id','=','users.id')
