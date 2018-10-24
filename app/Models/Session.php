@@ -151,7 +151,7 @@ class Session extends Model
 
     public function getTutorSessionDetail($tutor_id){
         $tutor_session_detail = User::select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name', 'sessions.id as session_id', 'sessions.student_id'
-                                    ,'sessions.book_later_at','sessions.session_location','rate','sessions.duration' ,'sessions.status as session_status', 'sessions.is_group as session_is_group'
+                                    ,'sessions.book_later_at','sessions.session_location','rate','sessions.hourly_rate','sessions.duration' ,'sessions.status as session_status', 'sessions.is_group as session_is_group'
                                     , 'sessions.is_home as session_is_home', 'sessions.latitude as session_latitude', 'sessions.longitude as session_longitude'
                                     ,'subjects.name as s_name','sessions.student_id as session_user_id'
                                     ,'ratings.rating as session_rating','ratings.review as session_review')
@@ -202,6 +202,7 @@ class Session extends Model
             $session_detail[$index]['Session_Longitude'] = $session->session_longitude;
             $session_detail[$index]['Hour'] = $session->duration;
             $session_detail[$index]['Price'] = $session->rate;
+            $session_detail[$index]['hourly_rate'] = $session->hourly_rate;
             $session_detail[$index]['Date'] = $sessionDate;
             $session_detail[$index]['Age'] = Carbon::parse($session->dob)->age;
             $session_detail[$index]['Profile_image'] = !empty($student_detail->profileImage)?URL::to('/images').'/'.$student_detail->profileImage:'';
