@@ -43,16 +43,21 @@ class Profile extends Model
     }
     
     public static function registerUserProfile($tutor_id){
-        $profile = Self::updateOrCreate([
-            'is_mentor' => 0,
-            'is_deserving' => 0,
-            'is_home' => 0,
-            'is_group' => 0,
-            'meeting_type_id' => 0,
-            'user_id'=>$tutor_id,
-            'programme_id'=>0,
-            'subject_id'=>0,
+        $profile = Self::updateOrCreate(
+            [
+                'user_id'=>$tutor_id,
+            ],
+            [
+                'is_mentor' => 0,
+                'is_deserving' => 0,
+                'is_home' => 0,
+                'is_group' => 0,
+                'meeting_type_id' => 0,
+                'user_id'=>$tutor_id,
+                'programme_id'=>0,
+                'subject_id'=>0,
         ])->id;
+
         
         return $profile;
     }
