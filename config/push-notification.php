@@ -3,15 +3,15 @@
 return array(
 
     'appNameIOS'     => array(
-        'environment' =>'development',
-//        'environment' => 'production',
+        //'environment' =>'development',
+        'environment' => 'production',
         'certificate' => base_path().'/storage/pem/TutorPortalProduction.pem',
         'passPhrase'  =>'password',
         'service'     =>'apns'
     ),
     'appStudentIOS'     => array(
-        'environment' =>'development',
-//        'environment' => 'production',
+        //'environment' =>'development',
+        'environment' => 'production',
         'certificate' => base_path().'/storage/pem/TutorForAllProduction.pem',
         'passPhrase'  =>'password',
         'service'     =>'apns'
