@@ -156,7 +156,7 @@ class Session extends Model
                                     ,'subjects.name as s_name','sessions.student_id as session_user_id'
                                     ,'ratings.rating as session_rating','ratings.review as session_review')
                                 ->join('sessions','sessions.tutor_id','=','users.id')
-                                ->join('profiles','profiles.user_id','=','users.id')
+                                /*->join('profiles','profiles.user_id','=','users.id')*/
                                 ->join('programmes','programmes.id','=','sessions.programme_id')
                                 ->join('subjects','subjects.id','=','sessions.subject_id')
                                 ->leftJoin('ratings','ratings.session_id','=','sessions.id')
@@ -218,7 +218,7 @@ class Session extends Model
                                         ,'sessions.book_later_at','sessions.status as session_status','subjects.name as s_name', 'programmes.name as p_name','sessions.tutor_id as session_user_id','sessions.id as session_id', 'sessions.is_home as session_is_home'
                                         ,'ratings.rating as session_rating','ratings.review as session_review')
                                     ->join('sessions','sessions.student_id','=','users.id')
-                                    ->join('profiles','profiles.user_id','=','users.id')
+                                    /*->join('profiles','profiles.user_id','=','users.id')*/
                                     ->join('programmes','programmes.id','=','sessions.programme_id')
                                     ->join('subjects','subjects.id','=','sessions.subject_id')
                                     ->leftJoin('ratings','ratings.session_id','=','sessions.id')

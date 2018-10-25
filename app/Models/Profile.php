@@ -43,7 +43,7 @@ class Profile extends Model
     }
     
     public static function registerUserProfile($tutor_id){
-        $profile = Self::create([
+        $profile = Self::updateOrCreate([
             'is_mentor' => 0,
             'is_deserving' => 0,
             'is_home' => 0,
