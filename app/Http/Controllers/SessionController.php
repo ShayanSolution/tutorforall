@@ -31,7 +31,6 @@ use phpDocumentor\Reflection\Types\Null_;
 class SessionController extends Controller
 {
     public function mySessions(Request $request){
-        dd("die");
         $data = $request->all();
         $session = new Session();
         //tutor session list
