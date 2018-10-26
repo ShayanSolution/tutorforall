@@ -651,6 +651,10 @@ class UserController extends Controller
         $user = User::find(Auth::user()->id);
         if($user){
             if($user->delete()){
+
+                $user->update(['device_token'=>'']);//Remove user device token
+                Auth::user()->AauthAcessToken()->delete();//Delete user access token
+
                 return response()->json(
                     [
                         'status' => 'success',
