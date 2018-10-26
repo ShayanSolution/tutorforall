@@ -47,7 +47,7 @@ class AuthenticationController extends Controller
         ]);
         $phone = $request->phone;
         $user = new User;
-        $phoneExist = $user->findByPhoneNumber($phone);
+        $phoneExist = $user->findByExactPhoneNumber($phone);
 
         if ($phoneExist && $phoneExist->deleted_at){
 

@@ -331,6 +331,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return self::where('phone','like','%'.$phoneWithoutCode)->withTrashed()->first();
     }
 
+
+    public static function findByExactPhoneNumber($phone)
+    {
+        return self::where('phone',$phone)->withTrashed()->first();
+    }
+
+
     public function isActive($phone)
     {
         return self::where('phone','like','%'.$phone)->where('is_active', 1)->first();
