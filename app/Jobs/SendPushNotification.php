@@ -137,6 +137,7 @@ class SendPushNotification extends Job
                             'Class_id' => $programmeId,
                             'Subject_id' => $subjectId,
                             'IS_Group' => (int)$sessionData['is_group'],
+                            'Group_Members' => (int)$sessionData['group_members'],
                             'IS_Home' => (int)$this->data['is_home'],
                             'Hourly_Rate' => (string)round($this->data['hourly_rate'], 0),
                             'Longitude' =>  $sessionData['longitude'],
