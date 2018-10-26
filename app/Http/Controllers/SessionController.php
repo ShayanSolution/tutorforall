@@ -205,7 +205,7 @@ class SessionController extends Controller
         if(!$session){
             return [
                 'status' => 'fail',
-                'messages' => 'Session id does not exist'
+                'message' => 'Session id does not exist'
             ];
         }
 
@@ -213,7 +213,7 @@ class SessionController extends Controller
         if($session->status == 'booked'){
             return [
                 'status' => 'fail',
-                'messages' => 'Session already booked!'
+                'message' => 'Session already booked!'
             ];
         }else{
 //            $tutorId = $session->tutor_id;
