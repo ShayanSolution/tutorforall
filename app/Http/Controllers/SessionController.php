@@ -339,7 +339,7 @@ class SessionController extends Controller
         $data['status'] = 'reject';
         
         $session = new Session();
-        $session = $session->updateSession(['id'=>$data['session_id']], ['status'=> $data['status']]);
+        $session = $session->updateSession(['id'=>$data['session_id']], ['status'=> $data['status'], 'tutor_id'=> Auth::user()->id]);
         if($session){
             return [
                 'status' => 'success',
