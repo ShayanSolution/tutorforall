@@ -152,7 +152,7 @@ class Session extends Model
     public function getTutorSessionDetail($tutor_id){
         $tutor_session_detail = User::select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name', 'sessions.id as session_id', 'sessions.student_id'
                                     ,'sessions.book_later_at','sessions.session_location','rate','sessions.hourly_rate','sessions.duration' ,'sessions.status as session_status', 'sessions.is_group as session_is_group'
-                                    , 'sessions.is_home as session_is_home', 'sessions.latitude as session_latitude', 'sessions.longitude as session_longitude'
+                                    , 'sessions.is_home as session_is_home', 'sessions.latitude as session_latitude', 'sessions.longitude as session_longitude', 'sessions.group_members as session_group_members'
                                     ,'subjects.name as s_name','sessions.student_id as session_user_id'
                                     ,'ratings.rating as session_rating','ratings.review as session_review')
                                 ->join('sessions','sessions.tutor_id','=','users.id')
@@ -195,6 +195,7 @@ class Session extends Model
             $session_detail[$index]['id'] = $session->id;
             $session_detail[$index]['is_home'] = $session->session_is_home;
             $session_detail[$index]['is_group'] = $session->session_is_group;
+            $session_detail[$index]['group_members'] = $session->session_group_members;
             $session_detail[$index]['Student_Longitude'] = $session->longitude;
             $session_detail[$index]['Student_Latitude'] = $session->latitude;
             $session_detail[$index]['Session_Location'] = is_null($session->session_location)?'':$session->session_location;
