@@ -6,6 +6,7 @@ use App\Wallet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class Session extends Model
@@ -73,6 +74,36 @@ class Session extends Model
         
         $session = Session::create($data);
         return $session;
+    }
+
+    public function createOrUpdateSession($data){
+        Log::info('createOrUpdateSession called: '.print_r($data, true));
+        $data['subscription_id']= 3;
+        $data['meeting_type_id']= 1;
+
+        $session = new Session();
+
+        $getSession = $session->where(
+                        [
+                            'student_id'=>$data['student_id'],
+                            'programme_id'=>$data['programme_id'],
+                            'subject_id'=>$data['subject_id'],
+                            'programme_id'=>$data['programme_id'],
+                        ])
+                        ->whereDate('started_at', '=', date('Y-m-d', strtotime($data['started_at'])))->first();
+
+        if(!$getSession){
+            $updateSession = Session::create($data);
+            Log::info('New session created with id: '.$updateSession->id);
+            return $updateSession;
+        }
+        else{
+            $updateSession = $getSession->update($data);
+            Log::info('Session updated with id: '.$getSession->id);
+            return $getSession;
+        }
+
+        
     }
 
     public function findSessionById($session_id){

@@ -13,7 +13,7 @@ use App\Models\User;
 use App\Models\Programme;
 use App\Models\Subject;
 
-class SendPushNotification extends Job
+class SendPushNotification extends Job 
 {
     /**
      * Create a new job instance.
@@ -26,6 +26,7 @@ class SendPushNotification extends Job
 
     public function __construct($data, $tutorsIds, $student)
     {
+        Log::info('Tutor request push notification constructor called at '.Carbon::now());
         $this->tutorsIds = $tutorsIds;
         $this->data = $data;
         $this->student = $student;
@@ -111,7 +112,12 @@ class SendPushNotification extends Job
                 }
 
                 $session = new Session();
-                $sessionRequest = $session->addSession($sessionData);
+//                $sessionRequest = $session->addSession($sessionData);//Create new entry for every tutor
+
+                //Create new entry if session is not exist with same student_id, subject_id, class_id and date. else update the already existed entry.
+                //Reject session request status is also updated. Means we will not have reject sessions history.
+//                Log::info('createOrUpdateSession called: '.print_r($sessionData, true));
+                $sessionRequest = $session->createOrUpdateSession($sessionData);
 
                 $deviceTokenArray[] = $user->token;
                 //notification message
