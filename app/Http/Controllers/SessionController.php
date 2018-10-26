@@ -216,7 +216,8 @@ class SessionController extends Controller
                 'messages' => 'Session already booked!'
             ];
         }else{
-            $tutorId = $session->tutor_id;
+//            $tutorId = $session->tutor_id;
+            $tutorId = Auth::user()->id;//Get login tutor id
             $studentId = $session->student_id;
 
             //get tutor profile
