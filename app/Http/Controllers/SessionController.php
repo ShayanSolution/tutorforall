@@ -463,7 +463,7 @@ class SessionController extends Controller
             $wallet->save();
             //TODO: Add in job
             $message = PushNotification::Message(
-                'Your total cost is Rs' . $totalCostAccordingToHours,
+                'Your total cost is Rs ' . $totalCostAccordingToHours,
                 array(
                     'badge' => 1,
                     'sound' => 'example.aiff',
@@ -501,7 +501,7 @@ class SessionController extends Controller
             $findSession->save();
             //TODO: Add in job
             $message = PushNotification::Message(
-                'Your total cost is Rs' . $totalCostAccordingToHours,
+                'Your total cost is Rs ' . $totalCostAccordingToHours,
                 array(
                     'badge' => 1,
                     'sound' => 'example.aiff',
