@@ -212,7 +212,7 @@ class SessionController extends Controller
         }
 
         //if student session already exists.
-        if($session->status == 'booked'){
+        if($session->status == 'booked' || $session->status == 'started' || $session->status == 'ended'){
             return [
                 'status' => 'fail',
                 'message' => 'Session already booked!'
