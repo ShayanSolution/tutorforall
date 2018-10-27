@@ -549,6 +549,9 @@ class SessionController extends Controller
     public function getLatestSession(){
         $userId = Auth::user()->id;
         $roleId = Auth::user()->role_id;
+        Log::info('Get latest session of user ID: '.$userId);
+        Log::info('Get latest session of user role: '.$roleId);
+
         $session = '';
         $rating = '';
         $data = [];
@@ -582,6 +585,9 @@ class SessionController extends Controller
                 );
             }
         }
+
+        Log::info('Get latest session ID: '.$session->id);
+
         $data['program_name'] = $session->programme->name;
         $data['subject_name'] = $session->subject->name;
         $data['tutor_name']   = $session->tutor->firstName." ".$session->tutor->lastName;
