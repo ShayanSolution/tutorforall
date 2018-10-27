@@ -84,6 +84,8 @@ class SessionController extends Controller
                     'is_home' => $user->session_is_home,
                     'Session_id' => $user->session_id,
                     'session_status' => $user->session_status,
+                    'is_group' => $user->session_is_group,
+                    'group_members' => $user->session_group_members,
                     'session_rating' => is_null($user->session_rating)?'':number_format((float)$user->session_rating, 1, '.', ''),
                     'session_review' => is_null($user->session_review)?'':(string)$user->session_review,
                     'paid_amount' => isset($paidAmount) ? $paidAmount : 0,
