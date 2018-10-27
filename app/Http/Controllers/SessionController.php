@@ -586,7 +586,7 @@ class SessionController extends Controller
             }
         }
 
-        Log::info('Get latest session ID: '.$session->id);
+        Log::info('Get latest session ID: '.print_r($session->student));
 
         $data['program_name'] = $session->programme->name;
         $data['subject_name'] = $session->subject->name;
