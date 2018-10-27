@@ -553,7 +553,7 @@ class SessionController extends Controller
         $rating = '';
         $data = [];
         if($roleId == 2){
-            $session = Session::where('tutor_id', $userId)->orderBy('updated_at', 'desc')->first();
+            $session = Session::where('tutor_id', $userId)->with('tutor','student')->orderBy('updated_at', 'desc')->first();
             if($session){
                 $rating = Rating::where('session_id', $session->id)->first();
             }else{
@@ -567,7 +567,7 @@ class SessionController extends Controller
             
         }
         else{
-            $session = Session::where('student_id', $userId)->orderBy('updated_at', 'desc')->first();
+            $session = Session::where('student_id', $userId)->with('tutor','student')->orderBy('updated_at', 'desc')->first();
             if($session) {
                 $rating = Rating::where('session_id', $session->id)->first();
                 //get tutor avg rating
