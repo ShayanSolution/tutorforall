@@ -116,7 +116,6 @@ class SendPushNotification extends Job
 
                 //Create new entry if session is not exist with same student_id, subject_id, class_id and date. else update the already existed entry.
                 //Reject session request status is also updated. Means we will not have reject sessions history.
-//                Log::info('createOrUpdateSession called: '.print_r($sessionData, true));
                 $sessionRequest = $session->createOrUpdateSession($sessionData);
 
                 $deviceTokenArray[] = $user->token;
