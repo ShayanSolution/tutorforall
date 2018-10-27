@@ -89,9 +89,10 @@ class Session extends Model
                             'programme_id'=>$data['programme_id'],
                             'subject_id'=>$data['subject_id'],
                             'programme_id'=>$data['programme_id'],
-                            'status'=>'pending',
                         ])
-                        ->orWhere('status','reject')
+                        ->where(function ($query) {
+                            $query->where('status','pending')->orWhere('status','reject');
+                        })
                         ->whereDate('started_at', '=', date('Y-m-d', strtotime($data['started_at'])))->first();
 
         if(!$getSession){
