@@ -551,7 +551,6 @@ class SessionController extends Controller
         $roleId = Auth::user()->role_id;
         Log::info('Get latest session of user ID: '.$userId);
         Log::info('Get latest session of user role: '.$roleId);
-
         $session = '';
         $rating = '';
         $data = [];
@@ -586,7 +585,7 @@ class SessionController extends Controller
             }
         }
 
-        Log::info('Get latest session ID: '.print_r($session));
+        Log::info('Get latest session ID: '.$session->id);
 
         $data['program_name'] = $session->programme->name;
         $data['subject_name'] = $session->subject->name;
@@ -594,7 +593,12 @@ class SessionController extends Controller
         $data['latitude']     = $session->tutor->latitude;
         $data['longitude']    = $session->tutor->longitude;
         $data['tutor_profile_img']  = \url("images/".$session->tutor->profileImage);
-        $data['student_name'] = $session->student->firstName." ".$session->student->lastName;
+        if(isset($session->student->firstName)){
+            $data['student_name'] = $session->student->firstName." ".$session->student->lastName;
+        }else{
+            $data['student_name'] = "";
+        }
+
         $data['student_profile_img']  = \url("images/".$session->student->profileImage);
         if($roleId == 3) {
             $data['tutor_rating'] = number_format((float)$tutor_rating->avg('rating'), 1, '.', '');
