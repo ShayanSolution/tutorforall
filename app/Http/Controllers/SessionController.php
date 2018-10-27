@@ -342,14 +342,15 @@ class SessionController extends Controller
         ]);
         $data = $request->all();
         $data['status'] = 'reject';
+        //TODO: work on reject status
 
-        $session = Session::find($data['session_id']);
-        Log::info('Reject Session API, Session status: '.$session->status);
-        if($session->status != 'booked' || $session->status != 'ended' || $session->status != 'started'){
-            $session = $session->update(['status'=> $data['status'], 'tutor_id'=> Auth::user()->id]);
-        }else{
-            //TODO: insert new entry as rejected status.
-        }
+//        $session = Session::find($data['session_id']);
+//        Log::info('Reject Session API, Session status: '.$session->status);
+//        if($session->status != 'booked' || $session->status != 'ended' || $session->status != 'started'){
+//            $session = $session->update(['status'=> $data['status'], 'tutor_id'=> Auth::user()->id]);
+//        }else{
+//            //TODO: insert new entry as rejected status.
+//        }
 
         if($session){
             return [
