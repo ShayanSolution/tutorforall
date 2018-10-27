@@ -595,11 +595,13 @@ class SessionController extends Controller
         $data['tutor_profile_img']  = \url("images/".$session->tutor->profileImage);
         if(isset($session->student->firstName)){
             $data['student_name'] = $session->student->firstName." ".$session->student->lastName;
+            $data['student_profile_img']  = \url("images/".$session->student->profileImage);
         }else{
             $data['student_name'] = "";
+            $data['student_profile_img']  = '';
         }
 
-        $data['student_profile_img']  = \url("images/".$session->student->profileImage);
+
         if($roleId == 3) {
             $data['tutor_rating'] = number_format((float)$tutor_rating->avg('rating'), 1, '.', '');
         }
