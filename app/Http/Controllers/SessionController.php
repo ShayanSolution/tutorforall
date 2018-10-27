@@ -340,9 +340,14 @@ class SessionController extends Controller
         ]);
         $data = $request->all();
         $data['status'] = 'reject';
-        
-        $session = new Session();
-        $session = $session->updateSession(['id'=>$data['session_id']], ['status'=> $data['status'], 'tutor_id'=> Auth::user()->id]);
+
+        $session = Session::find($data['session_id']);
+        if($session->status != 'booked' || $session->status != 'ended' || $session->status != 'started'){
+            $session = $session->update(['status'=> $data['status'], 'tutor_id'=> Auth::user()->id]);
+        }else{
+            //TODO: insert new entry as rejected status.
+        }
+
         if($session){
             return [
                 'status' => 'success',
