@@ -220,6 +220,9 @@ class SessionController extends Controller
             $tutorId = Auth::user()->id;//Get login tutor id
             $studentId = $session->student_id;
 
+            //Update tutor id who booked the session.
+            $updated_session_tutor = $session->updateSession(['id'=>$sessionId], ['tutor_id'=>Auth::user()->id]);
+
             //get tutor profile
             $user = new User();
             $users = $user->findBookedUser($tutorId, $sessionId);
