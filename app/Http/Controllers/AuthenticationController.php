@@ -55,14 +55,14 @@ class AuthenticationController extends Controller
         }
 
         $phoneCode = PhoneCode::getPhoneNumber($phone);
-//        if ($phoneCode){
-//            return JsonResponse::generateResponse(
-//                [
-//                    'status' => 'error',
-//                    'message' => 'Phone number already verified.'
-//                ],500
-//            );
-//        }else
+        if ($phoneCode){
+            return JsonResponse::generateResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Phone number already verified.'
+                ],500
+            );
+        }else
             {
                 $code = $this->generateRandomCode();
                 $toNumber = $this->sanitizePhoneNumber($phone);
