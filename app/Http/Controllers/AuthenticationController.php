@@ -477,6 +477,8 @@ class AuthenticationController extends Controller
         if(!$isSaved)
             return response()->json(['status'=>'error', 'message'=>'Oops! could not update password!']);
 
+        PhoneCode::where('phone', 'LIKE', '%'.substr($phone,-5))->where('verified', 0)->update(['verified'=>1]);
+
         return response()->json(['status'=>'success', 'message'=>'Password updated successfully']);
 
     }
