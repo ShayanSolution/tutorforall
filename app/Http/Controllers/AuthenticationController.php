@@ -463,16 +463,16 @@ class AuthenticationController extends Controller
 
         $phone = $request->phone;
 
-        $user = new User();
+        $userInitObject = new User();
 
-        $activeUser = $user->isActive(substr($phone,-5));
+        $activeUser = $userInitObject->isActive(substr($phone,-5));
 
         if(!$activeUser)
             return response()->json(['status'=>'error', 'message'=>'Either user does not exists or is not active!']);
 
-        $user->password = Hash::make($password);
+        $activeUser->password = Hash::make($password);
 
-        $isSaved = $user->save();
+        $isSaved = $activeUser->save();
 
         if(!$isSaved)
             return response()->json(['status'=>'error', 'message'=>'Oops! could not update password!']);
