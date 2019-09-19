@@ -51,6 +51,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'mobile',
         'role_id',
         'isActive',
+        'is_active',
         'profileImage',
         'device_token',
         'confirmation_code',
