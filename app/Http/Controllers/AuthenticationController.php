@@ -451,7 +451,7 @@ class AuthenticationController extends Controller
         return $this->generateRandomCodeAndSendThroughTwilio($phone);
     }
 
-    public function postResetPassword(Request $request){
+    public function resetPassword(Request $request){
 
         $this->validate($request, [
             'phone' => 'required|digits_between:11,20',

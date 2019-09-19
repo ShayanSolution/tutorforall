@@ -123,8 +123,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     Route::get('/user/remove', 'UserController@removeUser');
 });
 
-Route::get('password-reset-code', 'AuthenticationController@getPasswordResetCode');
-Route::post('post-reset-password', 'AuthenticationController@postResetPassword');
+Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');
+Route::post('reset-password', 'AuthenticationController@resetPassword');
 
 Route::get("notify", function(){
     $userToken = "fI0b50hYRS4:APA91bFPdsH42J7ZRUJtFxU9vyIVwaEbg8jRDRXetI8ESWMegHvGUMWTFibxmejS0X9Ui9opKL_cBXvHws2B5-i81V_3Yk-AtmQaQH-qF0eln_4yVaWhPyHcl6dHAIgHevl-Co-up7ScCz3oVuSDZT45VvL7EnHfLQ";
