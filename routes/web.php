@@ -28,7 +28,7 @@ $router->get('appKey', function () {
 $router->post('login', 'AccessTokenController@createAccessToken');
 $router->get('get-phone-code', 'AuthenticationController@getPhoneVerificationCode');
 $router->post('verify-phone-code', 'AuthenticationController@postPhoneVerificationCode');
-$router->post('register-student', 'AuthenticationController@postRegisterStudent');
+$router->post('register', 'AuthenticationController@postRegister');
 
 $router->get('get-class-name', 'ProgrammeSubjectController@getProgramme');
 $router->get('get-subjectby-id', 'ProgrammeSubjectController@getSubjectById');$router->post('save-programme', 'ProgrammeSubjectController@postSaveProgramme');

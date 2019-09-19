@@ -220,37 +220,63 @@ class AuthenticationController extends Controller
      *     ),
      * )
      */
-    public function postRegisterStudent(Request $request){
+    public function postRegister(Request $request){
 
-        $this->validate($request,[
+        $validation_array = [
             'email' => 'required|email',
             'phone' => 'required|digits_between:11,20',
+            'password' => 'required|min:6|confirmed',
             'device_token' => 'required',
-        ]);
+            'role_id'       =>  'required'
+        ];
 
+        if($request->role_id == 2)
+        {
+            $validation_array['firstName']  = 'required';
+            $validation_array['lastName']   = 'required';
+        }
+
+        $this->validate($request, $validation_array);
 
         $email = $request->email;
         $phone = $request->phone;
-//        $code = $request->code;
+        $password = $request->password;
+        $role_id = $request->role_id;
         $device_token = $request->device_token;
 
+
         $confirmation_code = str_random(30);
-        $password = str_random(6);
         try {
-            $user = User::updateOrCreate(['phone' => $phone],
-                [
-                    'email' => $email,
-                    'phone' => $phone,
-                    'password' => Hash::make($password),
-                    'uid' => md5(microtime()),
-                    'role_id' => 3,
-                    'is_active' => 1,
-                    'device_token' => $device_token,
-                    'confirmation_code' => $confirmation_code,
-                ])->id;
+
+            $userDataArray = [
+                'email' => $email,
+                'phone' => $phone,
+                'password' => Hash::make($password),
+                'uid' => md5(microtime()),
+                'role_id' => $role_id,
+                'is_active' => 1,
+                'device_token' => $device_token,
+                'confirmation_code' => $confirmation_code
+            ];
+
+            if($role_id == 2){
+
+                $fullName = explode(" ",$request['name']);
+
+                if(count($fullName)>1){
+                    $userDataArray['firstName'] = $fullName[0]; $userDataArray['lastName'] = $fullName[1];
+                }else{
+                    $userDataArray['firstName'] = $fullName[0]; $userDataArray['lastName'] = '';
+                }
+            }
+
+
+            $user = User::updateOrCreate(['phone' => $phone], $userDataArray)->id;
 
             if ($user) {
+
                 Profile::registerUserProfile($user);
+
                 $user = User::where('id', $user)->first();
 
                 return [

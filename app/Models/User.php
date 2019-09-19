@@ -208,7 +208,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }else{
             $firstName = $fullName[0]; $lastName = '';
         }
-        $password = $request['passwords']['password'];
+
+        if(isset($request['passwords']))
+            $password = $request['passwords']['password'];
+        else
+            $password = $request['password'];
+
         $phone = $request['phone'];
         $uid = str_random(32);
         $user = Self::create([
