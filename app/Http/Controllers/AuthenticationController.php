@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use App\Helpers\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Profile;
 use App\Location;
@@ -50,54 +51,62 @@ class AuthenticationController extends Controller
         $phoneExist = $user->findByExactPhoneNumber($phone);
 
         if ($phoneExist && $phoneExist->deleted_at){
-
             $phoneExist->restore();
         }
 
         $phoneCode = PhoneCode::getPhoneNumber($phone);
-        if ($phoneCode){
+
+        if ($phoneCode) {
+
+            return JsonResponse::generateResponse([
+                    'status' => 'error',
+                    'message' => 'Phone number already verified.'
+                ],500);
+
+        } else {
+            return $this->generateRandomCodeAndSendThroughTwilio($phone, $phoneCode);
+        }
+    }
+
+    public function generateRandomCodeAndSendThroughTwilio($phone, $phoneCode = null){
+        $code = $this->generateRandomCode();
+        $toNumber = $this->sanitizePhoneNumber($phone);
+//                // Use the client to do fun stuff like send text messages!
+        $response = TwilioHelper::sendCodeSms($toNumber, $code);
+
+        if ($response){
+
+            if ($phoneCode && $phoneCode->verified == 0){
+                $phoneCode->code = $code;
+                $phoneCode->save();
+            }elseif ($phoneCode && $phoneCode->verified == 1){
+                $phoneCode->code = $code;
+                $phoneCode->verified = 0;
+                $phoneCode->save();
+            } else{
+                $phoneCode = new PhoneCode();
+                $phoneCode->phone  = $toNumber;
+                $phoneCode->code = $code;
+                $phoneCode->save();
+            }
+
+            return JsonResponse::generateResponse(
+                [
+                    'status' => 'success',
+                    'message' => 'Phone code created successfully'
+                ],200
+            );
+
+        }else{
             return JsonResponse::generateResponse(
                 [
                     'status' => 'error',
-                    'message' => 'Phone number already verified.'
+                    'message' => 'Unable to send SMS.'
                 ],500
             );
-        }else
-            {
-                $code = $this->generateRandomCode();
-                $toNumber = $this->sanitizePhoneNumber($phone);
-//                // Use the client to do fun stuff like send text messages!
-                $response = TwilioHelper::sendCodeSms($toNumber, $code);
-                if ($response){
-                    if ($phoneCode && $phoneCode->verified == 0){
-                        $phoneCode->code = $code;
-                        $phoneCode->save();
-                    }elseif ($phoneCode && $phoneCode->verified == 1){
-                        $phoneCode->code = $code;
-                        $phoneCode->verified = 0;
-                        $phoneCode->save();
-                    } else{
-                        $phoneCode = new PhoneCode();
-                        $phoneCode->phone  = $toNumber;
-                        $phoneCode->code = $code;
-                        $phoneCode->save();
-                    }
-                   return JsonResponse::generateResponse(
-                    [
-                        'status' => 'success',
-                        'message' => 'Phone code created successfully'
-                    ],200
-                );
-                }else{
-                    return JsonResponse::generateResponse(
-                        [
-                            'status' => 'error',
-                            'message' => 'Unable to send SMS.'
-                        ],500
-                    );
-                }
         }
     }
+
 
     public function generateRandomCode($digits = 4){
         return rand(pow(10, $digits-1), pow(10, $digits)-1);
@@ -426,4 +435,48 @@ class AuthenticationController extends Controller
         );
     }
 
+    public function getPasswordResetCode(Request $request){
+
+        $this->validate($request, [
+            'phone' => 'required|digits_between:11,20'
+        ]);
+
+        $phone  = $request->phone;
+
+        $isEligibleOrNot = User::isEligibleToRequestResetPassword($phone);
+
+        if(!$isEligibleOrNot['status'] == 'error')
+            return response()->json($isEligibleOrNot);
+
+        return $this->generateRandomCodeAndSendThroughTwilio($phone);
+    }
+
+    public function postResetPassword(Request $request){
+
+        $this->validate($request, [
+            'phone' => 'required|digits_between:11,20',
+            'password' => 'required|min:6|confirmed'
+        ]);
+
+        $password = $request->password;
+
+        $phone = $request->phone;
+
+        $user = new User();
+
+        $activeUser = $user->isActive(substr($phone,-5));
+
+        if(!$activeUser)
+            return response()->json(['status'=>'error', 'message'=>'Either user does not exists or is not active!']);
+
+        $user->password = Hash::make($password);
+
+        $isSaved = $user->save();
+
+        if(!$isSaved)
+            return response()->json(['status'=>'error', 'message'=>'Oops! could not update password!']);
+
+        return response()->json(['status'=>'success', 'message'=>'Password updated successfully']);
+
+    }
 }

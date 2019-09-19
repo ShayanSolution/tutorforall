@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Request;
 use Laravel\Lumen\Auth\Authorizable;
@@ -346,5 +347,37 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function isActive($phone)
     {
         return self::where('phone','like','%'.$phone)->where('is_active', 1)->first();
+    }
+
+    public static function isEligibleToRequestResetPassword($phone){
+
+        $phoneCodeAlreadyGeneratedWithinOneDay = PhoneCode::where('phone', 'LIKE', '%'.substr($phone,-5))
+            ->where('verified', 0)
+            ->where('created_at', '>', Carbon::now()->subDay())
+            ->first();
+
+        $user = self::where('phone', $phone)->first();
+
+        if(!$user || $user->is_active != 1 || $phoneCodeAlreadyGeneratedWithinOneDay){
+
+            $message = '';
+
+            if(!$user)
+                $message    =   'User is not registered!';
+            elseif ($user->is_active != 1)
+                $message    =   'User is not active!';
+            elseif ($phoneCodeAlreadyGeneratedWithinOneDay)
+                $message    =   'You have already applied for Password Reset';
+
+            return [
+                'message'   =>  $message,
+                'status'    =>  'error'
+            ];
+        }
+
+        return [
+            'message'   =>  'Eligible to request for reset password',
+            'status'    =>  'success'
+        ];
     }
 }
