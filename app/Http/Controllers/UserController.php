@@ -707,7 +707,8 @@ class UserController extends Controller
             if($token){
                 return response()->json(
                     [
-                        'status' => 'Device token updated successfully',
+                        'status'    =>  'success',
+                        'message'   =>  'Device token updated successfully',
                     ], 200
                 );
             }else{

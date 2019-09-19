@@ -274,10 +274,10 @@ class AuthenticationController extends Controller
                 $user = User::where('id', $user)->first();
 
                 return [
-                    'status' => 'success',
-                    'password' => $password,
-                    'user_id' => $user,
-                    'messages' => 'Student has been created'
+                    'status'    => 'success',
+                    'pswrd'     => $password,
+                    'user_id'   => $user,
+                    'messages'  => 'Student has been created'
                 ];
             } else {
                 return response()->json(
