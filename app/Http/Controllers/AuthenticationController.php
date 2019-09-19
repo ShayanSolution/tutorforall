@@ -175,14 +175,15 @@ class AuthenticationController extends Controller
         if ($phone_verified){
             return JsonResponse::generateResponse(
                 [
-                    'status' => 'success',
+                    'status'    =>  'success',
+                    'message'   =>  'Phone code verified successfully!'
                 ],200
             );
         }else{
             return JsonResponse::generateResponse(
                 [
-                    'status' => 'Error',
-                    'Error' => 'Unable to verify phone number'
+                    'status'    => 'error',
+                    'error'     => 'Unable to verify phone number'
                 ],500
             );
         }
