@@ -260,14 +260,8 @@ class AuthenticationController extends Controller
             ];
 
             if($role_id == 2){
-
-                $fullName = explode(" ",$request['name']);
-
-                if(count($fullName)>1){
-                    $userDataArray['firstName'] = $fullName[0]; $userDataArray['lastName'] = $fullName[1];
-                }else{
-                    $userDataArray['firstName'] = $fullName[0]; $userDataArray['lastName'] = '';
-                }
+                $userDataArray['firstName'] = $request->firstName;
+                $userDataArray['lastName']  = $request->lastName;
             }
 
 
