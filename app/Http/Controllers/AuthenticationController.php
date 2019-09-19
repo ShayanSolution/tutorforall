@@ -277,13 +277,13 @@ class AuthenticationController extends Controller
                     'status'    => 'success',
                     'pswrd'     => $password,
                     'user_id'   => $user,
-                    'messages'  => 'Student has been created'
+                    'messages'  => 'User has been created'
                 ];
             } else {
                 return response()->json(
                     [
                         'status' => 'error',
-                        'message' => 'Unable to create student'
+                        'message' => 'Unable to create User'
                     ], 422
                 );
             }
