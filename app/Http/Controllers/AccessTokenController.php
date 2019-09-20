@@ -50,6 +50,7 @@ class AccessTokenController extends Controller
         if($user->role_id != $request->role_id)
             return response()->json(['status'=>'error', 'message'=> 'You are not a '.$roleInMessage.'. You cannot login here.']);
 
+
 //        $user = new User();
 //        $isActive = $user->isActive($inputs['username']);
 //
