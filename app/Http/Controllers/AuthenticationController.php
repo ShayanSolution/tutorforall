@@ -183,7 +183,7 @@ class AuthenticationController extends Controller
             return JsonResponse::generateResponse(
                 [
                     'status'    => 'error',
-                    'error'     => 'Unable to verify phone number'
+                    'message'   => 'Unable to verify phone number'
                 ],500
             );
         }
