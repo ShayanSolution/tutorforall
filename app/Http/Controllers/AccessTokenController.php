@@ -39,6 +39,17 @@ class AccessTokenController extends Controller
     {
         $inputs = $request->all();
 
+        $user = User::where('phone', $request->username)->first();
+
+        if(!$user){
+            return response()->json(['status'=>'error', 'message'=>'Invalid Phone Number']);
+        }
+
+        $roleInMessage = $request->role_id == 2 ? 'Tutor' : 'Student';
+
+        if($user->role_id != $request->role_id)
+            return response()->json(['status'=>'error', 'message'=> 'You are not a '.$roleInMessage.'. You cannot login here.']);
+
 //        $user = new User();
 //        $isActive = $user->isActive($inputs['username']);
 //
