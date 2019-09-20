@@ -439,12 +439,14 @@ class AuthenticationController extends Controller
     public function getPasswordResetCode(Request $request){
 
         $this->validate($request, [
-            'phone' => 'required|digits_between:11,20'
+            'phone'     => 'required|digits_between:11,20',
+            'role_id'   =>  'required'
         ]);
 
         $phone  = $request->phone;
+        $roleId = $request->role_id;
 
-        $isEligibleOrNot = User::isEligibleToRequestResetPassword($phone);
+        $isEligibleOrNot = User::isEligibleToRequestResetPassword($phone, $roleId);
 
         if($isEligibleOrNot['status'] == 'error')
             return response()->json($isEligibleOrNot);

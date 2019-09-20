@@ -350,14 +350,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return self::where('phone','like','%'.$phone)->where('is_active', 1)->first();
     }
 
-    public static function isEligibleToRequestResetPassword($phone){
+    public static function isEligibleToRequestResetPassword($phone, $roleId){
 
         $phoneCodeAlreadyGeneratedWithinOneDay = PhoneCode::where('phone', 'LIKE', '%'.substr($phone,-5))
             ->where('verified', 0)
             ->where('created_at', '>', Carbon::now()->subDay())
             ->first();
 
-        $user = self::where('phone', $phone)->first();
+        $user = self::where('phone', $phone)->where('role_id', $roleId)->first();
 
         if(!$user || $user->is_active != 1 || $phoneCodeAlreadyGeneratedWithinOneDay){
 
