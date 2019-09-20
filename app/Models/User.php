@@ -368,7 +368,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             elseif ($user->is_active != 1)
                 $message    =   'User is not active!';
             elseif ($phoneCodeAlreadyGeneratedWithinOneDay)
-                $message    =   'You have already applied for Password Reset';
+                $message    =   'You have already applied for Password Reset. You can avail this facility after   '.Carbon::parse($phoneCodeAlreadyGeneratedWithinOneDay->created_at)->addDay()->format('M d, Y h:i A');
 
             return [
                 'status'    =>  'error',
