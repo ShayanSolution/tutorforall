@@ -446,7 +446,7 @@ class AuthenticationController extends Controller
 
         $isEligibleOrNot = User::isEligibleToRequestResetPassword($phone);
 
-        if(!$isEligibleOrNot['status'] == 'error')
+        if($isEligibleOrNot['status'] == 'error')
             return response()->json($isEligibleOrNot);
 
         return $this->generateRandomCodeAndSendThroughTwilio($phone);

@@ -371,14 +371,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 $message    =   'You have already applied for Password Reset';
 
             return [
-                'message'   =>  $message,
-                'status'    =>  'error'
+                'status'    =>  'error',
+                'message'   =>  $message
             ];
         }
 
         return [
-            'message'   =>  'Eligible to request for reset password',
-            'status'    =>  'success'
+            'status'    =>  'success',
+            'message'   =>  'Eligible to request for reset password'
         ];
     }
 }
