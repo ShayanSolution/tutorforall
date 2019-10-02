@@ -19,6 +19,12 @@ $router->get('/', function () {
     return app()->version();
 });
 
+$router->get('/twilio-test', function(){
+    $toNumber = '+923004412255';
+    $code = '2255';
+    \App\Helpers\TwilioHelper::sendCodeSms($toNumber, $code);
+});
+
 // Generate random string
 $router->get('appKey', function () {
     return str_random('32');
