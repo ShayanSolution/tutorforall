@@ -19,6 +19,8 @@ class TwilioHelper
         $accountSid = config('twilio.accountId');
         $authToken  = config('twilio.authKey');
         $twilioNumber = config('twilio.twilioNumber');
+        $twilioTestNumber = config('twilio.twilioTestNumber');
+        $textIsTest = !$isEnvProd ? 'Test Twilio: ' : '';
 //        Log::info("sending code to: ".$toNumber);
         $client = new Client($accountSid, $authToken);
         try {
@@ -29,9 +31,9 @@ class TwilioHelper
                 $isEnvProd ? $toNumber : config('twilio.testReceivingNumber'),
                 array(
                     // A Twilio phone number you purchased at twilio.com/console
-                    'from' => $twilioNumber,
+                    'from' => $isEnvProd ? $twilioNumber : $twilioTestNumber,
                     // the body of the text message you'd like to send
-                    'body' => (!$isEnvProd ? 'Test: ' : ''). "Welcome to Tutor4all app. Your verification code is $code"
+                    'body' => $textIsTest. "Welcome to Tutor4all app. Your verification code is $code"
                 )
             );
             if($response->sid){
