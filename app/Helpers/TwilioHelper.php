@@ -15,6 +15,7 @@ use Twilio\Exceptions\TwilioException;
 class TwilioHelper
 {
     public static function sendCodeSms($toNumber, $code){
+        $isEnvProd = app()->environment() == 'production';
         $accountSid = config('twilio.accountId');
         $authToken  = config('twilio.authKey');
         $twilioNumber = config('twilio.twilioNumber');
@@ -25,12 +26,12 @@ class TwilioHelper
             // Use the client to do fun stuff like send text messages!
             $response = $client->messages->create(
             // the number you'd like to send the message to
-                $toNumber,
+                $isEnvProd ? $toNumber : config('twilio.testReceivingNumber'),
                 array(
                     // A Twilio phone number you purchased at twilio.com/console
                     'from' => $twilioNumber,
                     // the body of the text message you'd like to send
-                    'body' => "Welcome to Tutor4all app. Your verification code is $code"
+                    'body' => (!$isEnvProd ? 'Test: ' : ''). "Welcome to Tutor4all app. Your verification code is $code"
                 )
             );
             if($response->sid){
