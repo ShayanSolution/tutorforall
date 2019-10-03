@@ -20,9 +20,10 @@ $router->get('/', function () {
 });
 
 $router->get('/twilio-test', function(){
-    $toNumber = '+923004412255';
+    $toNumber = '+923093512171'; //923004412255
     $code = '2255';
-    \App\Helpers\TwilioHelper::sendCodeSms($toNumber, $code);
+    $response = \App\Helpers\TwilioHelper::sendCodeSms($toNumber, $code);
+    return $response ? 'Message Sent' : 'Message Not Sent';
 });
 
 // Generate random string
