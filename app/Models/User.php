@@ -156,41 +156,29 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             $group = $data['is_group'];
             Profile::updateStudentGroup($student_id,$group);
         }
-        if($data['is_deserving'] == 1){
-            return Self::select('users.*')
-                ->join('profiles','profiles.user_id','=','users.id')
-                ->join('program_subject','program_subject.user_id','=','users.id')
-                ->where('profiles.is_mentor','=', 1)
-                ->where('program_subject.program_id','=',$data['class_id'])
-                ->where('program_subject.subject_id','=',$data['subject_id'])
-                ->where(function ($query) use ($data){
-                    $query->where('profiles.is_home','=',$data['is_home'])
-                        ->orWhere('profiles.call_student','=',$data['call_student']);
 
-                })
-                ->where(function ($query) use ($data){
-                    $query->where('profiles.is_group','=',$data['is_group'])
-                        ->orWhere('profiles.one_on_one','=',$data['one_on_one']);
-                })
-                ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
-                ->get();
-        }
-        return Self::select('users.*')
-                ->join('profiles','profiles.user_id','=','users.id')
-                ->join('program_subject','program_subject.user_id','=','users.id')
-                ->where('profiles.is_mentor','=', 0)
-                ->where('program_subject.program_id','=',$data['class_id'])
-                ->where('program_subject.subject_id','=',$data['subject_id'])
-                ->where(function ($query) use ($data){
-                    $query->where('profiles.is_home','=',$data['is_home'])
-                        ->orWhere('profiles.call_student','=',$data['call_student']);
-                })
-                ->where(function ($query) use ($data){
-                    $query->where('profiles.is_group','=',$data['is_group'])
-                        ->orWhere('profiles.one_on_one','=',$data['one_on_one']);
-                })
-                ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
-                ->get();
+        $is_mentor = $data['is_deserving'] == 1 ? 1 : 0;
+
+        $query = Self::select('users.*')
+            ->join('profiles','profiles.user_id','=','users.id')
+            ->join('program_subject','program_subject.user_id','=','users.id')
+            ->where('profiles.is_mentor','=', $is_mentor)
+            ->where('program_subject.program_id','=',$data['class_id']);
+
+        if($data['gender_id'] != '0')
+            $query = $query->where('users.gender_id', '=', $data['gender_id']);
+
+        return $query->where('program_subject.subject_id','=',$data['subject_id'])
+            ->where(function ($query) use ($data){
+                $query->where('profiles.is_home','=',$data['is_home'])
+                    ->orWhere('profiles.call_student','=',$data['call_student']);
+            })
+            ->where(function ($query) use ($data){
+                $query->where('profiles.is_group','=',$data['is_group'])
+                    ->orWhere('profiles.one_on_one','=',$data['one_on_one']);
+            })
+            ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
+            ->get();
     }
     
     public static function updateProfileImage($tutor_id,$file_name,$role_id){

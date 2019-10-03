@@ -244,6 +244,7 @@ class AuthenticationController extends Controller
         {
             $validation_array['firstName']  = 'required';
             $validation_array['lastName']   = 'required';
+            $validation_array['is_mentor']   = 'required';
         }
 
         $this->validate($request, $validation_array);
@@ -269,9 +270,12 @@ class AuthenticationController extends Controller
                 'confirmation_code' => $confirmation_code
             ];
 
+            $isMentor = 0;
+
             if($role_id == 2){
                 $userDataArray['firstName'] = $request->firstName;
                 $userDataArray['lastName']  = $request->lastName;
+                $isMentor                   = $request->is_mentor;
             }
 
 
@@ -279,7 +283,7 @@ class AuthenticationController extends Controller
 
             if ($user) {
 
-                Profile::registerUserProfile($user);
+                Profile::registerUserProfile($user, $isMentor);
 
                 $user = User::where('id', $user)->first();
 

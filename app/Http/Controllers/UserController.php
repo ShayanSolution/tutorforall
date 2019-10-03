@@ -610,6 +610,7 @@ class UserController extends Controller
             'is_home' => 'numeric',
             'is_group' => 'numeric',
             'is_mentor' => 'numeric',
+            'gender_id' => 'numeric',
 //            'programme_id' => 'numeric',
 //            'subject_id' => 'numeric',
             'call_student' => 'numeric',

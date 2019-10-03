@@ -42,13 +42,13 @@ class Profile extends Model
         return Profile::where('user_id','=',$id)->update($update_profile_values);
     }
     
-    public static function registerUserProfile($tutor_id){
+    public static function registerUserProfile($tutor_id, $isMentor = 0){
         $profile = Self::updateOrCreate(
             [
                 'user_id'=>$tutor_id,
             ],
             [
-                'is_mentor' => 0,
+                'is_mentor' => $isMentor,
                 'is_deserving' => 0,
                 'is_home' => 0,
                 'is_group' => 0,
@@ -100,6 +100,10 @@ class Profile extends Model
         }
         if(isset($array['call_student'])){
             $profile_settings['call_student'] = $array['call_student'];
+        }
+
+        if(isset($array['gender_id'])){
+            $profile_settings['gender_id'] = $array['gender_id'];
         }
         return $profile_settings;
     }
