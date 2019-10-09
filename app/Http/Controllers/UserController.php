@@ -619,6 +619,11 @@ class UserController extends Controller
         $profile = new Profile();
         $profile_setting = $profile->setProfileSettingArray($data);
         $update_profile = $profile->updateUserProfile($data['tutor_id'], $profile_setting);
+        if(key_exists('gender_id', $data)){
+            User::where('id', $data['tutor_id'])->update([
+                'gender_id'  =>  $data['gender_id']
+            ]);
+        }
         if($update_profile){
             return response()->json(
                 [

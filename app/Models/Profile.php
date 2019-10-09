@@ -102,9 +102,6 @@ class Profile extends Model
             $profile_settings['call_student'] = $array['call_student'];
         }
 
-        if(isset($array['gender_id'])){
-            $profile_settings['gender_id'] = $array['gender_id'];
-        }
         return $profile_settings;
     }
 
