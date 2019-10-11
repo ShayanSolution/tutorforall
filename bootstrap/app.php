@@ -29,6 +29,8 @@ $app = new Laravel\Lumen\Application(
 
  $app->withEloquent();
 
+class_alias(\LaravelFCM\Facades\FCM::class, 'FCM');
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -109,6 +111,7 @@ $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(\SwaggerLume\ServiceProvider::class);
 $app->register('Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider');
+$app->register(\LaravelFCM\FCMServiceProvider::class);
 
 LumenPassport::routes($app);
 
