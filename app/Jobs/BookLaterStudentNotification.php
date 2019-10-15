@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Jobs;
+use App\Helpers\Push;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 use Log;
 //helpers
@@ -42,39 +44,26 @@ class BookLaterStudentNotification extends Job
         $subject = Subject::find($session->subject_id);
 
         if(!empty($student->device_token)){
+
+            $title = Config::get('user-constants.APP_NAME');
+            $body = 'Your session will start with '.$tutor->firstName.' '.$tutor->lastName.' in an hour.';
             //get tutor device token
-            $message = PushNotification::Message(
-                'Your session will start with '.$tutor->firstName.' '.$tutor->lastName.' in an hour.',
-                array(
-                    'badge' => 1,
-                    'sound' => 'example.aiff',
-                    'actionLocKey' => 'Action button title!',
-                    'locKey' => 'localized key',
-                    'locArgs' => array(
-                        'localized args',
-                        'localized args',
-                    ),
-                    'launchImage' => 'image.jpg',
-                    'custom' => array('custom_data' => array(
-                        'notification_type' => 'student_session_start',
-                        'session_id' => $this->sessionId,
-                        'tutor_name' => $tutor->firstName." ".$tutor->lastName,
-                        'class_name' => $program->name,
-                        'subject_name' => $subject->name,
-                        'class_id' => $program->id,
-                        'subject_id' => $subject->id,
-                        'is_group' => $session->is_group,
-                        'session_lat' => $session->latitude,
-                        'session_long' => $session->longitude,
-                        'session_location' => $session->session_location,
-                        'Profile_Image' => !empty($tutor->profileImage)?URL::to('/images').'/'.$tutor->profileImage:'',
-                    ))
-                ));
-            if($student->device_type == 'android') {
-                PushNotification::app('appNameAndroid')->to($student->device_token)->send($message);
-            }else{
-                PushNotification::app('appStudentIOS')->to($student->device_token)->send($message);
-            }
+            $customData = array(
+                'notification_type' => 'student_session_start',
+                'session_id' => $this->sessionId,
+                'tutor_name' => $tutor->firstName." ".$tutor->lastName,
+                'class_name' => $program->name,
+                'subject_name' => $subject->name,
+                'class_id' => $program->id,
+                'subject_id' => $subject->id,
+                'is_group' => $session->is_group,
+                'session_lat' => $session->latitude,
+                'session_long' => $session->longitude,
+                'session_location' => $session->session_location,
+                'Profile_Image' => !empty($tutor->profileImage)?URL::to('/images').'/'.$tutor->profileImage:'',
+            );
+
+            Push::handle($title, $body, $customData, $student);
         }
     }
 }

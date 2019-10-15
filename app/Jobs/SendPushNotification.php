@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Jobs;
+use App\Helpers\Push;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Carbon\Carbon;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Log;
 //helpers
@@ -12,9 +15,11 @@ use App\Models\Session;
 use App\Models\User;
 use App\Models\Programme;
 use App\Models\Subject;
+use Illuminate\Support\Facades\Config;
 
-class SendPushNotification extends Job 
+class SendPushNotification extends Job implements ShouldQueue
 {
+    use Queueable;
     /**
      * Create a new job instance.
      *
@@ -118,51 +123,33 @@ class SendPushNotification extends Job
                 //Reject session request status is also updated. Means we will not have reject sessions history.
                 $sessionRequest = $session->createOrUpdateSession($sessionData);
 
-                $deviceTokenArray[] = $user->token;
-                //notification message
-                $message = PushNotification::Message(
-                    $this->student->firstName.' '.$this->student->lastName.' wants a session with you',
-                    array(
-                        'badge' => 1,
-                        'sound' => 'example.aiff',
-                        'actionLocKey' => 'Action button title!',
-                        'locKey' => 'localized key',
-                        'locArgs' => array(
-                            'localized args',
-                            'localized args',
-                        ),
-                        'launchImage' => 'image.jpg',
-                        'custom' => array('custom_data' => array(
-                            'notification_type' => 'session_request',
-                            'session_id' => (string)$sessionRequest->id,
-                            'Student_Name' => $this->student->firstName." ".$this->student->lastName,
-                            'Student_id' => $this->student->id,
-                            'Class_Name' => isset($class->name)?$class->name:'',
-                            'Subject_Name' => isset($subject->name)?$subject->name:'',
-                            'Class_id' => $programmeId,
-                            'Subject_id' => $subjectId,
-                            'IS_Group' => (int)$sessionData['is_group'],
-                            'Group_Members' => (int)$sessionData['group_members'],
-                            'IS_Home' => (int)$this->data['is_home'],
-                            'Hourly_Rate' => (string)round($this->data['hourly_rate'], 0),
-                            'Longitude' =>  (string)$sessionData['longitude'],
-                            'Latitude' => (string)$sessionData['latitude'],
-                            'Session_Location' => $sessionData['session_location'],
-                            'Datetime' => $sessionDateTime,
-                            'date' => $dateTime[0],
-                            'time' => date("g:i a", strtotime($dateTime[1])),
-                            'Age' => $userAge>0?$userAge:'',
-                            'Profile_Image' => !empty($this->student->profileImage)?URL::to('/images').'/'.$this->student->profileImage:'',
-                        ))
-                    ));
 
-                if($user->device_type == 'android') {
-                    Log::info('Tutor request push notification sent at '.Carbon::now(). ' to android device');
-                    PushNotification::app('appNameAndroid')->to($user->token)->send($message);
-                }else{
-                    Log::info('Tutor request push notification sent at '.Carbon::now(). ' to IOS device');
-                    PushNotification::app('appNameIOS')->to($user->token)->send($message);
-                }
+                $title = Config::get('user-constants.APP_NAME');
+                $body = $this->student->firstName.' '.$this->student->lastName.' wants a session with you [Local]';
+                $customData = array(
+                    'notification_type' => 'session_request',
+                    'session_id' => (string)$sessionRequest->id,
+                    'Student_Name' => $this->student->firstName." ".$this->student->lastName,
+                    'Student_id' => $this->student->id,
+                    'Class_Name' => isset($class->name)?$class->name:'',
+                    'Subject_Name' => isset($subject->name)?$subject->name:'',
+                    'Class_id' => $programmeId,
+                    'Subject_id' => $subjectId,
+                    'IS_Group' => (int)$sessionData['is_group'],
+                    'Group_Members' => (int)$sessionData['group_members'],
+                    'IS_Home' => (int)$this->data['is_home'],
+                    'Hourly_Rate' => (string)round($this->data['hourly_rate'], 0),
+                    'Longitude' =>  (string)$sessionData['longitude'],
+                    'Latitude' => (string)$sessionData['latitude'],
+                    'Session_Location' => $sessionData['session_location'],
+                    'Datetime' => $sessionDateTime,
+                    'date' => $dateTime[0],
+                    'time' => date("g:i a", strtotime($dateTime[1])),
+                    'Age' => $userAge>0?$userAge:'',
+                    'Profile_Image' => !empty($this->student->profileImage)?URL::to('/images').'/'.$this->student->profileImage:'',
+                );
+
+                Push::handle($title, $body, $customData, $user);
             }
         }
 

@@ -13,6 +13,115 @@ use Symfony\Component\HttpFoundation\File\File;
 | and give it the Closure to call when that URI is requested.
 |
 */
+
+Route::get('/test-push', function () {
+
+
+    $message = PushNotification::Message(
+        'Arslan Ali wants a session with you',
+        array(
+            'badge' => 1,
+            'sound' => 'example.aiff',
+            'actionLocKey' => 'Action button title!',
+            'locKey' => 'localized key',
+            'locArgs' => array(
+                'localized args',
+                'localized args',
+            ),
+            'launchImage' => 'image.jpg',
+            'custom' => array('custom_data' => array(
+                'notification_type' => 'session_request',
+                'session_id' => 1,
+                'Student_Name' => 'Arslan Ali',
+                'Student_id' => 1,
+                'Class_Name' => 'Matric',
+                'Subject_Name' => 'Maths',
+                'Class_id' => 1,
+                'Subject_id' => 1,
+                'IS_Group' => 1,
+                'Group_Members' => 'My Group',
+                'IS_Home' => 1,
+                'Hourly_Rate' => '10',
+                'Longitude' =>  '0.0000',
+                'Latitude' => '0.0000',
+                'Session_Location' => 'My home',
+            ))
+        ));
+
+
+
+
+
+    $optionBuilder = new \LaravelFCM\Message\OptionsBuilder();
+    $optionBuilder->setTimeToLive(60*20);
+
+    $notificationBuilder = new \LaravelFCM\Message\PayloadNotificationBuilder('my title');
+    $notificationBuilder->setBody('Hello world')
+        ->setSound('default');
+
+    $dataBuilder = new \LaravelFCM\Message\PayloadDataBuilder();
+    $dataBuilder->addData(['a_data' => 'my_data']);
+
+    $option = $optionBuilder->build();
+    $notification = $notificationBuilder->build();
+    $data = $dataBuilder->build();
+
+    //prod
+    $token = "cq87UNVJ-Fw:APA91bE-55wajvGoRlQ0M-vXVA_MS3B20fSjhIA5v9T_MGh4TmTA3EmWbUwiYQ99iaQKijkr64J5fsFa-Bx5GA82JJj6y99MIJnljHaSaFvmvTpktoGn4eu28P0rhMDoClps415p_skN";
+
+    //dev
+//    $token = 'cIGAbkWEY8Q:APA91bGHJiqV82AGW7fQtOKhfGPBfjSPzeAuFWtzwtfVWjPLer1uCF_aenIviCyC_OEpPVwCR69-neCbnWZJjrHWeOrHWypXzY7Z49KMt1cKraXb_a2KsfiOc6PdYFxVpROYXOPA_chl';
+
+
+    //android device token
+    $token = 'cycBJTc3T7s:APA91bHZWsDPFM5kYHtKXn11qa6uc4D7kZtfoeTdK9Ch1DBoAFpk7t3eqj4cCYVY14L_HAS2CvDPkEB5VGG3UeWvD9iLJMy3tOOh62PMB8seDGruLU5naXTqzsYI4L8JdM4XTmDAFH86';
+    //PushNotification::app('appNameAndroid')->to($token)->send($message);
+    $downstreamResponse = \LaravelFCM\Facades\FCM::sendTo($token, $option, $notification, $data);
+
+
+
+
+    //ios device token
+    $token = "cq87UNVJ-Fw:APA91bE-55wajvGoRlQ0M-vXVA_MS3B20fSjhIA5v9T_MGh4TmTA3EmWbUwiYQ99iaQKijkr64J5fsFa-Bx5GA82JJj6y99MIJnljHaSaFvmvTpktoGn4eu28P0rhMDoClps415p_skN";
+
+    //PushNotification::app('appNameAndroid')->to($token)->send($message);
+    $downstreamResponse = \LaravelFCM\Facades\FCM::sendTo($token, $option, $notification, $data);
+
+    dd("tst");
+
+
+
+
+
+
+
+
+    $url = "https://fcm.googleapis.com/fcm/send";
+    $serverKey = env('FCM_SERVER_KEY');
+    $title = "Title";
+    $body = "Body of the message";
+    $notification = array('title' =>$title , 'text' => $body, 'sound' => 'default', 'badge' => '1');
+    $arrayToSend = array('to' => $token, 'notification' => $notification, 'priority'=>'high');
+    $json = json_encode($arrayToSend);
+    $headers = array();
+    $headers[] = 'Content-Type: application/json';
+    $headers[] = 'Authorization: key='. $serverKey;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+    curl_setopt($ch, CURLOPT_HTTPHEADER,$headers);
+//Send the request
+    $response = curl_exec($ch);
+//Close request
+    if ($response === FALSE) {
+        die('FCM Send Error: ' . curl_error($ch));
+    }
+    curl_close($ch);
+});
+
+
 /** @var \Laravel\Lumen\Routing\Router $router */
 $router->get('/', function () {
     dd('for testing on dev');

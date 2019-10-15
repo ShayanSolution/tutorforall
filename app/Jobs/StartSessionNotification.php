@@ -1,13 +1,18 @@
 <?php
 
 namespace App\Jobs;
+use App\Helpers\Push;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
 //Models
 use App\Models\Session;
 use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Config;
 
-class StartSessionNotification extends Job
+class StartSessionNotification extends Job implements ShouldQueue
 {
+    use Queueable;
     /**
      * Create a new job instance.
      *
@@ -32,34 +37,16 @@ class StartSessionNotification extends Job
         $session = Session::find($this->sessionId);
 
         //get student device token to send notification
-        $user = User::where('id','=',$session->student_id)->select('users.*','device_token as token')->first();
+        $user = User::where('id','=',$session->student_id)->select('users.*','device_token')->first();
         if(!empty($user->token)){
 
-            //notification message
-            $message = PushNotification::Message(
-                'Your session started.',
-                array(
-                    'badge' => 1,
-                    'sound' => 'example.aiff',
-                    'actionLocKey' => 'Action button title!',
-                    'locKey' => 'localized key',
-                    'locArgs' => array(
-                        'localized args',
-                        'localized args',
-                    ),
-                    'launchImage' => 'image.jpg',
-                    'custom' => array('custom_data' => array(
-                        'notification_type' => 'session_started',
-                        'session_id' => (string)$sessionId,
-                    ))
-                ));
-
-            if($user->device_type == 'android') {
-                PushNotification::app('appNameAndroid')->to($user->token)->send($message);
-            }else{
-                //TODO: Implement from IOS side
-                //PushNotification::app('appNameIOS')->to($user->token)->send($message);
-            }
+            $title  = Config::get('user-constants.APP_NAME');
+            $body   = 'Your session started.';
+            $customData = array(
+                'notification_type' => 'session_started',
+                'session_id' => (string)$sessionId,
+            );
+            Push::handle($title, $body, $customData, $user);
         }
 
     }

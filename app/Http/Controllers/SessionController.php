@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Jobs\BookNotification;
 use App\Wallet;
 use Illuminate\Http\Request;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
@@ -244,70 +245,22 @@ class SessionController extends Controller
 
             if($updated_session){
 
-                //get tutor device token
-                $device = User::where('id','=',$studentId)->select('device_type', 'device_token as token')->first();
-                $message = PushNotification::Message(
-                    $users->firstName.' '.$users->lastName.' accepted your request',
-                    array(
-                        'badge' => 1,
-                        'sound' => 'example.aiff',
-                        'actionLocKey' => 'Action button title!',
-                        'locKey' => 'localized key',
-                        'locArgs' => array(
-                            'localized args',
-                            'localized args',
-                        ),
-                        'launchImage' => 'image.jpg',
-                        'custom' => array('custom_data' => array(
-                            'notification_type' => 'session_booked',
-                            'session_id' => $sessionId,
-                            'Tutor_Name' => $users->firstName." ".$users->lastName,
-                            'Class_Name' => $users->p_name,
-                            'Subject_Name' => $users->s_name,
-                            'Class_id' => $users->p_id,
-                            'Subject_id' => $users->s_id,
-                            'is_group' => $users->is_group,
-                            'group_members' => $users->s_group_members,
-                            'is_home' => $users->s_is_home,
-                            'hourly_rate' => $users->hourly_rate,
-                            'tutor_is_home' => $users->t_is_home,
-                            'tutor_lat' => (string)$users->latitude,
-                            'tutor_long' => (string)$users->longitude,
-                            'student_lat' => $student->latitude,
-                            'student_long' => $student->longitude,
-                            'session_lat' => (string)$session->latitude,
-                            'session_long' => (string)$session->longitude,
-                            'session_location' => $session->session_location,
-                            'session_rating' => number_format((float)$rating->avg('rating'), 1, '.', ''),
-                            'Profile_Image' => !empty($users->profileImage)?URL::to('/images').'/'.$users->profileImage:'',
-                        ))
-                    ));
-                //send student info
-    //            Queue::push(PushNotification::app('appStudentIOS')
-    //                ->to($device->token)
-    //                ->send($message));
-                if($device->device_type == 'android') {
-                    PushNotification::app('appNameAndroid')->to($device->token)->send($message);
-                }else{
-                    PushNotification::app('appStudentIOS')->to($device->token)->send($message);
-                }
+                $bookNotification = (new BookNotification($student, $users, $session, $rating));
+                dispatch($bookNotification);
 
                 //Book later notifications.
-//                if($session->book_later_at != null || $session->book_later_at != ''){
-//                    $bookLaterAt = Carbon::parse($session->book_later_at);
-//                    $now = Carbon::now();
-//                    $delay = $bookLaterAt->diffInMinutes($now) - 60; //Subtract 1 hour
-//
-//                    $tutorNotificationJob = (new BookLaterTutorNotification($session->id))->delay($delay*60);
-//                    dispatch($tutorNotificationJob);
-//
-//                    $studentNotificationJob = (new BookLaterStudentNotification($session->id))->delay($delay*60);
-//                    dispatch($studentNotificationJob);
-//
-//                }
+                if($session->book_later_at != null || $session->book_later_at != ''){
+                    $bookLaterAt = Carbon::parse($session->book_later_at);
+                    $now = Carbon::now();
+                    $delay = $bookLaterAt->diffInMinutes($now) - 60; //Subtract 1 hour
 
+                    $tutorNotificationJob = (new BookLaterTutorNotification($session->id))->delay(Carbon::now()->addMinutes($delay));
+                    dispatch($tutorNotificationJob);
 
-                
+                    $studentNotificationJob = (new BookLaterStudentNotification($session->id))->delay(Carbon::now()->addMinutes($delay));
+                    dispatch($studentNotificationJob);
+                }
+
                 return [
                     'status' => 'success',
                     'messages' => 'Session booked successfully'
