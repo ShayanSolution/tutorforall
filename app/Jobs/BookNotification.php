@@ -12,10 +12,10 @@ class BookNotification extends Job implements ShouldQueue
 {
     use Queueable;
 
-    protected $student;
-    protected $user;
-    protected $session;
-    protected $rating;
+    public $student;
+    public $users;
+    public $session;
+    public $rating;
     /**
      * Create a new job instance.
      *
@@ -25,10 +25,10 @@ class BookNotification extends Job implements ShouldQueue
      * @param $rating
      * @return void
      */
-    public function __construct($student, $user, $session, $rating)
+    public function __construct($student, $users, $session, $rating)
     {
         $this->student      = $student;
-        $this->user         = $user;
+        $this->users        = $users;
         $this->session      = $session;
         $this->rating       = $rating;
     }
@@ -40,8 +40,8 @@ class BookNotification extends Job implements ShouldQueue
      */
     public function handle()
     {
-        $user       = $this->user;
-        $student    = $this->student;
+        $user       = json_decode($this->users);
+        $student    = json_decode($this->student);
         $session    = $this->session;
         $rating     = $this->rating;
 
@@ -50,10 +50,11 @@ class BookNotification extends Job implements ShouldQueue
         //get tutor device token
 
 
+
         $customData = array(
             'notification_type' => 'session_booked',
             'session_id' => $session->sessionId,
-            'Tutor_Name' => $this->user->firstName." ".$this->user->lastName,
+            'Tutor_Name' => $user->firstName." ".$user->lastName,
             'Class_Name' => $user->p_name,
             'Subject_Name' => $user->s_name,
             'Class_id' => $user->p_id,
@@ -73,6 +74,7 @@ class BookNotification extends Job implements ShouldQueue
             'session_rating' => number_format((float)$rating->avg('rating'), 1, '.', ''),
             'Profile_Image' => !empty($user->profileImage) ? URL::to('/images').'/'.$user->profileImage:'',
         );
+        dd($customData);
 
         Push::handle($title, $body, $customData, $student);
     }

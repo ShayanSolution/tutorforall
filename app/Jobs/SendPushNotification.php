@@ -124,7 +124,8 @@ class SendPushNotification extends Job implements ShouldQueue
 
 
                 $title = Config::get('user-constants.APP_NAME');
-                $body = $this->student->firstName.' '.$this->student->lastName.' wants a session with you [Local]';
+                $isLocal = app()->environment('APP_ENV') != 'production' ? ' [Local]': '';
+                $body = $this->student->firstName.' '.$this->student->lastName.' wants a session with you'.$isLocal;
                 $customData = array(
                     'notification_type' => 'session_request',
                     'session_id' => (string)$sessionRequest->id,
