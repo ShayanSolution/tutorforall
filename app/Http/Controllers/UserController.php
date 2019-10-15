@@ -369,6 +369,8 @@ class UserController extends Controller
             'hourly_rate' => 'required',
             'is_home'  => 'required'
         ]);
+
+
         
         $student_id = $data['student_id'];
         $programme_id = $data['class_id'];

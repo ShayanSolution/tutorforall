@@ -94,9 +94,11 @@ class FindTutorController extends Controller
 
             $tutors = \DB::select($query);
 //                dd($tutors);
+            $sessionSentGroup = $studentId.time();
             foreach($tutors as $tutor){
                 $tutorId = $tutor->id;
                 $params = [
+                    'session_sent_group'=>$sessionSentGroup,
                     'student_id' => (int)$studentId,
                     'tutor_id' => json_encode([$tutorId]),
                     'subject_id' => (int)$studentSubjectId,

@@ -30,7 +30,8 @@ class Session extends Model
         'session_location',
         'book_later_at',
         'hourly_rate',
-        'is_home'
+        'is_home',
+        'session_sent_group'
     ];
 
     public function student()
@@ -85,6 +86,7 @@ class Session extends Model
 
         $getSession = $session->where(
                         [
+                            'tutor_id'=>$data['tutor_id'],
                             'student_id'=>$data['student_id'],
                             'programme_id'=>$data['programme_id'],
                             'subject_id'=>$data['subject_id'],

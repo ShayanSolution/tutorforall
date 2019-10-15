@@ -204,7 +204,6 @@ class SessionController extends Controller
         //get session by id
         $session = Session::find($sessionId);
 
-
         if(!$session){
             return [
                 'status' => 'fail',
@@ -212,8 +211,14 @@ class SessionController extends Controller
             ];
         }
 
+        $sessionBookedOrStartedOrEnded = Session::where('session_sent_group', $session->session_sent_group)
+                            ->whereIn('status', [
+                                'booked', 'started', 'ended'
+                            ])
+                            ->count();
+
         //if student session already exists.
-        if($session->status == 'booked' || $session->status == 'started' || $session->status == 'ended'){
+        if($sessionBookedOrStartedOrEnded > 0){
             return [
                 'status' => 'fail',
                 'message' => 'Session already booked!'
@@ -384,10 +389,10 @@ class SessionController extends Controller
         $job = new StartSessionNotification($request->session_id);
         dispatch($job);
         
-        return [
+        return response()->json([
             'status' => 'success',
             'messages' => 'Session updated successfully'
-        ];
+        ]);
     }
     
     public function sessionCalculationCost(Request $request){
