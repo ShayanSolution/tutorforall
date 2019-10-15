@@ -74,7 +74,6 @@ class BookNotification extends Job implements ShouldQueue
             'session_rating' => number_format((float)$rating->avg('rating'), 1, '.', ''),
             'Profile_Image' => !empty($user->profileImage) ? URL::to('/images').'/'.$user->profileImage:'',
         );
-        dd($customData);
 
         Push::handle($title, $body, $customData, $student);
     }
