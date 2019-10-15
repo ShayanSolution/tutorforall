@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 use App\Helpers\Push;
-use Davibennun\LaravelPushNotification\Facades\PushNotification;
 //Models
 use App\Models\Session;
 use App\Models\User;

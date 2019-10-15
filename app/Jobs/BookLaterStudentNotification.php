@@ -2,21 +2,21 @@
 
 namespace App\Jobs;
 use App\Helpers\Push;
-use Davibennun\LaravelPushNotification\Facades\PushNotification;
-use Carbon\Carbon;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 use Log;
 //helpers
-use TimeZoneHelper;
 //Models
 use App\Models\User;
 use App\Models\Session;
 use App\Models\Subject;
 use App\Models\Programme;
 
-class BookLaterStudentNotification extends Job
+class BookLaterStudentNotification extends Job implements ShouldQueue
 {
+    use Queueable;
     /**
      * Create a new job instance.
      *

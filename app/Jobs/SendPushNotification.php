@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 use App\Helpers\Push;
-use Davibennun\LaravelPushNotification\Facades\PushNotification;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
