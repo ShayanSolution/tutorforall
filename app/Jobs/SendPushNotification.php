@@ -113,6 +113,8 @@ class SendPushNotification extends Job implements ShouldQueue
 
                 //Create new entry if session is not exist with same student_id, subject_id, class_id and date. else update the already existed entry.
                 //Reject session request status is also updated. Means we will not have reject sessions history.
+                $sessionData['subscription_id']= 3;
+                $sessionData['meeting_type_id']= 1;
                 $sessionRequest = Session::create($sessionData);
                 //$session = new Session();
                 //$sessionRequest = $session->createOrUpdateSession($sessionData);
