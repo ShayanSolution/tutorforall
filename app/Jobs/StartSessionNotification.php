@@ -36,8 +36,8 @@ class StartSessionNotification extends Job implements ShouldQueue
         $session = Session::find($this->sessionId);
 
         //get student device token to send notification
-        $user = User::where('id','=',$session->student_id)->select('users.*','device_token')->first();
-        if(!empty($user->token)){
+        $user = User::where('id','=',$session->student_id)->first();
+        if(!empty($user->device_token)){
 
             $title  = Config::get('user-constants.APP_NAME');
             $body   = 'Your session started.';
