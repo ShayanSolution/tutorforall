@@ -90,7 +90,6 @@ class Session extends Model
                             'student_id'=>$data['student_id'],
                             'programme_id'=>$data['programme_id'],
                             'subject_id'=>$data['subject_id'],
-                            'programme_id'=>$data['programme_id'],
                         ])
                         ->where(function ($query) {
                             $query->where('status','pending')->orWhere('status','reject');

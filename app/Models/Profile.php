@@ -76,34 +76,4 @@ class Profile extends Model
         self::where('user_id',$student_id)->update(['is_deserving'=>$deserving_status]);
 
     }
-
-
-    public function setProfileSettingArray($array){
-        $profile_settings = [];
-        if(isset($array['is_home'])){
-            $profile_settings['is_home'] = $array['is_home'];
-        }
-        if(isset($array['is_group'])){
-            $profile_settings['is_group'] = $array['is_group'];
-        }
-        if(isset($array['is_mentor'])){
-            $profile_settings['is_mentor'] = $array['is_mentor'];
-        }
-//        if(isset($array['programme_id'])){
-//            $profile_settings['programme_id'] = $array['programme_id'];
-//        }
-//        if(isset($array['subject_id'])){
-//            $profile_settings['subject_id'] = $array['subject_id'];
-//        }
-        if(isset($array['one_on_one'])){
-            $profile_settings['one_on_one'] = $array['one_on_one'];
-        }
-        if(isset($array['call_student'])){
-            $profile_settings['call_student'] = $array['call_student'];
-        }
-
-        return $profile_settings;
-    }
-
-
 }

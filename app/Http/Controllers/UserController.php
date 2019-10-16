@@ -391,7 +391,7 @@ class UserController extends Controller
                     ->first();
         
         if($student){
-            
+
             //send student info to tutor
             $job = new SendPushNotification($data, $tutors_ids, $student);
             dispatch($job);
@@ -613,19 +613,14 @@ class UserController extends Controller
             'is_group' => 'numeric',
             'is_mentor' => 'numeric',
             'gender_id' => 'numeric',
-//            'programme_id' => 'numeric',
-//            'subject_id' => 'numeric',
             'call_student' => 'numeric',
         ]);
         $data = $request->all();
         $profile = new Profile();
-        $profile_setting = $profile->setProfileSettingArray($data);
-        $update_profile = $profile->updateUserProfile($data['tutor_id'], $profile_setting);
-        if(key_exists('gender_id', $data)){
-            User::where('id', $data['tutor_id'])->update([
-                'gender_id'  =>  $data['gender_id']
-            ]);
-        }
+        $update_profile = $profile->updateUserProfile(
+            $data['tutor_id'],
+            $request->only(['is_home', 'is_group', 'is_mentor', 'gender_id', 'call_student'])
+        );
         if($update_profile){
             return response()->json(
                 [

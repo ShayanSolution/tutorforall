@@ -109,11 +109,13 @@ class SendPushNotification extends Job implements ShouldQueue
                     $dateTime = explode(" ",$sessionData['book_later_at']);
                 }
 
-                $session = new Session();
+
 
                 //Create new entry if session is not exist with same student_id, subject_id, class_id and date. else update the already existed entry.
                 //Reject session request status is also updated. Means we will not have reject sessions history.
-                $sessionRequest = $session->createOrUpdateSession($sessionData);
+                $sessionRequest = Session::create($sessionData);
+                //$session = new Session();
+                //$sessionRequest = $session->createOrUpdateSession($sessionData);
 
 
                 $title = Config::get('user-constants.APP_NAME');
