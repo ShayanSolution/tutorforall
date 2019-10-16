@@ -270,8 +270,9 @@ class SessionController extends Controller
                 }
 
                 return [
-                    'status' => 'success',
-                    'messages' => 'Session booked successfully'
+                    'status'        => 'success',
+                    'messages'      => 'Session booked successfully',
+                    'session_id'    =>  $sessionId
                 ];
             }else{
                 return response()->json(
