@@ -44,7 +44,7 @@ class FindTutorController extends Controller
         $studentProfile = Profile::where('user_id', $request->student_id)->first();
 
         $roleId = 2;
-        
+        $sessionSentGroup = $studentId.'-'.time();
         for( $i=0; $i<=3; $i++){
                 
             // Query to find Tutors in range(KM)
@@ -94,7 +94,6 @@ class FindTutorController extends Controller
 
             $tutors = \DB::select($query);
 //                dd($tutors);
-            $sessionSentGroup = $studentId.'-'.time();
             foreach($tutors as $tutor){
                 $tutorId = $tutor->id;
                 $params = [
