@@ -251,7 +251,7 @@ class SessionController extends Controller
 
             if($updated_session){
 
-                $bookNotification = (new BookNotification(json_encode($student), json_encode($users), $session, $rating));
+                $bookNotification = (new BookNotification(json_encode($student), json_encode($users), $session, $rating, $sessionId));
                 dispatch($bookNotification);
 
                 //Book later notifications.
@@ -262,10 +262,10 @@ class SessionController extends Controller
                     $now = Carbon::now();
                     $delay = $bookLaterAt->diffInMinutes($now) - 60; //Subtract 1 hour
 
-                    $tutorNotificationJob = (new BookLaterTutorNotification($session->id))->delay(Carbon::now()->addMinutes($delay));
+                    $tutorNotificationJob = (new BookLaterTutorNotification($sessionId))->delay(Carbon::now()->addMinutes($delay));
                     dispatch($tutorNotificationJob);
 
-                    $studentNotificationJob = (new BookLaterStudentNotification($session->id))->delay(Carbon::now()->addMinutes($delay));
+                    $studentNotificationJob = (new BookLaterStudentNotification($sessionId))->delay(Carbon::now()->addMinutes($delay));
                     dispatch($studentNotificationJob);
                 }
 

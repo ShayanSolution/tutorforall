@@ -16,6 +16,7 @@ class BookNotification extends Job implements ShouldQueue
     public $users;
     public $session;
     public $rating;
+    public $session_id;
     /**
      * Create a new job instance.
      *
@@ -25,12 +26,13 @@ class BookNotification extends Job implements ShouldQueue
      * @param $rating
      * @return void
      */
-    public function __construct($student, $users, $session, $rating)
+    public function __construct($student, $users, $session, $rating, $session_id)
     {
         $this->student      = $student;
         $this->users        = $users;
         $this->session      = $session;
         $this->rating       = $rating;
+        $this->session_id   = $session_id;
     }
 
     /**
@@ -53,7 +55,7 @@ class BookNotification extends Job implements ShouldQueue
 
         $customData = array(
             'notification_type' => 'session_booked',
-            'session_id' => $session->sessionId,
+            'session_id' => $this->session_id,
             'Tutor_Name' => $user->firstName." ".$user->lastName,
             'Class_Name' => $user->p_name,
             'Subject_Name' => $user->s_name,
