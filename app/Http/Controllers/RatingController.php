@@ -22,7 +22,7 @@ class RatingController extends Controller
         ]);
         $response = Rating::generateErrorResponse($validator);
         if($response['code'] == 500){
-            return $response;
+            return response()->json($response);
         }
         $data = $request->all();
         $session=Session::find($request->session_id);
