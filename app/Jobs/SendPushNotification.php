@@ -48,7 +48,6 @@ class SendPushNotification extends Job implements ShouldQueue
         $programmeId = $this->data['class_id'];
         $subjectId = $this->data['subject_id'];
 
-        $deviceTokenArray = array();
         $class = Programme::find($programmeId);
         $subject = Subject::find($subjectId);
 
@@ -66,6 +65,7 @@ class SendPushNotification extends Job implements ShouldQueue
                 $sessionData['student_id'] =  $studentId;
                 $sessionData['programme_id'] =  $programmeId;
                 $sessionData['subject_id'] =  $subjectId;
+                $sessionData['session_sent_group'] =  $this->data['session_sent_group'];
                 $sessionData['status'] =  'pending';
 
                 if($this->data['is_home'] == 0){
@@ -96,12 +96,6 @@ class SendPushNotification extends Job implements ShouldQueue
                 }
                 $sessionData['started_at'] = TimeZoneHelper::timeConversion(Carbon::now(), 0);
 
-//                if(isset($this->data['session_location'])){
-//
-//                    $sessionData['session_location'] = $this->data['session_location'];
-//                }else{
-//                    $sessionData['session_location'] = '';
-//                }
 
                 if(isset($this->data['book_later_time']) && isset($this->data['book_later_date'])){
                     $sessionData['book_later_at'] = $this->data['book_later_date'].' '.date("H:i:s", strtotime($this->data['book_later_time']));
@@ -116,7 +110,6 @@ class SendPushNotification extends Job implements ShouldQueue
                 }
 
                 $session = new Session();
-//                $sessionRequest = $session->addSession($sessionData);//Create new entry for every tutor
 
                 //Create new entry if session is not exist with same student_id, subject_id, class_id and date. else update the already existed entry.
                 //Reject session request status is also updated. Means we will not have reject sessions history.
