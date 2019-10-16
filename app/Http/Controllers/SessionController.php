@@ -438,7 +438,7 @@ class SessionController extends Controller
             $wallet->save();
 
             $job = (new SendNotificationOfCalculationCost($totalCostAccordingToHours, $request->session_id, json_encode($user), 'commercial'));
-            $job->dispatch();
+            dispatch($job);
             return response()->json(
                 [
                     'status' => 'success',
@@ -455,7 +455,7 @@ class SessionController extends Controller
             $findSession->save();
 
             $job = (new SendNotificationOfCalculationCost($totalCostAccordingToHours, $request->session_id, json_encode($user), 'mentor'));
-            $job->dispatch();
+            dispatch($job);
             return response()->json(
                 [
                     'status' => 'success',
