@@ -416,8 +416,8 @@ class UserController extends Controller
 
     public function updateStudentProfile(Request $request){
         $this->validate($request,[
-            'firstName' => 'regex:/^[a-zA-Z ]*$/u|max:255',
-            'lastName' => 'regex:/^[a-zA-Z ]*$/u|max:255',
+            'firstName' => 'regex:/^[a-zA-Z0-9 ]*$/u|max:255',
+            'lastName' => 'regex:/^[a-zA-Z0-9 ]*$/u|max:255',
             'email' => 'email',
             'student_id' => 'Required|numeric',
             'gender_id' => 'numeric',
