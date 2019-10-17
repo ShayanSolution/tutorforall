@@ -233,7 +233,7 @@ class AuthenticationController extends Controller
     public function postRegister(Request $request){
 
         $validation_array = [
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users',
             'phone' => 'required|digits_between:11,20',
             'password' => 'required|min:6|confirmed',
             'device_token' => 'required',
