@@ -161,6 +161,11 @@ $router->post('/update-user', 'AuthenticationController@updateUser');
 
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
+
+    $router->post('upload-documents', 'DocumentsController@uploadDocs');
+    $router->get('tutors-documents-list', 'DocumentsController@tutorsDocsList');
+    $router->delete('delete-tutors-document/{document}', 'DocumentsController@deleteTutorsDoc');
+
     //Dashboard Routes
     $router->get('dashboard-pie-chart-totals',  [
         'uses'       => 'UserController@getDashboardTotalOfPieCharts',
