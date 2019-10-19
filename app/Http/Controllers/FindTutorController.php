@@ -11,21 +11,24 @@ class FindTutorController extends Controller
     public function findTutor(Request $request){
 
         $this->validate($request,[
-            'student_id' => 'Required',
-            'class_id' => 'Required',
-            'subject_id' => 'Required',
-            'is_group' => 'Required',
-            'longitude'  => 'Required',
-            'latitude' => 'Required',
-            'group_count' => 'Required',
+            'student_id' => 'required',
+            'class_id' => 'required',
+            'subject_id' => 'required',
+            'is_group' => 'required',
+            'longitude'  => 'required',
+            'latitude' => 'required',
+            'group_count' => 'required',
             'hourly_rate' => 'required',
             'is_home' => 'required',
             'call_student' => 'required',
-            'one_on_one' => 'required'
+            'one_on_one' => 'required',
+            'book_type'=>'required',
+            'session_time'=>'required'
         ]);
 
 
         $studyFrom = $request->study_from;
+        $bookType = $request->book_type;
         $studentId = $request->student_id;
         $studentClassId = $request->class_id;
         $studentSubjectId = $request->subject_id;
@@ -36,6 +39,8 @@ class FindTutorController extends Controller
         $isHome = $request->is_home;
         $callStudent = $request->call_student;
         $oneOnOne = $request->one_on_one;
+        $hourlyRate = $request->hourly_rate;
+        $sessionTime = $request->session_time;
         $distanceInKmMin = 0;
         $distanceInKmMax = 2;
 
@@ -43,7 +48,7 @@ class FindTutorController extends Controller
 
         $roleId = 2;
         $sessionSentGroup = $studentId.'-'.time();
-        $genderMatchingQuery = "";//" AND (profiles.teach_to = $studyFrom OR profiles.teach_to = 0) ";
+        $genderMatchingQuery = " AND (profiles.teach_to = $studyFrom OR profiles.teach_to = 0) ";
         for( $i=0; $i<=3; $i++){
                 
             // Query to find Tutors in range(KM)
@@ -79,15 +84,24 @@ class FindTutorController extends Controller
             foreach($tutors as $tutor){
                 $tutorId = $tutor->id;
                 $params = [
-                    'session_sent_group'=>$sessionSentGroup,
                     'student_id' => (int)$studentId,
                     'tutor_id' => json_encode([$tutorId]),
                     'subject_id' => (int)$studentSubjectId,
                     'class_id' => (int)$studentClassId,
                     'latitude' => floatval($studentLat),
                     'longitude' => floatval($studentLong),
+                    'session_sent_group'=>$sessionSentGroup,
                     'is_group'  => (int)$studentIsGroup,
-                    'group_members' => (int)$studentGroupCount
+                    'group_members' => (int)$studentGroupCount,
+                    'is_home'=>$isHome,
+                    'hourly_rate'=>$hourlyRate,
+
+                    //-----New fields-----/
+                    'call_student'=>$callStudent,
+                    'one_on_one'=>$oneOnOne,
+                    'group_count'=>$studentGroupCount,
+                    'book_type'=>$bookType,
+                    'session_time'=>$sessionTime
                 ];
 //                    dd($params);
                 $request->request->add($params);

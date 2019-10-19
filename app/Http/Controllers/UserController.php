@@ -363,11 +363,13 @@ class UserController extends Controller
             'class_id' => 'required',
             'latitude' => 'required',
             'longitude' => 'required',
-//            'session_location' => 'required', //TODO: Required when android developer is ready.
             'is_group'  => 'required',
             'group_members' => 'required_if:is_group,==,1',
             'hourly_rate' => 'required',
-            'is_home'  => 'required'
+            'is_home'  => 'required',
+            'call_student'=>'required',
+            'one_on_one'=>'required',
+            'group_count'=>'required'
         ]);
 
 
@@ -376,6 +378,7 @@ class UserController extends Controller
         $programme_id = $data['class_id'];
         $subject_id = $data['subject_id'];
         $tutors_ids = json_decode($data['tutor_id']);
+
 //        $device_token_array = array();
 //        $class = Programme::find($programme_id);
 //        $subject = Subject::find($subject_id);
