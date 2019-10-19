@@ -619,7 +619,7 @@ class UserController extends Controller
         $profile = new Profile();
         $update_profile = $profile->updateUserProfile(
             $data['tutor_id'],
-            $request->only(['is_home', 'is_group', 'is_mentor', 'teach_to', 'call_student'])
+            $request->only(['is_home', 'is_group', 'is_mentor', 'teach_to', 'call_student', 'one_on_one'])
         );
         if($update_profile){
             return response()->json(
