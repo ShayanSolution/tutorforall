@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 class FindTutorController extends Controller
 {
     public function findTutor(Request $request){
-//        dd($request->toArray());
+
         $this->validate($request,[
             'student_id' => 'Required',
             'class_id' => 'Required',
@@ -18,13 +18,14 @@ class FindTutorController extends Controller
             'longitude'  => 'Required',
             'latitude' => 'Required',
             'group_count' => 'Required',
-//            'book_type' => 'Required',
             'hourly_rate' => 'required',
             'is_home' => 'required',
             'call_student' => 'required',
             'one_on_one' => 'required'
         ]);
-//        dd($studentTableId);
+
+
+        $studyFrom = $request->study_from;
         $studentId = $request->student_id;
         $studentClassId = $request->class_id;
         $studentSubjectId = $request->subject_id;
@@ -42,6 +43,7 @@ class FindTutorController extends Controller
 
         $roleId = 2;
         $sessionSentGroup = $studentId.'-'.time();
+        $genderMatchingQuery = " AND (profiles.teach_to = '$studyFrom' OR profiles.teach_to = '0') ";
         for( $i=0; $i<=3; $i++){
                 
             // Query to find Tutors in range(KM)
@@ -49,7 +51,7 @@ class FindTutorController extends Controller
             //3959 = Miles
 
             $isMentor = $studentProfile->is_deserving == 0 ? "0" : "1";
-            $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, profiles.is_mentor, profiles.is_home, profiles.call_student, profiles.is_group, profiles.one_on_one, program_subject.program_id as t_program_id, program_subject.subject_id as t_subject_id,"
+            $query = "SELECT users.id, users.firstName, users.role_id, users.latitude, users.longitude, users.device_token, profiles.is_mentor, profiles.teach_to, profiles.is_home, profiles.call_student, profiles.is_group, profiles.one_on_one, program_subject.program_id as t_program_id, program_subject.subject_id as t_subject_id,"
             . "( 6371 "
             . " * acos ( cos ( radians(" . $studentLat . ") )"
             . " * cos( radians( `latitude` ) )"
@@ -66,6 +68,7 @@ class FindTutorController extends Controller
             . " AND profiles.is_mentor = '$isMentor' "
             . " AND (profiles.is_home = '$isHome' OR profiles.call_student = '$callStudent') "
             . " AND (profiles.is_group = '$studentIsGroup' OR profiles.one_on_one = '$oneOnOne') "
+            . $genderMatchingQuery
             . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
 
 
