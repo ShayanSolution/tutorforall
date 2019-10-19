@@ -356,21 +356,21 @@ class UserController extends Controller
     
     public function tutorSessionInfo(Request $request){
         $data = $request->all();
-        $this->validate($request,[
-            'student_id' => 'required',
-            'tutor_id' => 'required',
-            'subject_id' => 'required',
-            'class_id' => 'required',
-            'latitude' => 'required',
-            'longitude' => 'required',
-            'is_group'  => 'required',
-            'group_members' => 'required_if:is_group,==,1',
-            'hourly_rate' => 'required',
-            'is_home'  => 'required',
-            'call_student'=>'required',
-            'one_on_one'=>'required',
-            'group_count'=>'required'
-        ]);
+//        $this->validate($request,[
+//            'student_id' => 'required',
+//            'tutor_id' => 'required',
+//            'subject_id' => 'required',
+//            'class_id' => 'required',
+//            'latitude' => 'required',
+//            'longitude' => 'required',
+//            'is_group'  => 'required',
+//            'group_members' => 'required_if:is_group,==,1',
+//            'hourly_rate' => 'required',
+//            'is_home'  => 'required',
+//            'call_student'=>'required',
+//            'one_on_one'=>'required',
+//            'group_count'=>'required'
+//        ]);
 
 
         
