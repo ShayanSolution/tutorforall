@@ -20,6 +20,7 @@ class Profile extends Model
         'one_on_one',
         'call_tutor',
         'call_student',
+        'teach_to'
     ];
 
     public function user()

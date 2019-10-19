@@ -310,7 +310,7 @@ class UserController extends Controller
                 'Subjects List'=>$subjectList,
                 'Rating' => number_format((float)$user_rating, 1, '.', ''),
                 'Profile_Image' => URL::to('/images').'/'.$user->profileImage,
-
+                'teach_to' => $user->teach_to,
             );
             return $profile;
         }
@@ -612,14 +612,14 @@ class UserController extends Controller
             'is_home' => 'numeric',
             'is_group' => 'numeric',
             'is_mentor' => 'numeric',
-            'gender_id' => 'numeric',
+            'teach_to' => 'numeric',
             'call_student' => 'numeric',
         ]);
         $data = $request->all();
         $profile = new Profile();
         $update_profile = $profile->updateUserProfile(
             $data['tutor_id'],
-            $request->only(['is_home', 'is_group', 'is_mentor', 'gender_id', 'call_student'])
+            $request->only(['is_home', 'is_group', 'is_mentor', 'teach_to', 'call_student'])
         );
         if($update_profile){
             return response()->json(
