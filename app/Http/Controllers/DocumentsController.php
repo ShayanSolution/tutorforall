@@ -25,9 +25,9 @@ class DocumentsController extends Controller
             'document' => 'required|mimes:jpeg,bmp,png'
         ]);
 
-        $imageName = Auth::user()->id.'-'.time().'.'.$request->document->getClientOriginalExtension();
+        $imageName = time().'.'.$request->document->getClientOriginalExtension();
 
-        $isUploaded = $request->document->move('/storage/documents', $imageName);
+        $isUploaded = $request->document->move(storage_path('app/public/documents'), $imageName);
 
         $fullyQualifiedPath = '/storage/documents/'.$imageName;
 
@@ -50,7 +50,7 @@ class DocumentsController extends Controller
 
         if(!$docCreated)
         {
-            unlink($fullyQualifiedPath);
+            unlink(storage_path('app/public/documents').'/'. $imageName);
             return response()->json([
                 'status'    =>  'error',
                 'message'   =>  'Oops! Something went wrong! Please re-upload the document'
