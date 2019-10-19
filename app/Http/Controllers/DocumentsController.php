@@ -82,14 +82,18 @@ class DocumentsController extends Controller
         ], 200);
     }
 
-    public function deleteTutorsDoc($documentId){
+    public function deleteTutorsDoc(Request $request){
+
+        $documentId = $request->document_id;
 
         $document = Document::find($documentId);
-        if(!$document)
+
+        if(!$document){
             return response()->json([
                 'status'=>'error',
                 'message'=>'Document does not exists.'
             ], 400);
+        }
 
         unlink($document->path);
 
