@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class DocumentsController extends Controller
 {
+    protected static $documentStoragePath;
+
+    public function __construct()
+    {
+        self::$documentStoragePath  = storage_path('app/public/documents');
+    }
 
     /**
      * Store a documents in storage.
@@ -23,13 +29,14 @@ class DocumentsController extends Controller
             'document_type'     =>  'required'
         ]);
 
-        $fullyQualifiedPath = $this->uploadDocumentImage($request);
+        $response = $this->uploadDocumentImage($request);
 
         $docCreated = Document::create([
             'tutor_id'          => Auth::user()->id,
             'title'             => $request->title,
-            'path'              => $fullyQualifiedPath,
+            'path'              => $response['accessPath'],
             'document_type'     => $request->document_type,
+            'storage_path'      => $response['storagePath'],
             'status'            => 2,
             'verified_by'       => null,
             'verified_at'       => null,
@@ -39,7 +46,7 @@ class DocumentsController extends Controller
 
         if(!$docCreated)
         {
-            unlink($fullyQualifiedPath);
+            unlink($response['storagePath']);
             return response()->json([
                 'status'    =>  'error',
                 'message'   =>  'Oops! Something went wrong! Please re-upload the document'
@@ -90,7 +97,7 @@ class DocumentsController extends Controller
             ], 400);
         }
 
-        unlink($document->path);
+        unlink($document->storage_path);
 
         $isdeleted = $document->delete();
 
@@ -133,7 +140,7 @@ class DocumentsController extends Controller
                 'message'   =>  'Document does not exists!'
             ], 404);
 
-        $deletedOriginalDocImage = unlink($document->path);
+        $deletedOriginalDocImage = unlink($document->storage_path);
 
         if(!$deletedOriginalDocImage)
             return response()->json([
@@ -141,13 +148,14 @@ class DocumentsController extends Controller
                 'message'   =>  'Oops! Something went wrong'
             ], 409);
 
-        $fullyQualifiedPath = $this->uploadDocumentImage($request);
+        $response = $this->uploadDocumentImage($request);
 
         $document->update([
             'tutor_id'          => Auth::user()->id,
             'title'             => $request->title,
-            'path'              => $fullyQualifiedPath,
+            'path'              => $response['accessPath'],
             'document_type'     => $request->document_type,
+            'storage_path'      => $response['storagePath'],
             'status'            => 2,
             'verified_by'       => null,
             'verified_at'       => null,
@@ -157,8 +165,7 @@ class DocumentsController extends Controller
         return response()->json([
             'status'    =>  'success',
             'message'   =>  'Document updated successfully!'
-        ], 204);
-
+        ]);
     }
 
 
@@ -166,15 +173,18 @@ class DocumentsController extends Controller
 
         $imageName = time().'.'.$request->document->getClientOriginalExtension();
 
-        $isUploaded = $request->document->move(storage_path('app/public/documents'), $imageName);
+        $isUploaded = $request->document->move(self::$documentStoragePath, $imageName);
+
+        $storagePath = self::$documentStoragePath.'/'.$imageName;
 
         $fullyQualifiedPath = '/storage/documents/'.$imageName;
 
         if(!$isUploaded)
-        {
             return response()->json(['status'=>'error', 'message'=>'Oops! something went wrong. Please re-upload document.'], 400);
-        }
 
-        return $fullyQualifiedPath;
+        return [
+            'accessPath'    =>  $fullyQualifiedPath,
+            'storagePath'   =>  $storagePath
+        ];
     }
 }
