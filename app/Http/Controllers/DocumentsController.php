@@ -72,7 +72,7 @@ class DocumentsController extends Controller
 
         return response()->json([
             'status'    =>  'success',
-            'message'   =>  'Document found successfully!',
+            'message'   =>  'Documents found successfully!',
             'documents' =>  $documents
         ], 200);
     }

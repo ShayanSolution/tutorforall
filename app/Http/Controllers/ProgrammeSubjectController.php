@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Programme;
+use App\Models\ProgramSubject;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Subject;
 
@@ -250,5 +252,38 @@ class ProgrammeSubjectController extends Controller
             );
         }
     }
-    
+
+    /**
+     * Add Tutor's Classes and Subjects
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function addTutorsClassesAndSubjects(Request $request){
+
+        $userId = Auth::user()->id;
+
+        ProgramSubject::where('user_id', $userId)->delete();
+
+        foreach ($request->all() as $object){
+
+            $subjectIds = $object->subject_ids;
+
+            foreach ($subjectIds as $subjectId){
+                ProgramSubject::create([
+                    'user_id'       =>  $userId,
+                    'program_id'    =>  $object->class_id,
+                    'subject_id'    =>  $subjectId
+                ]);
+            }
+
+        }
+
+        return response()->json([
+            'status'    =>  'success',
+            'message'   =>  'Added Subjects and Classes against tutor successfully!'
+        ]);
+
+    }
+
 }
