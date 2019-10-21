@@ -114,7 +114,7 @@ class DocumentsController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function updateDoc(Request $request){
+    public function updateTutorsDoc(Request $request){
 
         $this->validate($request, [
             'document_id'       =>  'required',
