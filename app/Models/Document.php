@@ -9,7 +9,7 @@ class Document extends Model
 {
     public $timestamps = false;
     protected $fillable = [
-        'tutor_id', 'title', 'path', 'status',
+        'tutor_id', 'title', 'path', 'status', 'document_type',
         'rejection_reason', 'verified_by', 'verified_at'
     ];
 

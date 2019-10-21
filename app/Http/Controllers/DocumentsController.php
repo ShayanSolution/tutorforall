@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use Laravel\Lumen\Routing\Router;
 
 class DocumentsController extends Controller
 {
@@ -21,8 +18,9 @@ class DocumentsController extends Controller
     public function uploadDocs(Request $request)
     {
         $this->validate($request,[
-            'title' => 'required',
-            'document' => 'required|mimes:jpeg,bmp,png'
+            'title'             =>  'required',
+            'document'          =>  'required|mimes:jpeg,bmp,png',
+            'document_type'     =>  'required'
         ]);
 
         $imageName = time().'.'.$request->document->getClientOriginalExtension();
@@ -41,6 +39,7 @@ class DocumentsController extends Controller
             'tutor_id'          => Auth::user()->id,
             'title'             => $request->title,
             'path'              => $fullyQualifiedPath,
+            'document_type'     => $request->document_type,
             'status'            => 2,
             'verified_by'       => null,
             'verified_at'       => null,
@@ -66,7 +65,6 @@ class DocumentsController extends Controller
     }
 
 
-
     /**
      * Listing tutor's documents.
      */
@@ -82,6 +80,13 @@ class DocumentsController extends Controller
         ], 200);
     }
 
+
+    /**
+     * Delete Tutor's Documents.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function deleteTutorsDoc(Request $request){
 
         $documentId = $request->document_id;
