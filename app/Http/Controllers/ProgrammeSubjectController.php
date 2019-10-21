@@ -261,11 +261,14 @@ class ProgrammeSubjectController extends Controller
      */
     public function addTutorsClassesAndSubjects(Request $request){
 
+        $request = json_decode($request->getContent());
+        $request = $request->data;
+
         $userId = Auth::user()->id;
 
         ProgramSubject::where('user_id', $userId)->delete();
 
-        foreach ($request->all() as $object){
+        foreach ($request as $object){
 
             $subjectIds = $object->subject_ids;
 
