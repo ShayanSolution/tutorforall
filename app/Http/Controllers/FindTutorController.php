@@ -22,8 +22,7 @@ class FindTutorController extends Controller
             'is_home' => 'required',
             'call_student' => 'required',
             'one_on_one' => 'required',
-            'book_type'=>'required',
-            'session_time'=>'required'
+            'book_type'=>'required'
         ]);
 
 
