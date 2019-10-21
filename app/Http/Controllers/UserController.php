@@ -356,33 +356,12 @@ class UserController extends Controller
     
     public function tutorSessionInfo(Request $request){
         $data = $request->all();
-//        $this->validate($request,[
-//            'student_id' => 'required',
-//            'tutor_id' => 'required',
-//            'subject_id' => 'required',
-//            'class_id' => 'required',
-//            'latitude' => 'required',
-//            'longitude' => 'required',
-//            'is_group'  => 'required',
-//            'group_members' => 'required_if:is_group,==,1',
-//            'hourly_rate' => 'required',
-//            'is_home'  => 'required',
-//            'call_student'=>'required',
-//            'one_on_one'=>'required',
-//            'group_count'=>'required'
-//        ]);
 
-
-        
         $student_id = $data['student_id'];
         $programme_id = $data['class_id'];
         $subject_id = $data['subject_id'];
         $tutors_ids = json_decode($data['tutor_id']);
 
-//        $device_token_array = array();
-//        $class = Programme::find($programme_id);
-//        $subject = Subject::find($subject_id);
-        //update class and subjects for students
         Profile::where('user_id',$student_id)->update(['programme_id'=>$programme_id,'subject_id'=>$subject_id]);
         $student = User::select('users.*')
                     ->select('users.*','profiles.is_group')
