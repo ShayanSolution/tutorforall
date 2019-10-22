@@ -81,6 +81,22 @@ class ProgrammeSubjectController extends Controller
     public function getAllSubjects() {
 
         $subjects = Subject::where('status', 1)->get();
+
+        /**
+         *  If user is tutor we are sending the selected field against all subjects. The
+         *  subjects which have been selected by Tutor will be marked as selected:true
+         */
+        if(Auth::user()->role_id == User::TUTOR_ROLE_ID){
+            $programSubjectIds = Auth::user()->subjects()->pluck('subjects.id')->toArray();
+            foreach ($subjects as $subject){
+                if(in_array($subject->id, $programSubjectIds))
+                    $subject->selected = true;
+                else
+                    $subject->selected = false;
+            }
+        }
+
+
         if($subjects){
             return response()->json(
                 [

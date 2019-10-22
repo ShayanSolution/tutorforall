@@ -21,6 +21,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     const ADMIN_ROLE = 'ADMIN_USER';
     const BASIC_ROLE = 'BASIC_USER';
+    const ADMIN_ROLE_ID = 1;
+    const TUTOR_ROLE_ID = 2;
+    const STUDENT_ROLE_ID = 3;
     protected $dates = ['deleted_at'];
     /**
      * The database table used by the model.
@@ -100,6 +103,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function role()
     {
         return $this->belongsTo('App\Models\Role');
+    }
+
+    public function subjects(){
+        return $this->belongsToMany('App\Models\Subject', 'program_subject', 'user_id', 'subject_id');
     }
 
     public function AauthAcessToken(){
