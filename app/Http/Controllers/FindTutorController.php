@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profile;
+use App\Models\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -113,6 +114,11 @@ class FindTutorController extends Controller
             $distanceInKmMin = $distanceInKmMin+2;
             $distanceInKmMax = $distanceInKmMax+2;
         }
+        Session::where('session_sent_group', $sessionSentGroup)
+                ->where('status', 'pending')
+                ->update([
+                    'status' => 'expired'
+                ]);
         return response()->json(
             [
                 'status' => 'Complete',

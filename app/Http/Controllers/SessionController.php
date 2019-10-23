@@ -224,7 +224,13 @@ class SessionController extends Controller
                 'status' => 'fail',
                 'message' => 'Session already booked!'
             ];
-        }else{
+        }else if($session->status == 'expired'){
+            return [
+                'status' => 'fail',
+                'message' => 'Session expired!'
+            ];
+        }
+        else{
 //            $tutorId = $session->tutor_id;
             $tutorId = Auth::user()->id;//Get login tutor id
             $studentId = $session->student_id;
