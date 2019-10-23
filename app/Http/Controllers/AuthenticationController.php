@@ -471,7 +471,7 @@ class AuthenticationController extends Controller
 
         $userInitObject = new User();
 
-        $activeUser = $userInitObject->isActive(substr($phone,-5));
+        $activeUser = $userInitObject->isActive(substr($phone,-10));
 
         if(!$activeUser)
             return response()->json(['status'=>'error', 'message'=>'Either user does not exists or is not active!']);

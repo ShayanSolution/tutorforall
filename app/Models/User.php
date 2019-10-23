@@ -347,7 +347,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public static function isEligibleToRequestResetPassword($phone, $roleId){
 
-        $phoneCodeAlreadyGeneratedWithinOneDay = PhoneCode::where('phone', 'LIKE', '%'.substr($phone,-5))
+        $phoneCodeAlreadyGeneratedWithinOneDay = PhoneCode::where('phone', 'LIKE', '%'.substr($phone,-10))
             ->where('verified', 0)
             ->where('created_at', '>', Carbon::now()->subDay())
             ->first();
