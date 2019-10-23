@@ -14,10 +14,6 @@ use Symfony\Component\HttpFoundation\File\File;
 |
 */
 
-Route::get('/phpinfo', function () {
-    phpinfo();
-});
-
 Route::get('/test-push', function () {
     $message = PushNotification::Message(
         'Arslan Ali wants a session with you',
