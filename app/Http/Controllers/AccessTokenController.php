@@ -45,6 +45,10 @@ class AccessTokenController extends Controller
             return response()->json(['error'=>'error', 'message'=>'Invalid Phone Number']);
         }
 
+        if($user->is_active == 0){
+            return response()->json(['error'=>'error', 'message'=>'Unauthorized'], 401);
+        }
+
         $roleInMessage = $request->role_id == 2 ? 'Tutor' : 'Student';
 
         if($user->role_id != $request->role_id)
