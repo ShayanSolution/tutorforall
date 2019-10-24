@@ -146,9 +146,22 @@ class SendPushNotification extends Job implements ShouldQueue
                     'Profile_Image' => !empty($this->student->profileImage)?URL::to('/images').'/'.$this->student->profileImage:'',
                 );
 
+                $this->slackLog($user, env('TOOTAR_LOGGER_WEBHOOK_SLACK'));
                 Push::handle($title, $body, $customData, $user);
             }
         }
 
+    }
+    private function slackLog($user, $url){
+        $ch = curl_init($url);
+        $data = array(
+            'text' => 'Notification sent to '.$user->fullName.'. His token is '.$user->device_token
+        );
+        $payload = json_encode($data);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($ch);
+        curl_close($ch);
     }
 }

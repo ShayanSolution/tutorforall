@@ -25,6 +25,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     const TUTOR_ROLE_ID = 2;
     const STUDENT_ROLE_ID = 3;
     protected $dates = ['deleted_at'];
+
+    public $appends = ['fullName'];
     /**
      * The database table used by the model.
      *
@@ -71,6 +73,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password',
     ];
+
+    public function getFullNameAttribute(){
+        return $this->firstName.' '.$this->lastName;
+    }
 
     /**
      * @return bool
