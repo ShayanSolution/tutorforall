@@ -155,7 +155,7 @@ class SendPushNotification extends Job implements ShouldQueue
     private function slackLog($user, $url){
         $ch = curl_init($url);
         $data = array(
-            'text' => 'Notification sent to '.$user->fullName.'. His token is '.$user->device_token
+            'text' => 'Notification sent to '.$user->fullName.'. at '.Carbon::now()
         );
         $payload = json_encode($data);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
