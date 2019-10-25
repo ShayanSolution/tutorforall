@@ -23,6 +23,10 @@ class Handler extends ExceptionHandler
         HttpException::class,
         ModelNotFoundException::class,
         ValidationException::class,
+
+        SessionExpired::class,
+        SessionBookedStartedOrEnded::class,
+        CouldNotMarkSessionAsBooked::class,
     ];
 
     /**
@@ -57,6 +61,18 @@ class Handler extends ExceptionHandler
 
         if ($e instanceof NotFoundHttpException) {
             return response()->json((['status' => 404, 'message' => 'The requested resource was not found']), 404);
+        }
+
+        if ($e instanceof SessionExpired) {
+            return response()->json(['status' => 'error', 'message' => 'Session Expired']);
+        }
+
+        if ($e instanceof SessionBookedStartedOrEnded) {
+            return response()->json(['status' => 'fail', 'message' => 'Session already booked!']);
+        }
+
+        if ($e instanceof CouldNotMarkSessionAsBooked) {
+            return response()->json(['status' => 'fail', 'message' => 'Oops! Session booking failed!']);
         }
 
         return parent::render($request, $e);

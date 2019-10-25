@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 
+use App\Exceptions\CouldNotMarkSessionAsBooked;
+use App\Exceptions\SessionBookedStartedOrEnded;
+use App\Exceptions\SessionExpired;
 use App\Jobs\BookNotification;
 use App\Jobs\SendNotificationOfCalculationCost;
 use App\Wallet;
 use Illuminate\Http\Request;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Log;
 use Carbon\Carbon;
@@ -189,6 +193,8 @@ class SessionController extends Controller
      * @package App\Http\Controllers
      * Api will create student session with tutor and notification to student
      */
+    /**
+     * New Implementation is written below
     public function bookedTutor(Request $request){
         $data = $request->all();
         $this->validate($request,[
@@ -294,6 +300,131 @@ class SessionController extends Controller
 
 
     }
+    */
+
+
+
+    /**
+     * Class SessionController
+     * @package App\Http\Controllers
+     * @param Request $request
+     * @return array|\Illuminate\Http\JsonResponse
+     * @throws \Exception
+     *
+     * Api will book student session with tutor and notify to student
+     */
+    public function bookedTutor(Request $request){
+        $this->validate($request,[
+            'session_id'            =>  'required',
+            'rate'                  =>  'required',
+            'session_sent_group'    =>  'required'
+        ]);
+
+
+        DB::beginTransaction();
+        try {
+            $tutorId        = Auth::user()->id;
+            $sessionId      = $request->session_id;
+            $packageId      = $request->rate;
+
+            $session = Session::find($sessionId);
+
+            if($session->status == 'expired'){
+                throw new SessionExpired();
+            }
+
+            $siblingSessions = Session::where('session_sent_group', $request->session_sent_group);
+
+            $sessionBookedOrStartedOrEnded = $siblingSessions
+                ->whereIn('status', [
+                    'booked', 'started', 'ended'
+                ])
+                ->count();
+
+            if($sessionBookedOrStartedOrEnded > 0){
+                throw new SessionBookedStartedOrEnded();
+            }
+
+            $siblingSessions->lockForUpdate()->get();
+
+
+            $user = new User();
+            $users = $user->findBookedUser($tutorId, $sessionId);
+
+
+            $student = $session->student;
+
+            $package = new Package();
+
+            $package_rate = $package->getPackageRate($packageId, $session->is_group, $session->group_members);
+
+
+            $thisSession            = $siblingSessions->where('id', $sessionId);
+            $thisSession->status    = 'booked';
+            $thisSession->rate      = $package_rate;
+            $savedThisSession       = $thisSession->save();
+
+            if(!$savedThisSession)
+                throw new CouldNotMarkSessionAsBooked();
+
+
+            $siblingsOfCurrentSession           = $siblingSessions->where('id', '!=', $sessionId);
+            $siblingsOfCurrentSession->status   = 'expired';
+            $savedThisSession                   = $siblingsOfCurrentSession->save();
+
+            if(!$savedThisSession)
+                throw new CouldNotMarkSessionAsBooked();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+        if($savedThisSession){
+            //get session rating
+            $rating_sessions = Session::where('tutor_id', $tutorId)->where('hourly_rate', '!=', 0)->pluck('id');
+            $rating = Rating::whereIn('session_id', $rating_sessions)->get();
+
+            return $this->sendBookingNotifications($student, $users, $session, $rating, $sessionId);
+        }else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to update session status'
+                ], 422
+            );
+        }
+
+    }
+
+    private function sendBookingNotifications($student, $users, $session, $rating, $sessionId){
+
+        $bookNotification = (new BookNotification(json_encode($student), json_encode($users), $session, $rating, $sessionId));
+        dispatch($bookNotification);
+
+        //Book later notifications.
+        if($session->book_later_at != null || $session->book_later_at != ''){
+
+            $bookLaterAt = Carbon::parse($session->book_later_at);//Carbon::createFromFormat('Y-m-d H:i:s', $session->book_later_at, env('APP_SERVER_TIMEZONE'));
+//                    $bookLaterAt->setTimezone(env('APP_TIMEZONE'));
+            $now = Carbon::now();
+            $delay = $bookLaterAt->diffInMinutes($now) - 60; //Subtract 1 hour
+
+            $tutorNotificationJob = (new BookLaterTutorNotification($sessionId))->delay(Carbon::now()->addMinutes($delay));
+            dispatch($tutorNotificationJob);
+
+            $studentNotificationJob = (new BookLaterStudentNotification($sessionId))->delay(Carbon::now()->addMinutes($delay));
+            dispatch($studentNotificationJob);
+        }
+
+        return [
+            'status'        => 'success',
+            'message'       => 'Session booked successfully',
+            'session_id'    =>  $sessionId
+        ];
+    }
+
 
     /**
      * @param Request $request
