@@ -320,7 +320,7 @@ class SessionController extends Controller
             'session_sent_group'    =>  'required'
         ]);
 
-
+        $savedThisSession = 0;
         DB::beginTransaction();
         try {
             $tutorId        = Auth::user()->id;
@@ -333,9 +333,7 @@ class SessionController extends Controller
                 throw new SessionExpired();
             }
 
-            $siblingSessions = Session::where('session_sent_group', $request->session_sent_group);
-
-            $sessionBookedOrStartedOrEnded = $siblingSessions
+            $sessionBookedOrStartedOrEnded = Session::where('session_sent_group', $request->session_sent_group)
                 ->whereIn('status', [
                     'booked', 'started', 'ended'
                 ])
@@ -344,9 +342,6 @@ class SessionController extends Controller
             if($sessionBookedOrStartedOrEnded > 0){
                 throw new SessionBookedStartedOrEnded();
             }
-
-            $siblingSessions->lockForUpdate()->get();
-
 
             $user = new User();
             $users = $user->findBookedUser($tutorId, $sessionId);
@@ -359,21 +354,22 @@ class SessionController extends Controller
             $package_rate = $package->getPackageRate($packageId, $session->is_group, $session->group_members);
 
 
-            $thisSession            = $siblingSessions->where('id', $sessionId);
-            $thisSession->status    = 'booked';
-            $thisSession->rate      = $package_rate;
-            $savedThisSession       = $thisSession->save();
+            $siblingSessions           = Session::where('session_sent_group', $request->session_sent_group)
+                ->lockForUpdate()->get();
 
-            if(!$savedThisSession)
-                throw new CouldNotMarkSessionAsBooked();
+            foreach ($siblingSessions as $session){
 
+                if($session->id == $sessionId){
+                    $session->status    = 'booked';
+                    $session->rate      = $package_rate;
+                }else
+                    $session->status   =  'expired';
 
-            $siblingsOfCurrentSession           = $siblingSessions->where('id', '!=', $sessionId);
-            $siblingsOfCurrentSession->status   = 'expired';
-            $savedThisSession                   = $siblingsOfCurrentSession->save();
+                $savedThisSession  =  $session->save();
 
-            if(!$savedThisSession)
-                throw new CouldNotMarkSessionAsBooked();
+                if(!$savedThisSession)
+                    throw new CouldNotMarkSessionAsBooked();
+            }
 
             DB::commit();
         } catch (\Exception $e) {
@@ -418,11 +414,11 @@ class SessionController extends Controller
             dispatch($studentNotificationJob);
         }
 
-        return [
+        return response()->json([
             'status'        => 'success',
             'message'       => 'Session booked successfully',
             'session_id'    =>  $sessionId
-        ];
+        ]);
     }
 
 
