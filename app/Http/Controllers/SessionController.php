@@ -429,29 +429,23 @@ class SessionController extends Controller
      */
     public function sessionRejected(Request $request){
         $this->validate($request,[
-            'session_id' => 'required', //TODO: this field will be required when mobile developer work on it.
-//            'tutor_id' => 'required',
-//            'student_id' => 'required',
-//            'class_id' => 'required',
-//            'subject_id' => 'required',
+            'session_id' => 'required'
         ]);
         $data = $request->all();
         $data['status'] = 'reject';
-        //TODO: work on reject status
 
         $session = Session::find($data['session_id']);
-//        Log::info('Reject Session API, Session status: '.$session->status);
-//        if($session->status != 'booked' || $session->status != 'ended' || $session->status != 'started'){
-//            $session = $session->update(['status'=> $data['status'], 'tutor_id'=> Auth::user()->id]);
-//        }else{
-//            //TODO: insert new entry as rejected status.
-//        }
 
-        if($session){
-            return [
+        $updatedSession = false;
+
+        if($session->status == 'pending')
+            $updatedSession = Session::where('id', $data['session_id'])->update(['status'=>$data['status']]);
+
+        if($updatedSession){
+            return response()->json([
                 'status' => 'success',
-                'messages' => 'Session status updated successfully'
-            ];
+                'message' => 'Session rejected successfully'
+            ]);
         }else{
             return response()->json(
                 [
