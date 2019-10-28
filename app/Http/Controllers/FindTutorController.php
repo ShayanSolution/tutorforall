@@ -82,7 +82,8 @@ class FindTutorController extends Controller
             $tutors = \DB::select($query);
 //                dd($tutors);
             foreach($tutors as $tutor){
-                $approachingTime = $this->getApproachingTimeUsingDistance($tutor->distance);
+                $distanceInKms = number_format((float)$tutor->distance, 2, '.', '');
+                $approachingTime = $this->getApproachingTimeUsingDistance($distanceInKms);
                 $tutorId = $tutor->id;
                 $params = [
                     'student_id' => (int)$studentId,
@@ -103,7 +104,7 @@ class FindTutorController extends Controller
                     'group_count'=>$studentGroupCount,
                     'book_type'=>$bookType,
                     'session_time'=>$sessionTime,
-                    'distance'=>substr((string)$tutor->distance, 0, 8).' km',
+                    'distance'=>$distanceInKms.' km',
                     'approaching_time'=>$approachingTime
                 ];
                 // dd($params);
