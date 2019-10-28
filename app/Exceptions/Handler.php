@@ -64,7 +64,7 @@ class Handler extends ExceptionHandler
         }
 
         if ($e instanceof SessionExpired) {
-            return response()->json(['status' => 'error', 'message' => 'Session Expired']);
+            return response()->json(['status' => 'error', 'message' => 'Session is already booked!']);
         }
 
         if ($e instanceof SessionBookedStartedOrEnded) {
