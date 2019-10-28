@@ -145,6 +145,8 @@ class SendPushNotification extends Job implements ShouldQueue
                     'Age' => $userAge>0?$userAge:'',
                     'Profile_Image' => !empty($this->student->profileImage)?URL::to('/images').'/'.$this->student->profileImage:'',
                     'session_sent_group' => $sessionData['session_sent_group'],
+                    'tutor_access_time' => $this->data['tutor_access_time'],
+                    'distance' => $this->data['distance'],
                 );
 
                 $this->slackLog($user, env('TOOTAR_LOGGER_WEBHOOK_SLACK'));

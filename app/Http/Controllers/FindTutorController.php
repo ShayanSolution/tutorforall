@@ -82,6 +82,7 @@ class FindTutorController extends Controller
             $tutors = \DB::select($query);
 //                dd($tutors);
             foreach($tutors as $tutor){
+                $tutorAccessTime = $this->getAccessTimeUsingDistance($tutor->distance);
                 $tutorId = $tutor->id;
                 $params = [
                     'student_id' => (int)$studentId,
@@ -101,9 +102,11 @@ class FindTutorController extends Controller
                     'one_on_one'=>$oneOnOne,
                     'group_count'=>$studentGroupCount,
                     'book_type'=>$bookType,
-                    'session_time'=>$sessionTime
+                    'session_time'=>$sessionTime,
+                    'distance'=>substr((string)$tutor->distance, 0, 8).' km',
+                    'tutor_access_time'=>$tutorAccessTime
                 ];
-//                    dd($params);
+                // dd($params);
                 $request->request->add($params);
 
                 $proxy = Request::create('/tutor-notification', 'POST', $request->request->all());
@@ -125,5 +128,18 @@ class FindTutorController extends Controller
                 'message'=> 'Complete Process'
             ]
         );
+    }
+
+    private function getAccessTimeUsingDistance($distanceInKms){
+        $averageBikeSpeedInMetresPerSecond = '8.05556';
+        $timeInSeconds = ($distanceInKms * 1000 ) / $averageBikeSpeedInMetresPerSecond;
+
+        $hours = floor($timeInSeconds / 3600);
+        $minutes = floor(($timeInSeconds / 60) % 60);
+        $seconds = $timeInSeconds % 60;
+
+        return  ( $hours   != 0 ? "$hours hours"     : '').
+                ( $minutes != 0 ? "$minutes minutes" : '').
+                ( $seconds != 0 ? "$seconds seconds" : '');
     }
 }
