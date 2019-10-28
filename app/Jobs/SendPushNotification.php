@@ -143,7 +143,7 @@ class SendPushNotification extends Job implements ShouldQueue
                     'date' => $dateTime[0],
                     'time' => date("g:i a", strtotime($dateTime[1])),
                     'Age' => $userAge>0?$userAge:'',
-                    'Profile_Image' => !empty($this->student->profileImage)?URL::to('/images').'/'.$this->student->profileImage:'',
+                    'Profile_Image' => !empty($this->student->profileImage)?env('ASSET_BASE_URL').'/images/'.$this->student->profileImage:'',
                     'session_sent_group' => $sessionData['session_sent_group'],
                     'approaching_time' => $this->data['approaching_time'],
                     'distance' => $this->data['distance'],
