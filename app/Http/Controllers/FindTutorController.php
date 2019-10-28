@@ -48,7 +48,7 @@ class FindTutorController extends Controller
 
         $roleId = 2;
         $sessionSentGroup = $studentId.'-'.time();
-        $genderMatchingQuery = $studyFrom == 0 ? '' : " AND profiles.teach_to IN ($studyFrom,0)";//" AND (profiles.teach_to = $studyFrom OR profiles.teach_to = 0) ";
+        $genderMatchingQuery = $studyFrom == 0 ? '' : " AND profiles.teach_to IN ($studyFrom,0) ";//" AND (profiles.teach_to = $studyFrom OR profiles.teach_to = 0) ";
         for( $i=0; $i<=3; $i++){
                 
             // Query to find Tutors in range(KM)
