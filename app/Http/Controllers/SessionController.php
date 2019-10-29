@@ -436,24 +436,26 @@ class SessionController extends Controller
 
         $session = Session::find($data['session_id']);
 
-        $updatedSession = false;
+        if($session->status == 'pending'){
 
-        if($session->status == 'pending')
             $updatedSession = Session::where('id', $data['session_id'])->update(['status'=>$data['status']]);
 
-        if($updatedSession){
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Session rejected successfully'
-            ]);
-        }else{
-            return response()->json(
-                [
-                    'status' => 'error',
-                    'message' => 'Unable to find tutor'
-                ], 422
-            );
+            if($updatedSession){
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Session rejected successfully'
+                ]);
+            }else{
+                return response()->json(
+                    [
+                        'status' => 'error',
+                        'message' => 'Unable to find tutor'
+                    ], 422
+                );
+            }
         }
+        else
+            return response()->json(['status'=>'success', 'message'=>'Session expired!']);
 
     }
 
