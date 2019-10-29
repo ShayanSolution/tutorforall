@@ -139,8 +139,8 @@ class FindTutorController extends Controller
         $hours = floor($timeInSeconds / 3600);
         $minutes = floor(($timeInSeconds / 60) % 60);
 
-        return  ( $hours   != 0 ? " $hours h"     : '').
-                ( $minutes > 1 ? " $minutes mins" : '1 min')
+        return  ( $hours   != 0 ? "$hours h "     : '').
+                ( $minutes > 1 ? "$minutes mins" : '1 min')
             ;
     }
 }
