@@ -277,7 +277,7 @@ class ProgrammeSubjectController extends Controller
      */
     public function addTutorsClassesAndSubjects(Request $request){
 
-        $subject_ids = json_decode($request->subject_ids);
+        $subject_ids = $request->subject_ids;
 
         $subjects = Subject::whereIn('id', $subject_ids)->get();
 
