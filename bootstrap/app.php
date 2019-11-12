@@ -25,9 +25,11 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
- $app->withFacades();
+ $app->withFacades('Davibennun\LaravelPushNotification\Facades\PushNotification');
 
  $app->withEloquent();
+
+class_alias(\LaravelFCM\Facades\FCM::class, 'FCM');
 
 /*
 |--------------------------------------------------------------------------
@@ -39,26 +41,29 @@ $app = new Laravel\Lumen\Application(
 | your own bindings here if you like or you can make another file.
 |
 */
+$app->configure('swagger-lume');
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     App\Exceptions\Handler::class
 );
-
 $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
     App\Console\Kernel::class
 );
-
 // load cors configurations
 $app->configure('cors');
-
 // load mail configurations
 $app->configure('mail');
-
+// load mail services
+$app->configure('services');
+// load constatns configurations
+$app->configure('user-constants');
 // load database configurations
 $app->configure('database');
-
+// load push notification configurations
+$app->configure('push-notification');
+$app->configure('twilio');
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -78,7 +83,10 @@ $app->configure('database');
      'auth' => App\Http\Middleware\Authenticate::class,
      'throttle' => App\Http\Middleware\ThrottleRequests::class,
      'scopes'   => \Laravel\Passport\Http\Middleware\CheckScopes::class,
-     'scope'    => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class
+     'scope'    => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
+     'student' => App\Http\Middleware\CheckStudent::class,
+     'tutor' => App\Http\Middleware\CheckTutor::class,
+     'admin' => App\Http\Middleware\CheckAdmin::class
  ]);
 
 /*
@@ -100,6 +108,10 @@ $app->register(Laravel\Passport\PassportServiceProvider::class);
 $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
 $app->register(Barryvdh\Cors\ServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
+$app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+$app->register(\SwaggerLume\ServiceProvider::class);
+$app->register('Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider');
+$app->register(\LaravelFCM\FCMServiceProvider::class);
 
 LumenPassport::routes($app);
 

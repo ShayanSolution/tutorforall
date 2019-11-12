@@ -39,6 +39,34 @@ class AccessTokenController extends Controller
     {
         $inputs = $request->all();
 
+        $user = User::where('phone', $request->username)->first();
+
+        if(!$user){
+            return response()->json(['error'=>'error', 'message'=>'Invalid Phone Number']);
+        }
+
+        if($user->is_active == 0){
+            return response()->json(['error'=>'error', 'message'=>'Unauthorized'], 401);
+        }
+
+        $roleInMessage = $request->role_id == 2 ? 'Tutor' : 'Student';
+
+        if($user->role_id != $request->role_id)
+            return response()->json(['error'=>'error', 'message'=> 'You are not a '.$roleInMessage.'. You cannot login here.']);
+
+
+//        $user = new User();
+//        $isActive = $user->isActive($inputs['username']);
+//
+//        if(!$isActive){
+//            return response()->json(
+//                [
+//                    'status' => 'error',
+//                    'message' => 'User is inactive.'
+//                ], 422
+//            );
+//        }
+
         //Set default scope with full access
         if (!isset($inputs['scope']) || empty($inputs['scope'])) {
             $inputs['scope'] = "*";

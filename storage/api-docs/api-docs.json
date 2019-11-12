@@ -1,0 +1,1071 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Tutor4all API",
+        "description": "This is tutor4all api",
+        "termsOfService": "",
+        "contact": {
+            "email": "marslanali@gmail.com"
+        },
+        "license": {
+            "name": "Private License",
+            "url": "#"
+        },
+        "version": "1.0.0"
+    },
+
+    "host": "tutor4all-api.shayansolutions.com",
+    "basePath": "/",
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "paths": {
+        "/get-phone-code": {
+            "get": {
+                "summary": "Get a phone verification pin code",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "phone",
+                        "in": "query",
+                        "description": "Phone number to generate code",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid phone value"
+                    }
+                }
+            }
+        },
+        "/verify-phone-code": {
+            "post": {
+                "summary": "Save phone verification code",
+                "description": "",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "phone",
+                        "in": "query",
+                        "description": "Phone number to generate code",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "code",
+                        "in": "query",
+                        "description": "Code number",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Phone code has been verified"
+                    },
+                    "422": {
+                        "description": "Invalid or expired phone code"
+                    }
+                }
+            }
+        },
+        "/register-student": {
+            "post": {
+                "summary": "Register student",
+                "description": "",
+                "operationId": "addPet",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Email address",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "phone",
+                        "in": "query",
+                        "description": "Phone number",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "code",
+                        "in": "query",
+                        "description": "Phone code",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "device_token",
+                        "in": "query",
+                        "description": "Device Token",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Phone code has been verified"
+                    },
+                    "422": {
+                        "description": "Invalid or expired phone code"
+                    }
+                }
+            }
+        },
+        "/get-classes": {
+            "get": {
+                "summary": "Get Classes",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Class not found"
+                    }
+                }
+            }
+        },
+        "/get-class-subjects": {
+            "get": {
+                "summary": "Get Class subjects",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "class",
+                        "in": "query",
+                        "description": "Class Id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid programme value"
+                    }
+                }
+            }
+        },
+        "/get-students": {
+            "get": {
+                "summary": "Get user",
+                "description": "",
+                "operationId": "getUser",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "role_id",
+                        "in": "header",
+                        "description": "Roleid",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User's List"
+                    },
+                    "422": {
+                        "description": "Un Processable Entry"
+                    }
+                }
+            }
+        },
+        "/my-sessions": {
+            "get": {
+                "summary": "Get user sessions list",
+                "description": "",
+                "operationId": "getUserSession",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "tutor_id",
+                        "in": "query",
+                        "description": "tutor id",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "student_id",
+                        "in": "query",
+                        "description": "student id",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User's List"
+                    },
+                    "422": {
+                        "description": "Un Processable Entry"
+                    }
+                }
+            }
+        },
+        "/request-sessions": {
+            "get": {
+                "summary": "Get user booked sessions list",
+                "description": "",
+                "operationId": "getUserBookedSession",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "tutor_id",
+                        "in": "query",
+                        "description": "tutor id",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User's List"
+                    },
+                    "422": {
+                        "description": "Un Processable Entry"
+                    }
+                }
+            }
+        },
+        "/request-categories": {
+            "get": {
+                "summary": "Get package categories",
+                "description": "",
+                "operationId": "getPackageCategories",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categories List"
+                    },
+                    "422": {
+                        "description": "Un Processable Entry"
+                    }
+                }
+            }
+        },
+        "/session-rejected": {
+            "post": {
+                "summary": "reject sessions",
+                "description": "",
+                "operationId": "rejectSession",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "tutor_id",
+                        "in": "query",
+                        "description": "tutor id",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "student_id",
+                        "in": "query",
+                        "description": "student id",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "class_id",
+                        "in": "query",
+                        "description": "Class id",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "subject_id",
+                        "in": "query",
+                        "description": "Subject id",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Session Rejected"
+                    },
+                    "422": {
+                        "description": "Un Processable Entry"
+                    }
+                }
+            }
+        },
+        "/package-cost": {
+            "post": {
+                "summary": "Package Cost",
+                "description": "",
+                "operationId": "categoryId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "description": "category id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "is_group",
+                        "in": "query",
+                        "description": "is group i.e. 1 or 0",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "group_count",
+                        "in": "query",
+                        "description": "Group Count",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Hourly Rate"
+                    },
+                    "422": {
+                        "description": "Un Processable Entry"
+                    }
+                }
+            }
+        },
+        "/get-profile": {
+            "get": {
+                "summary": "Get user profile",
+                "description": "",
+                "operationId": "getUserProfile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "User ID",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User's Profile"
+                    },
+                    "422": {
+                        "description": "Un Processable Entry"
+                    }
+                }
+            }
+        },
+        "/update-location": {
+            "post": {
+                "summary": "Update Location",
+                "description": "",
+                "operationId": "updateLocation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "longitude",
+                        "in": "query",
+                        "description": "Longitude",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "latitude",
+                        "in": "query",
+                        "description": "Latitude",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "User ID",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Location updated"
+                    },
+                    "422": {
+                        "description": "Unable to update location"
+                    }
+                }
+            }
+        },
+        "/update-student-profile": {
+            "post": {
+                "summary": "Update Student Profile",
+                "description": "",
+                "operationId": "updateStudentProfile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "firstName",
+                        "in": "query",
+                        "description": "First Name",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "lastName",
+                        "in": "query",
+                        "description": "Last Name",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Email",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "fatherName",
+                        "in": "query",
+                        "description": "Father Name",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "gender_id",
+                        "in": "query",
+                        "description": "i.e. Male or Female",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "mobile",
+                        "in": "query",
+                        "description": "Mobile Number",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "profileImage",
+                        "in": "formData",
+                        "description": "Profile Image",
+                        "required": false,
+                        "type": "file"
+                    },
+                    {
+                        "name": "student_id",
+                        "in": "query",
+                        "description": "Student id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "address",
+                        "in": "query",
+                        "description": "Address",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "qualification",
+                        "in": "query",
+                        "description": "Qualification",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "dob",
+                        "in": "query",
+                        "description": "Date of birth i.e. 2010-12-26",
+                        "required": false,
+                        "type": "string"
+                    }
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Profile updated"
+                    },
+                    "422": {
+                        "description": "Unable to update profile"
+                    }
+                }
+            }
+        },
+        "/update-tutor-profile": {
+            "post": {
+                "summary": "Update Tutor Profile",
+                "description": "",
+                "operationId": "updateTutorProfile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "firstName",
+                        "in": "query",
+                        "description": "First Name",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "lastName",
+                        "in": "query",
+                        "description": "Last Name",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Email",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "fatherName",
+                        "in": "query",
+                        "description": "Father Name",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "gender_id",
+                        "in": "query",
+                        "description": "i.e. Male or Female",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "mobile",
+                        "in": "query",
+                        "description": "Mobile Number",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "profileImage",
+                        "in": "formData",
+                        "description": "Profile Image",
+                        "required": false,
+                        "type": "file"
+                    },
+                    {
+                        "name": "tutor_id",
+                        "in": "query",
+                        "description": "Tutor id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "experience",
+                        "in": "query",
+                        "description": "Tutor Experience",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "qualification",
+                        "in": "query",
+                        "description": "Tutor qualification",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "programme_id",
+                        "in": "query",
+                        "description": "Tutor Programme Id",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "subject_id",
+                        "in": "query",
+                        "description": "Tutor Subject Id",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "cnic_no",
+                        "in": "query",
+                        "description": "CNIC Number",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "address",
+                        "in": "query",
+                        "description": "Address",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_mentor",
+                        "in": "query",
+                        "description": "Mentor or Commercial i.e. 1 for mentor",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "is_home",
+                        "in": "query",
+                        "description": "i.e. 1 for home",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "is_group",
+                        "in": "query",
+                        "description": "i.e. 1 for group",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "one_on_one",
+                        "in": "query",
+                        "description": "i.e. 1 for one on one",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "call_tutor",
+                        "in": "query",
+                        "description": "i.e. 1 for call tutor",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "call_student",
+                        "in": "query",
+                        "description": "i.e. 1 for call student",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "dob",
+                        "in": "query",
+                        "description": "Date of birth i.e. 2010-12-26",
+                        "required": false,
+                        "type": "string"
+                    }
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Profile updated"
+                    },
+                    "422": {
+                        "description": "Unable to update profile"
+                    }
+                }
+            }
+        },
+        "/tutor-notification": {
+            "post": {
+                "summary": "Notification",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "student_id",
+                        "in": "query",
+                        "description": "Student id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "tutor_id",
+                        "in": "query",
+                        "description": "Tutor id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "subject_id",
+                        "in": "query",
+                        "description": "Subject id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "class_id",
+                        "in": "query",
+                        "description": "Class id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid programme value"
+                    }
+                }
+            }
+        },
+        "/booked": {
+            "post": {
+                "summary": "Notification",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "student_id",
+                        "in": "query",
+                        "description": "Student id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "tutor_id",
+                        "in": "query",
+                        "description": "Tutor id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "subject_id",
+                        "in": "query",
+                        "description": "Subject id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "class_id",
+                        "in": "query",
+                        "description": "Class id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "longitude",
+                        "in": "query",
+                        "description": "Longitude",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "latitude",
+                        "in": "query",
+                        "description": "Latitude",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "rate",
+                        "in": "query",
+                        "description": "Hourly Rate",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "duration",
+                        "in": "query",
+                        "description": "Duration",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid programme value"
+                    }
+                }
+            }
+        },
+        "/get-tutors-profile": {
+            "post": {
+                "summary": "Get Tutors",
+                "description": "",
+                "operationId": "GetTutors",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "class_id",
+                        "in": "query",
+                        "description": "Class id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "subject_id",
+                        "in": "query",
+                        "description": "Subject id",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "is_home",
+                        "in": "query",
+                        "description": "Home or Call i.e. 1 for Home",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "call_student",
+                        "in": "query",
+                        "description": "Tutor option for Call student",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "is_group",
+                        "in": "query",
+                        "description": "Individual or group",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "student_id",
+                        "in": "query",
+                        "description": "Update is_group field for student",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Location updated"
+                    },
+                    "422": {
+                        "description": "Unable to update location"
+                    }
+                }
+            }
+        },
+        "/get-all-subjects": {
+            "get": {
+                "summary": "Get All subjects",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "422": {
+                        "description": "Invalid programme value"
+                    }
+                }
+            }
+        },
+        "/oauth/token": {
+            "post": {
+                "summary": "Loggedin",
+                "description": "",
+                "operationId": "loggedin",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "securitySchemes": {
+                    "oAuthSample": {
+                        "type": "oauth2",
+                        "authorizationUrl": "tutor4all-api.shayansolutions.com",
+                        "flow": "implicit",
+                        "scopes": {}
+                    }
+                },
+                "parameters": [
+                {
+                    "name": "grant_type",
+                    "in": "body",
+                    "description": "Grant Type",
+                    "required": false,
+                    "type": "string",
+                    "schema":{
+                        "type":"object",
+                        "properties":{
+                            "grant_type":{
+                                "type":"string",
+                                "example":"password"
+                            },
+                            "client_id":{
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "client_secret":{
+                                "type":"string",
+                                "example":"GGVvl9PxUGmdrg9Bji5RWSbJBeIW5JAMsK07fC66"
+                            },
+                            "username":{
+                                "type":"string",
+                                "example":"1-740-482-0983 x5989"
+                            },
+                            "password":{
+                                "type":"string",
+                                "example":"123456"
+                            },
+                            "scope":{
+                                "type":"string",
+                                "example":"*"
+                            },
+                            "role":{
+                                "type":"string",
+                                "example":"user"
+                            }
+
+                        }
+                    }
+                }
+
+                ],
+
+                "responses": {
+                    "200": {
+                        "description": "Phone code has been verified"
+                    },
+                    "422": {
+                        "description": "Invalid or expired phone code"
+                    }
+                }
+            }
+        }
+
+    },
+
+    "definitions": {}
+}

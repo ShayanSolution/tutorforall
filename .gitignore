@@ -5,4 +5,7 @@ Homestead.yaml
 /vendor/
 /.idea/
 /storage/*.key
+/nbproject
+/public/images/
 composer.lock
+/storage/pem/

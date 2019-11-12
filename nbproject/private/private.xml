@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/wamp64/www/tutorforall/app/Http/Controllers/SessionController.php</file>
+            <file>file:/C:/wamp64/www/tutorforall/app/Jobs/SendPushNotification.php</file>
+            <file>file:/C:/wamp64/www/tutorforall/app/Http/Controllers/PackageController.php</file>
+            <file>file:/C:/wamp64/www/tutorforall/app/Models/User.php</file>
+            <file>file:/C:/wamp64/www/tutorforall/app/Http/Controllers/FindTutorController.php</file>
+            <file>file:/C:/wamp64/www/tutorforall/app/Http/Controllers/UserController.php</file>
+            <file>file:/C:/wamp64/www/tutorforall/app/Models/Session.php</file>
+            <file>file:/C:/wamp64/www/tutorforall/routes/web.php</file>
+            <file>file:/C:/wamp64/www/tutorforall/config/push-notification.php</file>
+        </group>
+    </open-files>
+</project-private>
