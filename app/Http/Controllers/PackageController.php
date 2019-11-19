@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\PercentageCostForMultistudentGroup;
 use App\Models\Profile;
+use App\Models\Subject;
+use App\Models\ProgramSubject;
 use App\Package;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -17,9 +20,8 @@ class PackageController extends Controller
      */
     public function packageCost(Request $request){
         $this->validate($request,[
-            'category_id' => 'required',
-            'is_group' => 'required',
-            'group_count' => 'required',
+            'class_id' => 'required',
+            'subject_id'=> 'required',
         ]);
 
         $userId = Auth::user()->id;
@@ -34,56 +36,43 @@ class PackageController extends Controller
         }
 
         $request = $request->all();
+        $classId = $request['class_id'];
+        $subjectId = $request['subject_id'];
         $category_id = $request['category_id'];
         $is_group = $request['is_group'];
         $group_count = $request['group_count'];
-        $package = Package::where('category_id',$category_id)->where('is_active',1)->first();
-        if($is_group && !empty($package)){
-            if ($group_count == 2) {
-                $extraPercentage = ($package->extra_percentage_for_group_of_two/100) * $package->hourly_rate;
-                $hourly_rate = $package->hourly_rate + $extraPercentage;
+        $calculationsForGroup = 0;
+        $calculationsForCategory = 0;
+
+        //Online check need
+        $onlineTutors = ProgramSubject::whereHas('onlineTutors')->where('program_id', $classId)->where('subject_id', $subjectId)->get();
+        $onlineTutorsCount = count($onlineTutors);
+        // Class Subjects cost
+        $classSubject = Subject::where('id', $subjectId)->where('programme_id', $classId)->first();
+        $classSubjectPrice = $classSubject->price;
+
+        if ($classSubjectPrice) {
+            //cost Estimations when is group on
+            if ($is_group == 1){
+                $PercentageCostForMultistudentGroup = PercentageCostForMultistudentGroup::where('number_of_students', $group_count)->first();
+                $calculationsForGroup = ($PercentageCostForMultistudentGroup->percentage/100) * $classSubjectPrice;
+            }
+            // Cost estimation when category selected
+            if ($category_id != 0) {
+                $category = Category::where('id', $category_id)->first();
+                $calculationsForCategory = ($category->percentage/100) * $classSubjectPrice;
+            }
+            $hourly_rate = $calculationsForGroup + $calculationsForCategory + $classSubjectPrice;
+            if ($hourly_rate) {
                 return response()->json(
                     [
                         'status' => 'success',
-                        'hourly_rate' => $hourly_rate
+                        'hourly_rate' => $hourly_rate,
+                        'online_tutors' => $onlineTutorsCount,
                     ]
-                );
-            }else if($group_count == 3){
-                $extraPercentage = ($package->extra_percentage_for_group_of_three/100) * $package->hourly_rate;
-                $hourly_rate = $package->hourly_rate + $extraPercentage;
-                return response()->json(
-                    [
-                        'status' => 'success',
-                        'hourly_rate' => $hourly_rate
-                    ]
-                );
-            }else if($group_count == 4){
-                $extraPercentage = ($package->extra_percentage_for_group_of_four/100) * $package->hourly_rate;
-                $hourly_rate = $package->hourly_rate + $extraPercentage;
-                return response()->json(
-                    [
-                        'status' => 'success',
-                        'hourly_rate' => $hourly_rate
-                    ]
-                );
-            }else{
-                return response()->json(
-                    [
-                        'status' => 'error',
-                        'message' => 'Unable to find user hourly rate'
-                    ], 422
                 );
             }
-
-        }else if(!empty($package)){
-            $hourly_rate = $package->hourly_rate;
-            return response()->json(
-                [
-                    'status' => 'success',
-                    'hourly_rate' => $hourly_rate
-                ]
-            );
-        }else{
+        } else {
             return response()->json(
                 [
                     'status' => 'error',

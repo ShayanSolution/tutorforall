@@ -27,4 +27,8 @@ class ProgramSubject extends Model
         }
         return $string = rtrim($subjects, ', ');
     }
+
+    public function onlineTutors(){
+        return $this->hasMany(User::class, 'id', 'user_id')->where('is_online', 1);
+    }
 }
