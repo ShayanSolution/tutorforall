@@ -41,6 +41,24 @@ class ApplicationSettingsSeeder extends Seeder
                 "value"=> "10",
                 "label"=> "Default percentage for Group Students",
                 "group_name"=> "default-percentage-group-students"
+            ],
+            [
+                "slug"=> "peak-factor-percentage",
+                "value"=> "12",
+                "label"=> "Percentage of Peak Factor",
+                "group_name"=> "peak-factor"
+            ],
+            [
+                "slug"=> "peak-factor-on-off",
+                "value"=> "0",
+                "label"=> "Peak Factor Active/Inactive",
+                "group_name"=> "peak-factor"
+            ],
+            [
+                "slug"=> "peak-factor-no-of-tutors",
+                "value"=> "2",
+                "label"=> "Peak Factor (Number of Tutors)",
+                "group_name"=> "peak-factor"
             ]
         ];
 
