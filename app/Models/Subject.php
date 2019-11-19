@@ -10,6 +10,7 @@ class Subject extends Model
         'name',
         'status',
         'programme_id',
+        'price'
     ];
 
     public function programme()
