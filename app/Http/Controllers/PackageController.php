@@ -9,6 +9,7 @@ use App\Models\Setting;
 use App\Models\Subject;
 use App\Models\ProgramSubject;
 use App\Package;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
@@ -65,6 +66,15 @@ class PackageController extends Controller
                 $PercentageCostForMultistudentGroup = PercentageCostForMultistudentGroup::where('number_of_students', $group_count)->first();
                 $calculationsForGroup = ($PercentageCostForMultistudentGroup->percentage/100) * $hourly_rate;
                 $hourly_rate = $calculationsForGroup + $calculationsForCategory + $classSubjectPrice;
+            }
+            // get peakfactor
+            $isPeakFactor = Setting::all();
+            foreach ($isPeakFactor as $data) {
+                if ($data->slug == "peak-factor-on-off") {
+                    if ($data->value == 1){
+                        dd(Carbon::parse($data->updated_at)->timezone('Asia/Karachi')->format('Y-m-d h:i:s'), date('Y-m-d h:i:s'));
+                    }
+                }
             }
             if ($hourly_rate) {
                 return response()->json(
