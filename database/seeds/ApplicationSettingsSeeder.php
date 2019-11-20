@@ -63,6 +63,13 @@ class ApplicationSettingsSeeder extends Seeder
         ];
 
         foreach($entries as $entry)
-            \App\Models\Setting::create($entry);
+        {
+            \App\Models\Setting::updateOrCreate(
+                [
+                    'slug'  =>  $entry['slug']
+                ],
+                $entry
+            );
+        }
     }
 }
