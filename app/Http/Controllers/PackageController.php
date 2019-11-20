@@ -53,22 +53,24 @@ class PackageController extends Controller
         $classSubjectPrice = $classSubject->price;
 
         if ($classSubjectPrice) {
-            //cost Estimations when is group on
-            if ($is_group == 1){
-                $PercentageCostForMultistudentGroup = PercentageCostForMultistudentGroup::where('number_of_students', $group_count)->first();
-                $calculationsForGroup = ($PercentageCostForMultistudentGroup->percentage/100) * $classSubjectPrice;
-            }
+            $hourly_rate = $classSubjectPrice;
             // Cost estimation when category selected
             if ($category_id != 0) {
                 $category = Category::where('id', $category_id)->first();
-                $calculationsForCategory = ($category->percentage/100) * $classSubjectPrice;
+                $calculationsForCategory = ($category->percentage/100) * $hourly_rate;
+                $hourly_rate = $calculationsForCategory + $classSubjectPrice;
             }
-            $hourly_rate = $calculationsForGroup + $calculationsForCategory + $classSubjectPrice;
+            //cost Estimations when is group on
+            if ($is_group == 1){
+                $PercentageCostForMultistudentGroup = PercentageCostForMultistudentGroup::where('number_of_students', $group_count)->first();
+                $calculationsForGroup = ($PercentageCostForMultistudentGroup->percentage/100) * $hourly_rate;
+                $hourly_rate = $calculationsForGroup + $calculationsForCategory + $classSubjectPrice;
+            }
             if ($hourly_rate) {
                 return response()->json(
                     [
                         'status' => 'success',
-                        'hourly_rate' => $hourly_rate,
+                        'hourly_rate' => round($hourly_rate),
                         'online_tutors' => $onlineTutorsCount,
                     ]
                 );
