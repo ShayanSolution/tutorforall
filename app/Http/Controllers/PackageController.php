@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\PercentageCostForMultistudentGroup;
 use App\Models\Profile;
+use App\Models\Setting;
 use App\Models\Subject;
 use App\Models\ProgramSubject;
 use App\Package;
@@ -83,7 +84,24 @@ class PackageController extends Controller
     }
 
     public function getPackageCategories(){
-        //Mail::raw('Raw string email', function($msg) { $msg->to(['dev2@shayansolutions.com']); $msg->from(['dev2@shayansolutions.com']); });
+        // Experience Slider
+        $experienceSlider = Setting::all();
+        foreach ($experienceSlider as $data){
+            if ($data->slug == "experience-slider-min-value"){
+                $minSlider = $data->value;
+            }
+            if ($data->slug == "experience-slider-max-value"){
+                $maxSlider = $data->value;
+            }
+            if ($data->slug == "experience-slider-spread"){
+                $intervalSlider = $data->value;
+            }
+
+        }
+        // Number of groups
+        $minStudentGroups = PercentageCostForMultistudentGroup::min('number_of_students');
+        $maxStudentGroups = PercentageCostForMultistudentGroup::max('number_of_students');
+        // Categories
         $categories = Category::where('status',1)->get();
         if($categories){
             $package_categories = [];
@@ -96,7 +114,12 @@ class PackageController extends Controller
             return response()->json(
                 [
                     'status' => 'success',
-                    'data' => $package_categories
+                    'data' => $package_categories,
+                    'min_experience_slider' => $minSlider,
+                    'max_experience_slider' => $maxSlider,
+                    'interval_experience_slider' => $intervalSlider,
+                    'min_student_groups' => $minStudentGroups,
+                    'max_student_groups' => $maxStudentGroups
                 ]
             );
 
