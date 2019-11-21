@@ -33,7 +33,7 @@ class ApplyPeakFactor
                 $peakFactor = PeakFactor::create($request);
                 //@todo add queue which will execute after 1 hour to check if peak factor will remain or remove
                 $NumTutorsPeakFactor = $isPeakFactor['peak-factor-no-of-tutors'];
-                $timeDelay = Carbon::now()->addMinutes(0);
+                $timeDelay = Carbon::now()->addMinutes(60);
                 $jobId = Queue::later($timeDelay, (new CheckPeakFactor($peakFactor->id, $NumTutorsPeakFactor)));
                 create_queued_job_tracking($jobId, get_class($peakFactor), $peakFactor->id);
                 return [$hourlyRate, $peakFactorStatus];
