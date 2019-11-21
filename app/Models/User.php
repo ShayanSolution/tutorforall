@@ -89,6 +89,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $result = $queryBuilder->get();
         foreach($result as $record){
             //@todo make this rating round up and match it with passed category_id. if it matches with it keep record otherwise discard it.
+            if (round($record->rating->avg('rating')) == $category_id){
+                dd(round($record->rating->avg('rating')), $category_id, "matched");
+            }
             dd($record->rating->avg('rating'));
         }
 
