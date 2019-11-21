@@ -8,6 +8,7 @@ use App\Models\Profile;
 use App\Models\Setting;
 use App\Models\Subject;
 use App\Models\ProgramSubject;
+use App\Models\User;
 use App\Package;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -47,9 +48,9 @@ class PackageController extends Controller
         $calculationsForCategory = 0;
         $peakFactor = "off";
 
-        //Online check need
-        $onlineTutors = ProgramSubject::whereHas('onlineTutors')->where('program_id', $classId)->where('subject_id', $subjectId)->get();
-        $onlineTutorsCount = count($onlineTutors);
+        $onlineTutorsCount = User::findOnlineTutors($request);
+        dd($onlineTutorsCount);
+
         // Class Subjects cost
         $classSubject = Subject::where('id', $subjectId)->where('programme_id', $classId)->first();
         $classSubjectPrice = $classSubject->price;
@@ -69,6 +70,7 @@ class PackageController extends Controller
                 $hourly_rate = $calculationsForGroup + $calculationsForCategory + $classSubjectPrice;
 
                 // Check online tutors
+                // @todo remove code of count from here
                 $onlineTutors = ProgramSubject::whereHas('onlineTutors')->whereHas('isGroupTutors')->where('program_id', $classId)->where('subject_id', $subjectId)->get();
                 $onlineTutorsCount = count($onlineTutors);
             }
