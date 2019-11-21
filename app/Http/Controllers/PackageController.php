@@ -77,10 +77,13 @@ class PackageController extends Controller
             // get peakfactor
             $isPeakFactor = Setting::where('group_name', 'peak-factor')->pluck('value', 'slug');
             if ($isPeakFactor['peak-factor-on-off'] == 1) {
-                if ($isPeakFactor['peak-factor-no-of-tutors'] <= $onlineTutorsCount) {
+                //@todo make a query by passing $request object to check if peak factor is already active ?
+                if ($isPeakFactor['peak-factor-no-of-tutors'] <= $onlineTutorsCount ) {
                     $applyPeakFactor = ($isPeakFactor['peak-factor-percentage']/100) * $hourly_rate;
                     $hourly_rate = $applyPeakFactor + $hourly_rate;
                     $peakFactor = "on";
+                    //@todo add record into table for peack factor combinations
+                    //@todo add queue which will execute after 1 hour to check if peak factor will remain or remove
                 }
             }
             if ($hourly_rate) {

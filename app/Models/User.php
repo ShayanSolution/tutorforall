@@ -96,7 +96,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
 
-        $onlineTutorCount = count($queryBuilder->get());
+        $onlineTutorCount = count($result);
 
         return $onlineTutorCount;
 
