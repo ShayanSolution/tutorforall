@@ -14,6 +14,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
+use App\Services\ApplyPeakFactor;
+use App\Services\CostCalculation\CategoryCost;
+use App\Services\CostCalculation\GroupCost;
 
 class PackageController extends Controller
 {
@@ -21,7 +24,8 @@ class PackageController extends Controller
      *
      * retufn hourly package rate
      */
-    public function packageCost(Request $request){
+    public function packageCost(Request $request, ApplyPeakFactor $peakFactorAction, CategoryCost $categoryCostAction,
+                                GroupCost $groupCostAction){
         $this->validate($request,[
             'class_id' => 'required',
             'subject_id'=> 'required',
@@ -49,7 +53,6 @@ class PackageController extends Controller
         $peakFactor = "off";
 
         $onlineTutorsCount = User::findOnlineTutors($request);
-        dd($onlineTutorsCount);
 
         // Class Subjects cost
         $classSubject = Subject::where('id', $subjectId)->where('programme_id', $classId)->first();
@@ -59,12 +62,14 @@ class PackageController extends Controller
             $hourly_rate = $classSubjectPrice;
             // Cost estimation when category selected
             if ($category_id != 0) {
+                //@todo $categoryCostAction->execute($category_id);
                 $category = Category::where('id', $category_id)->first();
                 $calculationsForCategory = ($category->percentage/100) * $hourly_rate;
                 $hourly_rate = $calculationsForCategory + $classSubjectPrice;
             }
             //cost Estimations when is group on
             if ($is_group == 1){
+                //@todo $groupCostAction->execute($group_count);
                 $PercentageCostForMultistudentGroup = PercentageCostForMultistudentGroup::where('number_of_students', $group_count)->first();
                 $calculationsForGroup = ($PercentageCostForMultistudentGroup->percentage/100) * $hourly_rate;
                 $hourly_rate = $calculationsForGroup + $calculationsForCategory + $classSubjectPrice;
@@ -75,6 +80,7 @@ class PackageController extends Controller
                 $onlineTutorsCount = count($onlineTutors);
             }
             // get peakfactor
+            $peakFactorAction->execute($onlineTutorsCount);
             $isPeakFactor = Setting::where('group_name', 'peak-factor')->pluck('value', 'slug');
             if ($isPeakFactor['peak-factor-on-off'] == 1) {
                 //@todo make a query by passing $request object to check if peak factor is already active ?
