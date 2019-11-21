@@ -45,6 +45,7 @@ class PackageController extends Controller
         $group_count = $request['group_count'];
         $calculationsForGroup = 0;
         $calculationsForCategory = 0;
+        $peakFactor = "off";
 
         //Online check need
         $onlineTutors = ProgramSubject::whereHas('onlineTutors')->where('program_id', $classId)->where('subject_id', $subjectId)->get();
@@ -66,14 +67,18 @@ class PackageController extends Controller
                 $PercentageCostForMultistudentGroup = PercentageCostForMultistudentGroup::where('number_of_students', $group_count)->first();
                 $calculationsForGroup = ($PercentageCostForMultistudentGroup->percentage/100) * $hourly_rate;
                 $hourly_rate = $calculationsForGroup + $calculationsForCategory + $classSubjectPrice;
+
+                // Check online tutors
+                $onlineTutors = ProgramSubject::whereHas('onlineTutors')->whereHas('isGroupTutors')->where('program_id', $classId)->where('subject_id', $subjectId)->get();
+                $onlineTutorsCount = count($onlineTutors);
             }
             // get peakfactor
-            $isPeakFactor = Setting::all();
-            foreach ($isPeakFactor as $data) {
-                if ($data->slug == "peak-factor-on-off") {
-                    if ($data->value == 1){
-                        dd(Carbon::parse($data->updated_at)->timezone('Asia/Karachi')->format('Y-m-d h:i:s'), date('Y-m-d h:i:s'));
-                    }
+            $isPeakFactor = Setting::where('group_name', 'peak-factor')->pluck('value', 'slug');
+            if ($isPeakFactor['peak-factor-on-off'] == 1) {
+                if ($isPeakFactor['peak-factor-no-of-tutors'] <= $onlineTutorsCount) {
+                    $applyPeakFactor = ($isPeakFactor['peak-factor-percentage']/100) * $hourly_rate;
+                    $hourly_rate = $applyPeakFactor + $hourly_rate;
+                    $peakFactor = "on";
                 }
             }
             if ($hourly_rate) {
@@ -82,6 +87,7 @@ class PackageController extends Controller
                         'status' => 'success',
                         'hourly_rate' => round($hourly_rate),
                         'online_tutors' => $onlineTutorsCount,
+                        'peakFactor' => $peakFactor
                     ]
                 );
             }
