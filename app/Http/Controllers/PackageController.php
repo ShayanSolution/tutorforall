@@ -24,8 +24,7 @@ class PackageController extends Controller
      *
      * retufn hourly package rate
      */
-    public function packageCost(Request $request, ApplyPeakFactor $peakFactorAction, CategoryCost $categoryCostAction,
-                                GroupCost $groupCostAction){
+    public function packageCost(Request $request, ApplyPeakFactor $peakFactorAction, CategoryCost $categoryCostAction, GroupCost $groupCostAction){
         $this->validate($request,[
             'class_id' => 'required',
             'subject_id'=> 'required',
@@ -45,13 +44,11 @@ class PackageController extends Controller
         $request = $request->all();
         $classId = $request['class_id'];
         $subjectId = $request['subject_id'];
-        $category_id = $request['category_id'];
-        $is_group = $request['is_group'];
-        $group_count = $request['group_count'];
-        $calculationsForGroup = 0;
-        $calculationsForCategory = 0;
+        $categoryId = $request['category_id'];
+        $isGroup = $request['is_group'];
+        $groupCount = $request['group_count'];
         $peakFactor = "off";
-
+        //Get online tutors
         $onlineTutorsCount = User::findOnlineTutors($request);
 
         // Class Subjects cost
@@ -59,44 +56,27 @@ class PackageController extends Controller
         $classSubjectPrice = $classSubject->price;
 
         if ($classSubjectPrice) {
-            $hourly_rate = $classSubjectPrice;
+            $hourlyRate = $classSubjectPrice;
             // Cost estimation when category selected
-            if ($category_id != 0) {
-                //@todo $categoryCostAction->execute($category_id);
-                $category = Category::where('id', $category_id)->first();
-                $calculationsForCategory = ($category->percentage/100) * $hourly_rate;
-                $hourly_rate = $calculationsForCategory + $classSubjectPrice;
+            if ($categoryId != 0) {
+                $categoryCostRate = $categoryCostAction->execute($categoryId, $hourlyRate);
+                $hourlyRate = $hourlyRate + $categoryCostRate;
             }
             //cost Estimations when is group on
-            if ($is_group == 1){
-                //@todo $groupCostAction->execute($group_count);
-                $PercentageCostForMultistudentGroup = PercentageCostForMultistudentGroup::where('number_of_students', $group_count)->first();
-                $calculationsForGroup = ($PercentageCostForMultistudentGroup->percentage/100) * $hourly_rate;
-                $hourly_rate = $calculationsForGroup + $calculationsForCategory + $classSubjectPrice;
-
-                // Check online tutors
-                // @todo remove code of count from here
-                $onlineTutors = ProgramSubject::whereHas('onlineTutors')->whereHas('isGroupTutors')->where('program_id', $classId)->where('subject_id', $subjectId)->get();
-                $onlineTutorsCount = count($onlineTutors);
+            if ($isGroup == 1){
+                $hourlyRate = $groupCostAction->execute($groupCount, $hourlyRate, $categoryCostAction);
             }
             // get peakfactor
-            $peakFactorAction->execute($onlineTutorsCount);
+            // @todo refactor line number 71 + 72 tomorrow
             $isPeakFactor = Setting::where('group_name', 'peak-factor')->pluck('value', 'slug');
             if ($isPeakFactor['peak-factor-on-off'] == 1) {
-                //@todo make a query by passing $request object to check if peak factor is already active ?
-                if ($isPeakFactor['peak-factor-no-of-tutors'] <= $onlineTutorsCount ) {
-                    $applyPeakFactor = ($isPeakFactor['peak-factor-percentage']/100) * $hourly_rate;
-                    $hourly_rate = $applyPeakFactor + $hourly_rate;
-                    $peakFactor = "on";
-                    //@todo add record into table for peack factor combinations
-                    //@todo add queue which will execute after 1 hour to check if peak factor will remain or remove
-                }
+                list($hourlyRate, $peakFactor) = $peakFactorAction->execute($onlineTutorsCount, $hourlyRate, $request);
             }
-            if ($hourly_rate) {
+            if ($hourlyRate) {
                 return response()->json(
                     [
                         'status' => 'success',
-                        'hourly_rate' => round($hourly_rate),
+                        'hourly_rate' => round($hourlyRate),
                         'online_tutors' => $onlineTutorsCount,
                         'peakFactor' => $peakFactor
                     ]
