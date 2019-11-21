@@ -31,4 +31,8 @@ class ProgramSubject extends Model
     public function onlineTutors(){
         return $this->hasMany(User::class, 'id', 'user_id')->where('is_online', 1);
     }
+
+    public function isGroupTutors(){
+        return $this->hasMany(Profile::class, 'user_id', 'user_id')->where('is_group', 1);
+    }
 }
