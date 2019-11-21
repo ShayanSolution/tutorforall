@@ -65,6 +65,53 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'dob'
     ];
 
+    public static function findOnlineTutors($request){
+        $onlineTutorCount = 0;
+        //add logic here
+        $classId = $request['class_id'];
+        $subjectId = $request['subject_id'];
+        $category_id = $request['category_id'];
+        $is_group = isset($request['is_group']) ? $request['is_group'] : 0;
+
+        if($classId && $subjectId){
+            $queryBuilder = User::whereHas('teaches',function($query) use ($classId,$subjectId){ return $query->where('program_id',$classId)->where('subject_id',$subjectId); });
+        }
+        if($category_id){
+            //add logic for category id
+            $queryBuilder->with('rating');
+        }
+        if($is_group){
+            $queryBuilder->whereHas('isGroupTutors');
+        }
+
+        $queryBuilder->where('is_online',1);
+
+        $result = $queryBuilder->get();
+        foreach($result as $record){
+            //@todo make this rating round up and match it with passed category_id. if it matches with it keep record otherwise discard it.
+            dd($record->rating->avg('rating'));
+        }
+
+
+        $onlineTutorCount = count($queryBuilder->get());
+
+        return $onlineTutorCount;
+
+    }
+
+    public function teaches(){
+        return $this->hasMany(ProgramSubject::class, 'user_id', 'id');
+
+    }
+
+    public function isGroupTutors(){
+        return $this->hasMany(Profile::class, 'user_id', 'id')->where('is_group', 1);
+    }
+
+    public function rating(){
+        return $this->hasMany(Rating::class,'user_id','id');
+    }
+
     /**
      * The attributes excluded from the model's JSON form.
      *
