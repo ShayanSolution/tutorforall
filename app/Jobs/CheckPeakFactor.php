@@ -34,10 +34,9 @@ class CheckPeakFactor extends Job
             delete_queued_job_tracking(['model_id' => $peakfactor->id]);
         } else {
             // add queue again after 60min will run
-            $timeDelay = Carbon::now()->addMinutes(60);
+            $timeDelay = Carbon::now()->addMinutes(config('services.check_peak_factor_delay'));
             $jobId = Queue::later($timeDelay, (new CheckPeakFactor($this->peakFactorId, $this->numTutorsPeakFactor)));
             create_queued_job_tracking($jobId, get_class($peakfactor), $this->peakFactorId);
-            dd("queue added");
         }
     }
 }
