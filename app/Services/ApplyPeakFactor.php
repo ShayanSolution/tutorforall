@@ -21,7 +21,7 @@ class ApplyPeakFactor
 
     }
 
-    public function execute($onlineTutorsCount, $hourlyRate, $request){
+    public function execute($onlineTutorsCount, $hourlyRate, $request, $peakFactorStatus){
         $isPeakFactor = Setting::where('group_name', 'peak-factor')->pluck('value', 'slug');
         if ($isPeakFactor['peak-factor-on-off'] == 1) {
             //@todo make a query by passing $request object to check if peak factor is already active ?
@@ -36,8 +36,8 @@ class ApplyPeakFactor
                 $timeDelay = Carbon::now()->addMinutes(60);
                 $jobId = Queue::later($timeDelay, (new CheckPeakFactor($peakFactor->id, $NumTutorsPeakFactor)));
                 create_queued_job_tracking($jobId, get_class($peakFactor), $peakFactor->id);
-                return [$hourlyRate, $peakFactorStatus];
             }
         }
+        return [$hourlyRate, $peakFactorStatus];
     }
 }

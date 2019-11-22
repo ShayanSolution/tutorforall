@@ -67,11 +67,7 @@ class PackageController extends Controller
                 $hourlyRate = $groupCostAction->execute($groupCount, $hourlyRate, $categoryCostAction);
             }
             // get peakfactor
-            // @todo refactor line number 71 + 72 tomorrow
-            $isPeakFactor = Setting::where('group_name', 'peak-factor')->pluck('value', 'slug');
-            if ($isPeakFactor['peak-factor-on-off'] == 1) {
-                list($hourlyRate, $peakFactor) = $peakFactorAction->execute($onlineTutorsCount, $hourlyRate, $request);
-            }
+            list($hourlyRate, $peakFactor) = $peakFactorAction->execute($onlineTutorsCount, $hourlyRate, $request, $peakFactor);
             if ($hourlyRate) {
                 return response()->json(
                     [
