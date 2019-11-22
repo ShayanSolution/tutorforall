@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Config;
 use App\Jobs\SendPushNotification;
+use App\Models\Setting;
 
 
 class UserController extends Controller
@@ -280,6 +281,9 @@ class UserController extends Controller
                 $user_rating = $rating->avg('rating');
                 $subject = new ProgramSubject;
                 $subjectList = $subject->getSubjectsDetail($user_id);
+                //get Min Max slider defaults values from settings
+                // Need to refactor
+                $sliderDefaultValue = Setting::where('group_name', 'tutor-setting-slider')->pluck('value', 'slug');
             }
 
             $profile = array(
@@ -311,6 +315,10 @@ class UserController extends Controller
                 'Rating' => number_format((float)$user_rating, 1, '.', ''),
                 'Profile_Image' => URL::to('/images').'/'.$user->profileImage,
                 'teach_to' => $user->teach_to,
+                'min_thumb_slider' => $user->min_slider_value,
+                'max_thumb_slider' => $user->max_slider_value,
+                'min_slider' => $sliderDefaultValue['tutor-setting-slider-min-value'],
+                'max_slider' => $sliderDefaultValue['tutor-setting-slider-max-value'],
             );
             return $profile;
         }
@@ -596,12 +604,14 @@ class UserController extends Controller
             'is_mentor' => 'numeric',
             'teach_to' => 'numeric',
             'call_student' => 'numeric',
+            'min_slider_value' => 'numeric',
+            'max_slider_value' => 'numeric',
         ]);
         $data = $request->all();
         $profile = new Profile();
         $update_profile = $profile->updateUserProfile(
             $data['tutor_id'],
-            $request->only(['is_home', 'is_group', 'is_mentor', 'teach_to', 'call_student', 'one_on_one'])
+            $request->only(['is_home', 'is_group', 'is_mentor', 'teach_to', 'call_student', 'one_on_one', 'min_slider_value', 'max_slider_value'])
         );
         if($update_profile){
             return response()->json(
