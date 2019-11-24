@@ -26,6 +26,10 @@ class FindTutorController extends Controller
             'book_type'=>'required'
         ]);
 
+        //@todo add validation check for studyFrom
+        //@todo receive experience info
+        //@todo receive category_id / skill level
+
 
         $studyFrom = $request->study_from;
         $bookType = $request->book_type;
@@ -48,7 +52,10 @@ class FindTutorController extends Controller
 
         $roleId = 2;
         $sessionSentGroup = $studentId.'-'.time();
+        //@todo fix wrong logic here, booking preference will match with tutor gender (users.gender_id)
         $genderMatchingQuery = $studyFrom == 0 ? '' : " AND profiles.teach_to IN ($studyFrom,0) ";
+        //@todo add logic, match student gender (Auth::user()->gender_id) with profile.teach_to
+        //profiles.teach_to IN (Auth::user()->gender_id,0)
         for( $i=0; $i<=3; $i++){
                 
             // Query to find Tutors in range(KM)
@@ -76,6 +83,12 @@ class FindTutorController extends Controller
             . $genderMatchingQuery
             . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
 
+            //@todo refactor query to only include one option of go home or call student
+            //@todo refactor query to only include group or one_on_one option
+            //@todo refactor query to match gender
+            //@todo refactor query to match cost range
+            //@todo refactor query to match category level >= $category_id
+            //@todo refactor query to match experience level >= $experience_level
 
             Log::info($query);
 
