@@ -80,15 +80,15 @@ class FindTutorController extends Controller
             . " AND (program_subject.program_id = '$studentClassId' AND program_subject.subject_id = '$studentSubjectId') "
 
             . " AND profiles.is_mentor = '$isMentor' "
-            . " AND (profiles.is_home = '$isHome' OR profiles.call_student = '$callStudent') "
-            . " AND (profiles.is_group = '$studentIsGroup' OR profiles.one_on_one = '$oneOnOne') "
+            . " AND (profiles.is_home = '$isHome' OR profiles.call_student = '$callStudent') " //@todo refactor query to include no preference and accroding to booking option for tution place
+            . " AND (profiles.is_group = '$studentIsGroup' OR profiles.one_on_one = '$oneOnOne') "//@todo refactor query to only include group or one_on_one option   (OR because if tutor select any from settings)
             . " AND (profiles.min_slider_value >= '$hourlyRate' AND profiles.max_slider_value <= '$hourlyRate') "
             . $genderMatchingQuery
             . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
 
             dd($query);
-            //@todo refactor query to only include one option of go home or call student  (OR because if tutor select any from settings)
-            //@todo refactor query to only include group or one_on_one option   (OR because if tutor select any from settings)
+
+
             //@todo refactor query to match gender
             //@todo refactor query to match cost range
             //@todo refactor query to match category level >= $category_id
