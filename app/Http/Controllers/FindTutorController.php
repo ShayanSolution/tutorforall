@@ -12,6 +12,7 @@ class FindTutorController extends Controller
     public function findTutor(Request $request){
 
         $this->validate($request,[
+            'study_from' => 'required',
             'student_id' => 'required',
             'class_id' => 'required',
             'subject_id' => 'required',
@@ -23,16 +24,16 @@ class FindTutorController extends Controller
             'is_home' => 'required',
             'call_student' => 'required',
             'one_on_one' => 'required',
-            'book_type'=>'required'
+            'book_type'=>'required',
+            'experience' => 'required',
+            'category_id' => 'required'
         ]);
-
         //@todo add validation check for studyFrom
         //@todo receive experience info
         //@todo receive category_id / skill level
 
 
         $studyFrom = $request->study_from;
-        $bookType = $request->book_type;
         $studentId = $request->student_id;
         $studentClassId = $request->class_id;
         $studentSubjectId = $request->subject_id;
@@ -44,6 +45,7 @@ class FindTutorController extends Controller
         $callStudent = $request->call_student;
         $oneOnOne = $request->one_on_one;
         $hourlyRate = $request->hourly_rate;
+        $bookType = $request->book_type;
         $sessionTime = $request->session_time;
         $distanceInKmMin = 0;
         $distanceInKmMax = 2;
@@ -80,11 +82,13 @@ class FindTutorController extends Controller
             . " AND profiles.is_mentor = '$isMentor' "
             . " AND (profiles.is_home = '$isHome' OR profiles.call_student = '$callStudent') "
             . " AND (profiles.is_group = '$studentIsGroup' OR profiles.one_on_one = '$oneOnOne') "
+            . " AND (profiles.min_slider_value >= '$hourlyRate' AND profiles.max_slider_value <= '$hourlyRate') "
             . $genderMatchingQuery
             . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
 
-            //@todo refactor query to only include one option of go home or call student
-            //@todo refactor query to only include group or one_on_one option
+            dd($query);
+            //@todo refactor query to only include one option of go home or call student  (OR because if tutor select any from settings)
+            //@todo refactor query to only include group or one_on_one option   (OR because if tutor select any from settings)
             //@todo refactor query to match gender
             //@todo refactor query to match cost range
             //@todo refactor query to match category level >= $category_id
