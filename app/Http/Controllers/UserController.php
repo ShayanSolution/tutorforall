@@ -317,8 +317,8 @@ class UserController extends Controller
                 'teach_to' => $user->teach_to,
                 'min_thumb_slider' => $user->min_slider_value,
                 'max_thumb_slider' => $user->max_slider_value,
-                'min_slider' => $sliderDefaultValue['tutor-setting-slider-min-value'],
-                'max_slider' => $sliderDefaultValue['tutor-setting-slider-max-value'],
+                'min_slider' => isset($sliderDefaultValue['tutor-setting-slider-min-value']) ? $sliderDefaultValue['tutor-setting-slider-min-value'] : '',
+                'max_slider' => isset($sliderDefaultValue['tutor-setting-slider-max-value']) ? $sliderDefaultValue['tutor-setting-slider-max-value'] : '',
             );
             return $profile;
         }
