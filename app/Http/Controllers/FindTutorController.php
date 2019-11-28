@@ -111,7 +111,7 @@ AND ((profiles.is_group = '$studentIsGroup' AND profiles.one_on_one = '$oneOnOne
 $genderMatchingQuery 
 AND (profiles.min_slider_value >= '$hourlyRate' AND profiles.max_slider_value <= '$hourlyRate') 
 HAVING 
-`rating` >= $categoryId AND 
+`ratings` >= $categoryId AND 
 `experience` >= $experience AND 
 `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
 
