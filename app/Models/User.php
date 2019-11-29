@@ -66,27 +66,44 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     ];
 
     public static function findOnlineTutors($request){
-        $onlineTutorCount = 0;
         //add logic here
         $classId = $request['class_id'];
         $subjectId = $request['subject_id'];
         $category_id = $request['category_id'];
+        $is_home        = $request['is_home'];
+        $call_student   = $request['call_student'];
         $is_group = isset($request['is_group']) ? $request['is_group'] : 0;
 
-        if($classId && $subjectId){
-            $queryBuilder = User::whereHas('teaches',function($query) use ($classId,$subjectId){ return $query->where('program_id',$classId)->where('subject_id',$subjectId); });
+        if(!$classId || !$subjectId){
+            return false;
         }
+
+        $queryBuilder = self::whereHas('teaches', function($query) use ($classId, $subjectId){
+            return $query->where('program_id',$classId)->where('subject_id',$subjectId);
+        });
+
+        if($is_home == 1 || $call_student == 1) {
+            $queryBuilder = $queryBuilder->whereHas('profile', function($q) use ($is_home, $call_student)
+            {
+                return $q->where('is_home',  $is_home)->where('call_student',  $call_student);
+            });
+        }
+
         if($category_id){
             //add logic for category id
-            $queryBuilder->with('rating');
+            $queryBuilder = $queryBuilder->whereHas('rating', function($q) use ($category_id) {
+                $q->havingRaw('AVG(ratings.rating) >= ?', [$category_id]);
+            });
         }
         if($is_group){
-            $queryBuilder->whereHas('isGroupTutors');
+            $queryBuilder = $queryBuilder->whereHas('isGroupTutors');
         }
 
-        $queryBuilder->where('is_online',1);
+        $queryBuilder = $queryBuilder->where('is_online', 1);
 
         $result = $queryBuilder->get();
+//        return $result = [$queryBuilder->toSql(), $queryBuilder->getBindings()];
+
         foreach($result as $record){
             if (round($record->rating->avg('rating')) == $category_id){
                 $result[] = $record->rating;
@@ -95,6 +112,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $onlineTutorCount = count($result);
         return $onlineTutorCount;
     }
+
 
     public function teaches(){
         return $this->hasMany(ProgramSubject::class, 'user_id', 'id');

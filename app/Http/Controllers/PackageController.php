@@ -21,8 +21,14 @@ use App\Services\CostCalculation\GroupCost;
 class PackageController extends Controller
 {
     /**
+     * @method packageCost
+     * -------------------
+     * @param Request $request
+     * @param ApplyPeakFactor $peakFactorAction
+     * @param CategoryCost $categoryCostAction
+     * @param GroupCost $groupCostAction
      *
-     * retufn hourly package rate
+     * @return mixed hourly package rate
      */
     public function packageCost(Request $request, ApplyPeakFactor $peakFactorAction, CategoryCost $categoryCostAction, GroupCost $groupCostAction){
         $this->validate($request,[
@@ -30,7 +36,6 @@ class PackageController extends Controller
             'subject_id'=> 'required',
         ]);
 
-        $userId = Auth::user()->id;
         $studentProfile = Profile::where('user_id', Auth::user()->id)->first();
         if($studentProfile->is_deserving == 1){
             return response()->json(
