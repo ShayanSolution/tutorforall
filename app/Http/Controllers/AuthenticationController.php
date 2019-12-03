@@ -254,8 +254,10 @@ class AuthenticationController extends Controller
         $password = $request->password;
         $role_id = $request->role_id;
         $device_token = $request->device_token;
-
-
+        $genderId = 0;
+        if ($request->has('gender_id')) {
+            $genderId = $request->gender_id;
+        }
         $confirmation_code = str_random(30);
         try {
 
@@ -267,7 +269,8 @@ class AuthenticationController extends Controller
                 'role_id' => $role_id,
                 'is_active' => 1,
                 'device_token' => $device_token,
-                'confirmation_code' => $confirmation_code
+                'confirmation_code' => $confirmation_code,
+                'gender_id' => $genderId
             ];
 
             $isMentor = 0;
