@@ -86,7 +86,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         if($is_home == 1 || $call_student == 1) {
             $queryBuilder = $queryBuilder->whereHas('profile', function($q) use ($is_home, $call_student)
             {
-                return $q->where('is_home',  $is_home)->where('call_student',  $call_student);
+                return $q->where('is_home',  $is_home)->orWhere('call_student',  $call_student);
             });
         }
 
