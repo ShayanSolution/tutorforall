@@ -74,6 +74,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $is_home        = $request['is_home'];
         $call_student   = $request['call_student'];
         $is_group = isset($request['is_group']) ? $request['is_group'] : 0;
+        $experience = $request['experience'];
 
         if(!$classId || !$subjectId){
             return false;
@@ -98,6 +99,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
         if($is_group){
             $queryBuilder = $queryBuilder->whereHas('isGroupTutors');
+        }
+
+        if ($experience) {
+//            $queryBuilder = $queryBuilder->selectRaw(" @sum_of_students_whom_learned_in_group := (SELECT SUM(DISTINCT group_members) FROM sessions where sessions.tutor_id = users.id AND sessions.`status` = 'ended' AND sessions.is_group = 1), @sum_of_students_whom_learned_individually := (SELECT COUNT(DISTINCT group_members) FROM sessions where sessions.tutor_id = users.id AND sessions.`status` = 'ended' AND sessions.is_group = 0), ROUND(@sum_of_students_whom_learned_in_group + @sum_of_students_whom_learned_individually) as experience ");
+//
+//            $queryBuilder->havingRaw('experience >= ?',[$experience]);
+            // @todo Need to change logic according to group counts. Currently on session count if group count more than one currently it's equals to one
+            $queryBuilder = $queryBuilder->whereHas('sessions', function ($q) use ($experience){
+                $q->havingRaw('COUNT(sessions.tutor_id) >= ?', [$experience])->where('status', 'ended');
+            });
         }
 
         $queryBuilder = $queryBuilder->where('is_online', 1);
@@ -167,6 +178,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function tutor()
     {
         return $this->hasMany('App\Models\Sessions', 'tutor_id');
+    }
+
+    public function sessions()
+    {
+        return $this->hasMany('App\Models\Session', 'tutor_id');
     }
 
     public function role()
