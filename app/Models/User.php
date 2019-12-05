@@ -75,6 +75,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $call_student   = $request['call_student'];
         $is_group = isset($request['is_group']) ? $request['is_group'] : 0;
         $experience = $request['experience'];
+        $gender_id = $request['gender_id'];
 
         if(!$classId || !$subjectId){
             return false;
@@ -109,6 +110,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             $queryBuilder = $queryBuilder->whereHas('sessions', function ($q) use ($experience){
                 $q->havingRaw('COUNT(sessions.tutor_id) >= ?', [$experience])->where('status', 'ended');
             });
+        }
+
+        if ($gender_id != 0) {
+            $queryBuilder = $queryBuilder->where('users.gender_id', '=', $gender_id);
         }
 
         $queryBuilder = $queryBuilder->where('is_online', 1);
