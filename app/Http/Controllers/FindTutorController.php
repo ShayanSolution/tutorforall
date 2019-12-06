@@ -124,9 +124,9 @@ HAVING
             Log::info($query);
 
             $tutors = \DB::select($query);
-            Log::info("Tutors from DB are: ".$tutors);
 //                dd($tutors);
             foreach($tutors as $tutor){
+                Log::info("send request to tutor ID is: ".$tutor->id);
                 $distanceInKms = number_format((float)$tutor->distance, 2, '.', '');
                 $approachingTime = $this->getApproachingTimeUsingDistance($distanceInKms);
                 $tutorId = $tutor->id;
