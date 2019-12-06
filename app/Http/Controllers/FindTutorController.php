@@ -124,6 +124,7 @@ HAVING
             Log::info($query);
 
             $tutors = \DB::select($query);
+            Log::info("Tutors from DB are: ".$tutors);
 //                dd($tutors);
             foreach($tutors as $tutor){
                 $distanceInKms = number_format((float)$tutor->distance, 2, '.', '');
