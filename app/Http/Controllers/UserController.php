@@ -767,4 +767,36 @@ class UserController extends Controller
         }
     }
 
+    public function online(Request $request)
+    {
+        if (Auth::check()) {
+            $user_id =  Auth::user()->id;
+            User::where('id', $user_id)->update(['is_online'=>$request->is_online]);
+
+            if($request->is_online == 1){
+                return response()->json(
+                    [
+                        'status' => 'success',
+                        'message' => 'Successfully online',
+                    ], 200
+                );
+            }else{
+
+                return response()->json(
+                    [
+                        'status' => 'success',
+                        'message' => 'Successfully Offline'
+                    ], 200
+                );
+            }
+        } else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Not Authorized'
+                ], 422
+            );
+        }
+    }
+
 }

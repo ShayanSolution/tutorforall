@@ -260,6 +260,9 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     
     //Delete user account
     Route::get('/user/remove', 'UserController@removeUser');
+
+    //Online offline tutor
+    Route::post('/online', 'UserController@online');
 });
 
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');
