@@ -99,7 +99,7 @@ program_subject.subject_id AS t_subject_id,(6371 * ACOS (COS (RADIANS(" . $stude
 ,ROUND(IFNULL((SELECT AVG(ratings.rating) from ratings where users.id = ratings.user_id), 1)) as `ratings`
 ,@sum_of_students_whom_learned_in_group := (SELECT SUM(DISTINCT group_members) FROM sessions where sessions.tutor_id = users.id AND sessions.`status` = 'ended' AND sessions.is_group = 1) as `sum_of_students_whom_learned_in_group`
 ,@sum_of_students_whom_learned_individually := (SELECT COUNT(DISTINCT group_members) FROM sessions where sessions.tutor_id = users.id AND sessions.`status` = 'ended' AND sessions.is_group = 0) as `sum_of_students_whom_learned_individually`
-,ROUND(@sum_of_students_whom_learned_in_group + @sum_of_students_whom_learned_individually) AS `experience`
+,IFNULL(ROUND(@sum_of_students_whom_learned_in_group + @sum_of_students_whom_learned_individually),0) AS `experience`
 FROM `users`
 JOIN `profiles` ON users.id = profiles.user_id
 LEFT JOIN `program_subject` ON users.id = program_subject.user_id
@@ -109,7 +109,7 @@ AND profiles.is_mentor = '$isMentor'
 AND ((profiles.is_home = '$isHome' AND profiles.call_student = '$callStudent') OR (profiles.is_home = '1' AND profiles.call_student = '1')) 
 AND ((profiles.is_group = '$studentIsGroup' AND profiles.one_on_one = '$oneOnOne') OR (profiles.is_group = '1' AND profiles.one_on_one = '1')) 
 $genderMatchingQuery 
-AND (profiles.min_slider_value >= '$hourlyRate' AND profiles.max_slider_value <= '$hourlyRate') 
+AND (profiles.min_slider_value <= '$hourlyRate' AND profiles.max_slider_value >= '$hourlyRate') 
 HAVING 
 `ratings` >= $categoryId AND 
 `experience` >= $experience AND 
