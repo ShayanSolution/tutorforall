@@ -121,9 +121,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $result = $queryBuilder->get();
 //        return $result = [$queryBuilder->toSql(), $queryBuilder->getBindings()];
 
-        foreach($result as $record){
-            if (round($record->rating->avg('rating')) == $category_id){
-                $result[] = $record->rating;
+        foreach($result as $key => $record){
+            if (round($record->rating->avg('rating')) < $category_id){
+                unset($result[$key]);
+//                $result[] = $record->rating;
             }
         }
         $onlineTutorCount = count($result);
@@ -219,7 +220,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             return $user;
         }
     }
-    
+
     public function findBookedUser($tutorId, $sessionId){
         $user = User::select('users.*')
                 ->select('users.*','programmes.name as p_name','subjects.name as s_name'
@@ -277,15 +278,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
             ->get();
     }
-    
+
     public static function updateProfileImage($tutor_id,$file_name,$role_id){
         User::where('id','=',$tutor_id)->where('role_id','=',$role_id)-> update(['profileImage'=>$file_name]);
     }
-    
+
     public static function updateUserProfile($tutor_id,$update_array,$role_id){
         User::where('id','=',$tutor_id)->where('role_id','=',$role_id)-> update($update_array);
     }
-    
+
     public static function registerTutor($request){
         //print_r($request); dd();
         $email = $request['email'];
@@ -312,7 +313,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             'role_id' => Config::get('user-constants.TUTOR_ROLE_ID'),
             'phone'=>$phone
         ])->id;
-        
+
         return $user;
     }
 
@@ -345,7 +346,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
         return $student_detail;
     }
-    
+
     public static function updateUserActiveStatus($id){
         $user = Self::where('id',$id)->first();
         if($user->is_active == 0){
@@ -415,8 +416,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
         return $response;
     }
-    
-    
+
+
     public static function findByPhoneNumber($phone)
     {
         $phoneWithoutCode = substr($phone,-10);

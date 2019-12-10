@@ -61,7 +61,7 @@ class FindTutorController extends Controller
         //@todo add logic, match student gender (Auth::user()->gender_id) with profile.teach_to
         $genderMatchingQuery = $studyFrom == 0 ? "" : " AND users.gender_id = $studyFrom  AND profiles.teach_to IN (".Auth::user()->gender_id.",0) ";
         for( $i=0; $i<=3; $i++){
-                
+
             // Query to find Tutors in range(KM)
             //6371 = Kilometers
             //3959 = Miles
@@ -110,6 +110,7 @@ AND ((profiles.is_home = '$isHome' AND profiles.call_student = '$callStudent') O
 AND ((profiles.is_group = '$studentIsGroup' AND profiles.one_on_one = '$oneOnOne') OR (profiles.is_group = '1' AND profiles.one_on_one = '1')) 
 $genderMatchingQuery 
 AND (profiles.min_slider_value <= '$hourlyRate' AND profiles.max_slider_value >= '$hourlyRate') 
+AND users.is_online = 1 
 HAVING 
 `ratings` >= $categoryId AND 
 `experience` >= $experience AND 
