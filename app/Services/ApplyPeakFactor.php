@@ -31,7 +31,7 @@ class ApplyPeakFactor
                                                 where('is_group', $request['is_group'])
                                                 ->first();
 
-            if ($isPeakFactor['peak-factor-no-of-tutors'] <= $onlineTutorsCount ) {
+            if ($onlineTutorsCount <= $isPeakFactor['peak-factor-no-of-tutors']) {
                 $applyPeakFactor = ($isPeakFactor['peak-factor-percentage']/100) * $hourlyRate;
                 $hourlyRate = $applyPeakFactor + $hourlyRate;
                 $peakFactorStatus = "on";
