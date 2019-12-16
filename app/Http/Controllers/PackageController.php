@@ -52,6 +52,7 @@ class PackageController extends Controller
         $categoryId = $request['category_id'];
         $isGroup = $request['is_group'];
         $groupCount = $request['group_count'];
+        $goTutor = $request['is_home'];
         $peakFactor = "off";
         //Get online tutors
         $onlineTutorsCount = User::findOnlineTutors($request);
@@ -73,12 +74,14 @@ class PackageController extends Controller
             }
             // get peakfactor
             list($hourlyRate, $peakFactor) = $peakFactorAction->execute($onlineTutorsCount, $hourlyRate, $request, $peakFactor);
-            // discount
-            $isDiscount = Setting::where('group_name', 'discount')->pluck('value', 'slug');
-            if ($isDiscount['percent-discount-on-go-to-tutor-status'] == 1) {
-                $discountPercentage = $isDiscount['percent-discount-on-go-to-tutor'];
-                $discount = ($discountPercentage/100) * $hourlyRate;
-                $hourlyRate = $hourlyRate - $discount;
+            // discount on go to tutor
+            if ($goTutor == 0) {
+                $isDiscount = Setting::where('group_name', 'discount')->pluck('value', 'slug');
+                if ($isDiscount['percent-discount-on-go-to-tutor-status'] == 1) {
+                    $discountPercentage = $isDiscount['percent-discount-on-go-to-tutor'];
+                    $discount = ($discountPercentage/100) * $hourlyRate;
+                    $hourlyRate = $hourlyRate - $discount;
+                }
             }
             if ($hourlyRate) {
                 return response()->json(
