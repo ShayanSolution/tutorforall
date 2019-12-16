@@ -60,17 +60,23 @@ class ApplicationSettingsSeeder extends Seeder
 //                "label"=> "Peak Factor (Number of Tutors)",
 //                "group_name"=> "peak-factor"
 //            ],
+//            [
+//                "slug"=> "tutor-setting-slider-min-value",
+//                "value"=> "0",
+//                "label"=> "Tutor Setting Slider Min Value",
+//                "group_name"=> "tutor-setting-slider"
+//            ],
+//            [
+//                "slug"=> "tutor-setting-slider-max-value",
+//                "value"=> "2000",
+//                "label"=> "Tutor Setting Slider Max Value",
+//                "group_name"=> "tutor-setting-slider"
+//            ],
             [
-                "slug"=> "tutor-setting-slider-min-value",
+                "slug"=> "percent-discount-on-go-to-tutor-status",
                 "value"=> "0",
-                "label"=> "Tutor Setting Slider Min Value",
-                "group_name"=> "tutor-setting-slider"
-            ],
-            [
-                "slug"=> "tutor-setting-slider-max-value",
-                "value"=> "2000",
-                "label"=> "Tutor Setting Slider Max Value",
-                "group_name"=> "tutor-setting-slider"
+                "label"=> "Discount on go to tutor status",
+                "group_name"=> "discount"
             ]
         ];
 
