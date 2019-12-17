@@ -89,7 +89,7 @@ class PackageController extends Controller
                         'status' => 'success',
                         'hourly_rate' => round($hourlyRate),
                         'online_tutors' => $onlineTutorsCount,
-                        'peakFactor' => $peakFactor
+                        'peak_factor' => $peakFactor
                     ]
                 );
             }
