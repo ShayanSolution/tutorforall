@@ -66,7 +66,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'gender_id'
     ];
 
-    public static function findOnlineTutors($request){
+    public static function findOnlineTutors($request, $hourlyRate){
         //add logic here
         $classId = $request['class_id'];
         $subjectId = $request['subject_id'];
@@ -114,6 +114,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
         if ($gender_id != 0) {
             $queryBuilder = $queryBuilder->where('users.gender_id', '=', $gender_id);
+        }
+
+        if ($hourlyRate != 0) {
+            $queryBuilder = $queryBuilder->whereHas('profile', function($q) use ($hourlyRate)
+            {
+                return $q->where('min_slider_value', '<=', $hourlyRate)->where('max_slider_value', '>=', $hourlyRate);
+            });
         }
 
         $queryBuilder = $queryBuilder->where('is_online', 1);
