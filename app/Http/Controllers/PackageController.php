@@ -75,7 +75,7 @@ class PackageController extends Controller
             // get peakfactor
             list($hourlyRate, $peakFactor) = $peakFactorAction->execute($onlineTutorsCount, $hourlyRate, $request, $peakFactor);
             // discount on go to tutor
-            if ($goTutor == 0) {
+            if ($goTutor != 0) {
                 $isDiscount = Setting::where('group_name', 'discount')->pluck('value', 'slug');
                 if ($isDiscount['percent-discount-on-go-to-tutor-status'] == 1) {
                     $discountPercentage = $isDiscount['percent-discount-on-go-to-tutor'];
