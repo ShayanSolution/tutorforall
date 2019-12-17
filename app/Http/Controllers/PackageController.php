@@ -55,7 +55,7 @@ class PackageController extends Controller
         $goTutor = $request['is_home'];
         $peakFactor = "off";
         //Get online tutors
-        $onlineTutorsCount = User::findOnlineTutors($request);
+        $onlineTutorsCount = User::findOnlineTutors($request, $hourlyRate=0);
 
         // Class Subjects cost
         $classSubject = Subject::where('id', $subjectId)->where('programme_id', $classId)->first();
@@ -83,6 +83,8 @@ class PackageController extends Controller
                     $hourlyRate = $hourlyRate - $discount;
                 }
             }
+            //Get online tutors after checking tutor slider range
+            $onlineTutorsCount = User::findOnlineTutors($request, $hourlyRate);
             if ($hourlyRate) {
                 return response()->json(
                     [
