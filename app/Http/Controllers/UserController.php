@@ -762,8 +762,18 @@ class UserController extends Controller
     {
         if (Auth::check()) {
             $user_id =  Auth::user()->id;
-            User::where('id', $user_id)->update(['device_token'=>'']);
+            User::where('id', $user_id)->update([
+                'device_token'=> '',
+                'is_online'=> 0,
+            ]);
             Auth::user()->AauthAcessToken()->delete();
+
+            return response()->json(
+                [
+                    'status' => 'success',
+                    'message' => 'Successfully logout',
+                ], 200
+            );
         }
     }
 
