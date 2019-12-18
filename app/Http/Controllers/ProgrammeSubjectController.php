@@ -31,7 +31,7 @@ class ProgrammeSubjectController extends Controller
      */
     public function getAllProgrammes() {
 
-        $programmes = Programme::where('status', 1)->get();
+        $programmes = Programme::where('status', 1)->orderBy('name')->get();
         if($programmes){
             return response()->json(
                 [
@@ -80,7 +80,7 @@ class ProgrammeSubjectController extends Controller
 
     public function getAllSubjects() {
 
-        $subjects = Subject::where('status', 1)->get();
+        $subjects = Subject::where('status', 1)->orderBy('name')->get();
 
         /**
          *  If user is tutor we are sending the selected field against all subjects. The
@@ -143,9 +143,7 @@ class ProgrammeSubjectController extends Controller
             'class' => 'required',
         ]);
         $programme_id = $request['class'];
-        $subjects = Subject::where('programme_id', $programme_id)
-                    ->where('status',1)
-                    ->get();
+        $subjects = Subject::where('programme_id', $programme_id)->where('status',1)->orderBy('name')->get();
         if($subjects){
             return response()->json(
                 [
