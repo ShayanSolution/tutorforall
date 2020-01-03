@@ -88,8 +88,8 @@ class FindTutorController extends Controller
 //            . $genderMatchingQuery
 //            . "HAVING `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
 
-//@todo from lin 91 to 117 uncomment when skill and experience applied from app
-            /*$query = "SELECT DISTINCT users.id, users.firstName, users.role_id,
+
+            $query = "SELECT DISTINCT users.id, users.firstName, users.role_id, 
 users.latitude, users.longitude, 
 users.device_token, profiles.is_mentor, 
 profiles.teach_to, profiles.is_home, 
@@ -111,33 +111,8 @@ AND ((profiles.is_group = '$studentIsGroup' AND profiles.one_on_one = '$oneOnOne
 $genderMatchingQuery 
 AND (profiles.min_slider_value <= '$hourlyRate' AND profiles.max_slider_value >= '$hourlyRate') 
 AND users.is_online = 1 
-HAVING
-`ratings` >= $categoryId AND
-`experience` >= $experience AND 
-`distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";*/
-
-            $query = "SELECT DISTINCT users.id, users.firstName, users.role_id, 
-users.latitude, users.longitude, 
-users.device_token, profiles.is_mentor, 
-profiles.teach_to, profiles.is_home, 
-profiles.call_student, profiles.is_group, 
-profiles.one_on_one, program_subject.program_id AS t_program_id, 
-program_subject.subject_id AS t_subject_id,(6371 * ACOS (COS (RADIANS(" . $studentLat . ")) * COS(RADIANS(`users`.`latitude`)) * COS(RADIANS(`users`.`longitude`) - RADIANS(" . $studentLong . ")) + SIN (RADIANS(" . $studentLat . ")) * SIN(RADIANS(`users`.`latitude`)))) AS `distance`
-,@sum_of_students_whom_learned_in_group := (SELECT SUM(DISTINCT group_members) FROM sessions where sessions.tutor_id = users.id AND sessions.`status` = 'ended' AND sessions.is_group = 1) as `sum_of_students_whom_learned_in_group`
-,@sum_of_students_whom_learned_individually := (SELECT COUNT(DISTINCT group_members) FROM sessions where sessions.tutor_id = users.id AND sessions.`status` = 'ended' AND sessions.is_group = 0) as `sum_of_students_whom_learned_individually`
-,IFNULL(ROUND(@sum_of_students_whom_learned_in_group + @sum_of_students_whom_learned_individually),0) AS `experience`
-FROM `users`
-JOIN `profiles` ON users.id = profiles.user_id
-LEFT JOIN `program_subject` ON users.id = program_subject.user_id
-WHERE `role_id` = '$roleId' 
-AND (program_subject.program_id = '$studentClassId' AND program_subject.subject_id = '$studentSubjectId') 
-AND profiles.is_mentor = '$isMentor' 
-AND ((profiles.is_home = '$isHome' AND profiles.call_student = '$callStudent') OR (profiles.is_home = '1' AND profiles.call_student = '1')) 
-AND ((profiles.is_group = '$studentIsGroup' AND profiles.one_on_one = '$oneOnOne') OR (profiles.is_group = '1' AND profiles.one_on_one = '1')) 
-$genderMatchingQuery 
-AND (profiles.min_slider_value <= '$hourlyRate' AND profiles.max_slider_value >= '$hourlyRate') 
-AND users.is_online = 1 
-HAVING
+HAVING 
+`ratings` >= $categoryId AND 
 `experience` >= $experience AND 
 `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
 
