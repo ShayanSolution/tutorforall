@@ -112,7 +112,6 @@ $genderMatchingQuery
 AND (profiles.min_slider_value <= '$hourlyRate' AND profiles.max_slider_value >= '$hourlyRate') 
 AND users.is_online = 1 
 HAVING 
-`ratings` >= $categoryId AND 
 `experience` >= $experience AND 
 `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin";
 
