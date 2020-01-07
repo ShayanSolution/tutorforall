@@ -122,7 +122,7 @@ Route::get('/test-push', function () {
 
 /** @var \Laravel\Lumen\Routing\Router $router */
 $router->get('/', function () {
-    dd('for testing on dev');
+    dd('Welcome to Tootar and Tootar Teacher applications API project');
     return app()->version();
 });
 
