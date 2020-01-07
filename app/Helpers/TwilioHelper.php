@@ -32,7 +32,7 @@ class TwilioHelper
                     // A Twilio phone number you purchased at twilio.com/console
                     'from' => $isEnvProd ? $twilioNumber : $twilioTestNumber,
                     // the body of the text message you'd like to send
-                    'body' => "Welcome to Tutor4all app. Your verification code is $code"
+                    'body' => "Welcome to Tootar app. Your verification code is $code"
                 )
             );
             if($response->sid){
