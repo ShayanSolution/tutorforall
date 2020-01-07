@@ -126,6 +126,9 @@ class AuthenticationController extends Controller
         }elseif((substr($number,0,1) == '0') && substr($number,0,2) != 92){
             $number = substr_replace($number, '+92', 0, 1);
             return $number;
+        } else {
+            $number = substr_replace($number, '+1', 0, 1);
+            return $number;
         }
     }
 
