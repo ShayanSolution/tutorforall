@@ -14,7 +14,7 @@ use Twilio\Exceptions\TwilioException;
 
 class TwilioHelper
 {
-    public static function sendCodeSms($toNumber, $code){
+    public static function sendCodeSms($toNumber, $code, $roleId){
         $isEnvProd = app()->environment() == 'production';
         $accountSid = config('twilio.accountId');
         $authToken  = config('twilio.authKey');
@@ -22,6 +22,11 @@ class TwilioHelper
         $twilioTestNumber = config('twilio.twilioTestNumber');
 //        Log::info("sending code to: ".$toNumber);
         $client = new Client($accountSid, $authToken);
+        if ($roleId == 2){
+            $appNameForCode = 'Tootar Teacher';
+        } else {
+            $appNameForCode = 'Tootar';
+        }
         try {
 
             // Use the client to do fun stuff like send text messages!
@@ -32,7 +37,7 @@ class TwilioHelper
                     // A Twilio phone number you purchased at twilio.com/console
                     'from' => $isEnvProd ? $twilioNumber : $twilioTestNumber,
                     // the body of the text message you'd like to send
-                    'body' => "Welcome to Tootar app. Your verification code is $code"
+                    'body' => "Welcome to $appNameForCode. Your verification code is $code"
                 )
             );
             if($response->sid){

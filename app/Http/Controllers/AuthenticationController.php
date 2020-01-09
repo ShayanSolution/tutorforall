@@ -44,35 +44,46 @@ class AuthenticationController extends Controller
      */
     public function getPhoneVerificationCode(Request $request){
         $this->validate($request,[
-            'phone' => 'required|digits_between:11,20'
+            'phone' => 'required|digits_between:11,20',
+            'role_id'=> 'required'
         ]);
         $phone = $request->phone;
+        $roleId = $request->role_id;
         $user = new User;
-        $phoneExist = $user->findByExactPhoneNumber($phone);
-
+        $phoneExist = $user->findByExactPhoneNumber($phone, $roleId);
+        //if both account have than show error
+        if ($phoneExist && $phoneExist->deleted_at == null){
+            if ($roleId == 2) {
+                $appNameForCode = 'Tootar';
+            } else {
+                $appNameForCode = 'Tootar Teacher';
+            }
+            return JsonResponse::generateResponse([
+                    'status' => 'error',
+                    'message' => 'You have already '.$appNameForCode.' account. Please login'
+                ],500);
+        }
+        // If account soft delete than set deleted_at null
         if ($phoneExist && $phoneExist->deleted_at){
             $phoneExist->restore();
         }
-
-        $phoneCode = PhoneCode::getPhoneNumber($phone);
-
-        if ($phoneCode) {
-
-            return JsonResponse::generateResponse([
-                    'status' => 'error',
-                    'message' => 'Phone number already verified.'
-                ],500);
-
-        } else {
-            return $this->generateRandomCodeAndSendThroughTwilio($phone, $phoneCode);
-        }
+//        $phoneCode = PhoneCode::getPhoneNumber($phone);
+//        if ($phoneCode) {
+//            return JsonResponse::generateResponse([
+//                    'status' => 'error',
+//                    'message' => 'Phone number already verified.'
+//                ],500);
+//        } else {
+        // Send code
+            return $this->generateRandomCodeAndSendThroughTwilio($phone, $phoneCode = null,$roleId);
+//        }
     }
 
-    public function generateRandomCodeAndSendThroughTwilio($phone, $phoneCode = null){
+    public function generateRandomCodeAndSendThroughTwilio($phone, $phoneCode = null, $roleId){
         $code = $this->generateRandomCode();
         $toNumber = $this->sanitizePhoneNumber($phone);
 //                // Use the client to do fun stuff like send text messages!
-        $response = TwilioHelper::sendCodeSms($toNumber, $code);
+        $response = TwilioHelper::sendCodeSms($toNumber, $code, $roleId);
 
         if ($response){
 
@@ -236,7 +247,7 @@ class AuthenticationController extends Controller
     public function postRegister(Request $request){
 
         $validation_array = [
-            'email' => 'required|email|unique:users',
+            'email' => 'required',
             'phone' => 'required|digits_between:11,20',
             'password' => 'required|min:6|confirmed',
             'device_token' => 'required',
@@ -285,7 +296,7 @@ class AuthenticationController extends Controller
             }
 
 
-            $user = User::updateOrCreate(['phone' => $phone], $userDataArray)->id;
+            $user = User::updateOrCreate(['phone' => $phone, 'role_id' => $role_id], $userDataArray)->id;
 
             if ($user) {
 

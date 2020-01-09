@@ -432,9 +432,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
 
-    public static function findByExactPhoneNumber($phone)
+    public static function findByExactPhoneNumber($phone, $roleId)
     {
-        return self::where('phone',$phone)->withTrashed()->first();
+        return self::where('phone',$phone)->where('role_id', $roleId)->withTrashed()->first();
     }
 
 
