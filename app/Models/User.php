@@ -217,7 +217,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }else{
             $request  = Request::all();
             //$user = self::where('phone', $username)->where('confirmed','=',1)->first();
-            $user = self::where('phone', $username)->first();
+            $user = self::where('phone', $username)->where('role_id', $request['role_id'])->first();
             if(!$user){
                 return $user;
             }
