@@ -472,7 +472,7 @@ class AuthenticationController extends Controller
         if($isEligibleOrNot['status'] == 'error')
             return response()->json($isEligibleOrNot);
 
-        return $this->generateRandomCodeAndSendThroughTwilio($phone);
+        return $this->generateRandomCodeAndSendThroughTwilio($phone, $phoneCode = null, $roleId);
     }
 
     public function resetPassword(Request $request){
