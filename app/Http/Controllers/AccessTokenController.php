@@ -39,7 +39,7 @@ class AccessTokenController extends Controller
     {
         $inputs = $request->all();
 
-        $user = User::where('phone', $request->username)->first();
+        $user = User::where('phone', $request->username)->where('role_id', $request->role_id)->first();
 
         if(!$user){
             return response()->json(['error'=>'error', 'message'=>'Invalid Phone Number']);
