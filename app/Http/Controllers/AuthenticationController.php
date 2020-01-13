@@ -54,9 +54,9 @@ class AuthenticationController extends Controller
         //if both account have than show error
         if ($phoneExist && $phoneExist->deleted_at == null){
             if ($roleId == 2) {
-                $appNameForCode = 'Tootar';
-            } else {
                 $appNameForCode = 'Tootar Teacher';
+            } else {
+                $appNameForCode = 'Tootar';
             }
             return JsonResponse::generateResponse([
                     'status' => 'error',
