@@ -425,22 +425,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
 
-    public static function findByPhoneNumber($phone)
-    {
-        $phoneWithoutCode = substr($phone,-10);
-        return self::where('phone','like','%'.$phoneWithoutCode)->withTrashed()->first();
-    }
-
-
     public static function findByExactPhoneNumber($phone, $roleId)
     {
         return self::where('phone',$phone)->where('role_id', $roleId)->withTrashed()->first();
     }
 
 
-    public function isActive($phone)
+    public function isActive($phone, $roleId)
     {
-        return self::where('phone','like','%'.$phone)->where('is_active', 1)->first();
+        return self::where('phone','like','%'.$phone)->where('role_id', $roleId)->where('is_active', 1)->first();
     }
 
     public static function isEligibleToRequestResetPassword($phone, $roleId){

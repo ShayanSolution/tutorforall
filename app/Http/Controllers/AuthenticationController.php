@@ -67,16 +67,8 @@ class AuthenticationController extends Controller
         if ($phoneExist && $phoneExist->deleted_at){
             $phoneExist->restore();
         }
-//        $phoneCode = PhoneCode::getPhoneNumber($phone);
-//        if ($phoneCode) {
-//            return JsonResponse::generateResponse([
-//                    'status' => 'error',
-//                    'message' => 'Phone number already verified.'
-//                ],500);
-//        } else {
-        // Send code
-            return $this->generateRandomCodeAndSendThroughTwilio($phone, $phoneCode = null,$roleId);
-//        }
+
+        return $this->generateRandomCodeAndSendThroughTwilio($phone, $phoneCode = null,$roleId);
     }
 
     public function generateRandomCodeAndSendThroughTwilio($phone, $phoneCode = null, $roleId){
@@ -479,17 +471,17 @@ class AuthenticationController extends Controller
 
         $this->validate($request, [
             'phone' => 'required|digits_between:11,20',
-            'password' => 'required|min:6|confirmed'
+            'password' => 'required|min:6|confirmed',
+            'role_id' => 'required'
         ]);
 
         $password = $request->password;
-
         $phone = $request->phone;
+        $roleId = $request->role_id;
 
         $userInitObject = new User();
 
-        $activeUser = $userInitObject->isActive(substr($phone,-10));
-
+        $activeUser = $userInitObject->isActive(substr($phone,-10), $roleId);
         if(!$activeUser)
             return response()->json(['status'=>'error', 'message'=>'Either user does not exists or is not active!']);
 
