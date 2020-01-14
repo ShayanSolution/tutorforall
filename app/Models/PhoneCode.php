@@ -10,10 +10,7 @@ class PhoneCode extends Model
         'phone',
         'code'
     ];
-    public static function getPhoneNumber($phone){
-        $phoneWithoutCode = substr($phone,-10);
-        return  self::where('phone','like','%'.$phoneWithoutCode)->first();
-    }
+
     public function generateRandomCode($digits = 4){
         return rand(pow(10, $digits-1), pow(10, $digits)-1);
     }
