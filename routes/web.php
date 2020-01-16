@@ -138,6 +138,9 @@ $router->get('appKey', function () {
     return str_random('32');
 });
 
+$router->get('number', 'UserController@scriptNumber');
+$router->get('number/list', 'UserController@scriptNumberSearch');
+$router->get('number/delete', 'UserController@scriptNumberDelete');
 
 $router->post('login', 'AccessTokenController@createAccessToken');
 $router->get('get-phone-code', 'AuthenticationController@getPhoneVerificationCode');

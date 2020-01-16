@@ -809,4 +809,22 @@ class UserController extends Controller
         }
     }
 
+    public function scriptNumber(Request $request){
+       return view('partials.number_list');
+    }
+
+    public function scriptNumberSearch(Request $request){
+        $users = User::where('phone', $request->number)->get();
+        return (string)(view("partials.number_item", compact('users')));
+    }
+
+    public function scriptNumberDelete(Request $request){
+        $user = User::find($request->id);
+        $roleName = strtolower($user->role->name);
+        Session::where($roleName.'_id', $user->id)->delete();
+        Profile::where('user_id', $user->id)->delete();
+        $user->forceDelete();
+        return response()->json(['status'=>'success'], 200);
+    }
+
 }
