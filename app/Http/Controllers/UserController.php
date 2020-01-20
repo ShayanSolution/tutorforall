@@ -606,6 +606,7 @@ class UserController extends Controller
             'call_student' => 'numeric',
             'min_slider_value' => 'numeric',
             'max_slider_value' => 'numeric',
+            'offline_notification' => 'required',
         ]);
         $data = $request->all();
         $profile = new Profile();
@@ -613,6 +614,7 @@ class UserController extends Controller
             $data['tutor_id'],
             $request->only(['is_home', 'is_group', 'is_mentor', 'teach_to', 'call_student', 'one_on_one', 'min_slider_value', 'max_slider_value'])
         );
+        User::where('id','=',$request->tutor_id)->update(['offline_notification'=>$request->offline_notification]);
         if($update_profile){
             return response()->json(
                 [

@@ -63,7 +63,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'confirmation_code',
         'confirmed',
         'dob',
-        'gender_id'
+        'gender_id',
+        'offline_notification',
     ];
 
     public static function findOnlineTutors($request, $hourlyRate){
