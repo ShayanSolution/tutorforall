@@ -827,4 +827,36 @@ class UserController extends Controller
         return response()->json(['status'=>'success'], 200);
     }
 
+    public function offlineNotification(Request $request)
+    {
+        if (Auth::check()) {
+            $user_id =  Auth::user()->id;
+            User::where('id', $user_id)->update(['offline_notification'=>$request->offline_notification]);
+
+            if($request->offline_notification == 1){
+                return response()->json(
+                    [
+                        'status' => 'success',
+                        'message' => 'You will get notifications when you offline',
+                    ], 200
+                );
+            }else{
+
+                return response()->json(
+                    [
+                        'status' => 'success',
+                        'message' => 'You will not get notifications when you offline'
+                    ], 200
+                );
+            }
+        } else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Not Authorized'
+                ], 422
+            );
+        }
+    }
+
 }

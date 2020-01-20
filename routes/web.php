@@ -266,6 +266,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
 
     //Online offline tutor
     Route::post('/online', 'UserController@online');
+    // get notification when offline
+    Route::post('/offline_notification', 'UserController@offlineNotification');
 });
 
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');
