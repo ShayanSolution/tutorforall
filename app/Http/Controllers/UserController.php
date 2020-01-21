@@ -319,6 +319,7 @@ class UserController extends Controller
                 'max_thumb_slider' => $user->max_slider_value,
                 'min_slider' => isset($sliderDefaultValue['tutor-setting-slider-min-value']) ? $sliderDefaultValue['tutor-setting-slider-min-value'] : '',
                 'max_slider' => isset($sliderDefaultValue['tutor-setting-slider-max-value']) ? $sliderDefaultValue['tutor-setting-slider-max-value'] : '',
+                'offline_notification' => $user->offline_notification,
             );
             return $profile;
         }
