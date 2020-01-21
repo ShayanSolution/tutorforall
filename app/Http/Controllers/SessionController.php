@@ -625,6 +625,7 @@ class SessionController extends Controller
                 //get tutor avg rating
                 $rating_sessions = Session::where('tutor_id', $session->tutor_id)->where('hourly_rate', '!=', 0)->pluck('id');
                 $tutor_rating = Rating::whereIn('session_id', $rating_sessions)->get();
+                $tutorPhone = User::where('id', $session->tutor_id)->first();
             }else{
                 return response()->json(
                     [
@@ -640,6 +641,7 @@ class SessionController extends Controller
         $data['program_name'] = $session->programme->name;
         $data['subject_name'] = $session->subject->name;
         $data['tutor_name']   = $session->tutor->firstName." ".$session->tutor->lastName;
+        $data['tutor_phone']   = $tutorPhone->phone;
         $data['latitude']     = $session->tutor->latitude;
         $data['longitude']    = $session->tutor->longitude;
         $data['tutor_profile_img']  = \url("images/".$session->tutor->profileImage);
