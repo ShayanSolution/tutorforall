@@ -110,7 +110,7 @@ AND ((profiles.is_home = '$isHome' AND profiles.call_student = '$callStudent') O
 AND ((profiles.is_group = '$studentIsGroup' AND profiles.one_on_one = '$oneOnOne') OR (profiles.is_group = '1' AND profiles.one_on_one = '1')) 
 $genderMatchingQuery 
 AND (profiles.min_slider_value <= '$hourlyRate' AND profiles.max_slider_value >= '$hourlyRate') 
-AND users.is_online = 1 
+AND (users.is_online = 1 OR users.offline_notification = 1)
 HAVING 
 `ratings` >= $categoryId AND 
 `experience` >= $experience AND 
@@ -125,7 +125,7 @@ HAVING
             Log::info($query);
 
             $tutors = \DB::select($query);
-//                dd($tutors);
+                dd($tutors);
             foreach($tutors as $tutor){
                 Log::info("send request to tutor ID is: ".$tutor->id);
                 $distanceInKms = number_format((float)$tutor->distance, 2, '.', '');
