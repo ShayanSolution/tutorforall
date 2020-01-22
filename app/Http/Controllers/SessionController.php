@@ -606,6 +606,7 @@ class SessionController extends Controller
         $data = [];
         if($roleId == 2){
             $session = Session::where('tutor_id', $userId)->with('tutor','student')->orderBy('updated_at', 'desc')->first();
+            $tutorPhone = User::where('id', $session->tutor_id)->first();
             if($session){
                 $rating = Rating::where('session_id', $session->id)->first();
             }else{
