@@ -620,7 +620,7 @@ class UserController extends Controller
             return response()->json(
                 [
                     'status' => 'success',
-                    'message' => 'Profile settings updated successfully.'
+                    'message' => 'Settings updated successfully.'
                 ], 200
             );
         }else{
