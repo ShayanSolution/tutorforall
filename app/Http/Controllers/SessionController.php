@@ -68,7 +68,8 @@ class SessionController extends Controller
                 }else{
                     $sessionDate = $user->Session_created_date;
                 }
-                $tutor_sessions[] = [
+                if ($user_details){
+                    $tutor_sessions[] = [
                     'FullName' => $user_details->firstName.' '.$user_details->lastName,
                     'FirstName' => $user_details->firstName,
                     'LastName' => $user_details->lastName,
@@ -98,7 +99,8 @@ class SessionController extends Controller
                     'Age' => Carbon::parse($user->dob)->age,
                     'Profile_image'=>!empty($user_details->profileImage)?URL::to('/images').'/'.$user_details->profileImage:'',
                     'hourly_rate' => $user->hourly_rate
-                ];
+                    ];
+                }
 
             }
 
