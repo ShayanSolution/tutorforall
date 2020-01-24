@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
@@ -134,6 +135,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 unset($result[$key]);
 //                $result[] = $record->rating;
             }
+
+            $lastSession = $record->sessions()->where('student_id', Auth::user()->id)->where('status', 'ended')->orderBy('id', 'desc')->first();
+
+            if($lastSession && $lastSession->rating && $lastSession->rating->rating <= 2)
+                unset($result[$key]);
         }
         $onlineTutorCount = count($result);
         return $onlineTutorCount;
