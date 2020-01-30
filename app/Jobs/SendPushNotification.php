@@ -127,6 +127,7 @@ class SendPushNotification extends Job implements ShouldQueue
                     'notification_type' => 'session_request',
                     'session_id' => (string)$sessionRequest->id,
                     'Student_Name' => $this->student->firstName." ".$this->student->lastName,
+                    'student_phone' => $this->student->phone,
                     'Student_id' => $this->student->id,
                     'Class_Name' => isset($class->name)?$class->name:'',
                     'Subject_Name' => isset($subject->name)?$subject->name:'',
