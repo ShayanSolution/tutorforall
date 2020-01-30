@@ -25,7 +25,7 @@ class DocumentsController extends Controller
     {
         $this->validate($request,[
             'title'             =>  'required',
-            'document'          =>  'required|mimes:jpeg,bmp,png',
+            'document'          =>  'required|mimes:jpeg,bmp,png|min:1024',
             'document_type'     =>  'required'
         ]);
 
@@ -126,7 +126,7 @@ class DocumentsController extends Controller
         $this->validate($request, [
             'document_id'       =>  'required',
             'title'             =>  'required',
-            'document'          =>  'required|mimes:jpeg,bmp,png',
+            'document'          =>  'required|mimes:jpeg,bmp,png|min:1024',
             'document_type'     =>  'required'
         ]);
 
