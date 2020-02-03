@@ -73,6 +73,7 @@ class SessionController extends Controller
                     'FullName' => $user_details->firstName.' '.$user_details->lastName,
                     'FirstName' => $user_details->firstName,
                     'LastName' => $user_details->lastName,
+                    'tutor_phone' => $user_details->phone,
                     'Experience' => (int)$user_details->experience,
                     'Date' => $sessionDate,
                     'Lat' => $user->latitude,

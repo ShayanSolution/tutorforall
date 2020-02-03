@@ -227,6 +227,7 @@ class Session extends Model
             $session_detail[$index]['student_id'] = $session->student_id;
             $session_detail[$index]['firstName'] = !empty($student_detail->firstName)?$student_detail->firstName:'';
             $session_detail[$index]['lastName'] = !empty($student_detail->lastName)?$student_detail->lastName:'';
+            $session_detail[$index]['student_phone'] = $student_detail->phone;
             $session_detail[$index]['id'] = $session->id;
             $session_detail[$index]['is_home'] = $session->session_is_home;
             $session_detail[$index]['is_group'] = $session->session_is_group;
