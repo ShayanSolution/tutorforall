@@ -58,6 +58,7 @@ class BookNotification extends Job implements ShouldQueue
             'session_id' => $this->session_id,
             'Tutor_Name' => $user->firstName." ".$user->lastName,
             'tutor_phone' => $user->phone,
+            'tutor_device_token' => $user->device_token,
             'Class_Name' => $user->p_name,
             'Subject_Name' => $user->s_name,
             'Class_id' => $user->p_id,

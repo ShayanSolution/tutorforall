@@ -128,6 +128,7 @@ class SendPushNotification extends Job implements ShouldQueue
                     'session_id' => (string)$sessionRequest->id,
                     'Student_Name' => $this->student->firstName." ".$this->student->lastName,
                     'student_phone' => $this->student->phone,
+                    'student_device_token' => $this->student->device_token,
                     'Student_id' => $this->student->id,
                     'Class_Name' => isset($class->name)?$class->name:'',
                     'Subject_Name' => isset($subject->name)?$subject->name:'',
@@ -149,7 +150,6 @@ class SendPushNotification extends Job implements ShouldQueue
                     'approaching_time' => $this->data['approaching_time'],
                     'distance' => $this->data['distance'],
                 );
-
                 $this->slackLog($user, env('TOOTAR_LOGGER_WEBHOOK_SLACK'));
                 Push::handle($title, $body, $customData, $user);
             }
