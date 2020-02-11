@@ -646,6 +646,7 @@ class SessionController extends Controller
         $data['subject_name'] = $session->subject->name;
         $data['tutor_name']   = $session->tutor->firstName." ".$session->tutor->lastName;
         $data['tutor_phone']   = $tutorPhone->phone;
+        $data['device_token'] = $tutorPhone->device_token;
         $data['latitude']     = $session->tutor->latitude;
         $data['longitude']    = $session->tutor->longitude;
         $data['tutor_profile_img']  = \url("images/".$session->tutor->profileImage);
