@@ -40,4 +40,7 @@ class Document extends Model
         return $this->belongsTo(User::class, 'tutor_id', 'id');
     }
 
+    public function programSubjectDocument(){
+        return $this->hasMany(ProgramSubject::class);
+    }
 }

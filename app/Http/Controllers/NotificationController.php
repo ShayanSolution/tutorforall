@@ -13,9 +13,12 @@ class NotificationController extends Controller
         $userId = Auth::user()->id;
         if ($userId){
             $notifications = NotificationStatus::with('notification')->where('receiver_id', $userId)->get();
+            $UnReadNotification = NotificationStatus::where('receiver_id', $userId)->where('read_status', 0)->get();
+            $unReadNotificationCount = count($UnReadNotification);
             return response()->json(
                 [
-                    'notifications' => $notifications
+                    'notifications' => $notifications,
+                    'unread_notification_count' => $unReadNotificationCount
                 ]
             );
         } else {
