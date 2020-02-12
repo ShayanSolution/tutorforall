@@ -275,19 +275,22 @@ class ProgrammeSubjectController extends Controller
      */
     public function addTutorsClassesAndSubjects(Request $request){
 
-        $subject_ids = $request->subject_ids;
-
-        $subjects = Subject::whereIn('id', $subject_ids)->get();
-
         $userId = Auth::user()->id;
 
-        ProgramSubject::where('user_id', $userId)->delete();
+        $requestedSubjectIds    = $request->subject_ids;
+        $savedSubjectIds        = ProgramSubject::where('user_id', $userId)->pluck('subject_id')->toArray();
+
+        $subjectsToBeRemoved    = array_diff($savedSubjectIds, $requestedSubjectIds);
+        ProgramSubject::whereIn('subject_id', $subjectsToBeRemoved)->where('user_id', $userId)->delete();
+
+        $subjectsToBeAdded      = array_diff($requestedSubjectIds, $savedSubjectIds);
+        $subjects = Subject::whereIn('id', $subjectsToBeAdded)->get();
 
         foreach ($subjects as $subject){
             ProgramSubject::create([
-                'user_id'       =>  $userId,
-                'program_id'    =>  $subject->programme_id,
-                'subject_id'    =>  $subject->id
+                    'user_id'       =>  $userId,
+                    'program_id'    =>  $subject->programme_id,
+                    'subject_id'    =>  $subject->id
             ]);
         }
 

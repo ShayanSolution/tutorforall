@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Models\Programme;
+use App\Models\ProgramSubject;
+use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,28 +26,77 @@ class DocumentsController extends Controller
      */
     public function uploadDocs(Request $request)
     {
-        $this->validate($request,[
-            'title'             =>  'required',
-            'document'          =>  'required|mimes:jpeg,bmp,png|min:1024',
-            'document_type'     =>  'required'
-        ]);
+        if ($request->has("device")){
+            $this->validate($request,[
+                'title'             =>  'required',
+                'document'          =>  'required',
+                'document_type'     =>  'required'
+            ]);
+        } else {
+            $this->validate($request,[
+                'title'             =>  'required',
+                'document'          =>  'required|mimes:jpeg,bmp,png|min:1024',
+                'document_type'     =>  'required'
+            ]);
+        }
 
+        $tutorId = Auth::user()->id;
+        if ($request->document_type == "cnic_front" || $request->document_type == "cnic_back"){
+
+            if ($request->title == "CNIC Front" || $request->title == "Front Side"){
+                $cnicSide = 'cnic_front';
+            }
+            if ($request->title == "CNIC Back" || $request->title == "Back Side"){
+                $cnicSide = 'cnic_back';
+            }
+            $cnicProgram = Programme::where('name', '=', 'Cnic')->first();
+            $cnicSubject = Subject::where('programme_id', $cnicProgram->id)->where('name', '=', $cnicSide)->first();
+            $docCreatedId = $this->createDocument($request, $tutorId);
+            ProgramSubject::create([
+                'program_id' => $cnicProgram->id,
+                'subject_id' => $cnicSubject->id,
+                'user_id' => Auth::user()->id,
+                'document_id' => $docCreatedId,
+                'status' => 2,
+                'verified_by' => null,
+                'verified_at' => null,
+                'rejection_reason' => null
+            ]);
+
+            return response()->json([
+                'status'    =>  'success',
+                'message'   =>  'Document uploaded successfully!'
+            ], 201);
+
+        } else {
+            $programId = Programme::where('name', '=', $request->title)->first();
+            $docCreatedId = $this->createDocument($request, $tutorId);
+            $tutorClassesSubjects = ProgramSubject::where('user_id', $tutorId)->where('program_id', $programId->id)->get();
+            //update document Id against program subject
+            if ($tutorClassesSubjects){
+                foreach ($tutorClassesSubjects as $classesSubject){
+                    ProgramSubject::where('id', $classesSubject->id)->update(['document_id' => $docCreatedId]);
+                }
+            }
+
+            return response()->json([
+                'status'    =>  'success',
+                'message'   =>  'Document uploaded successfully!'
+            ], 201);
+        }
+    }
+
+    public function createDocument($request, $tutorId){
         $response = $this->uploadDocumentImage($request);
-
-        $docCreated = Document::create([
-            'tutor_id'          => Auth::user()->id,
+        $docCreatedId = Document::create([
+            'tutor_id'          => $tutorId,
             'title'             => $request->title,
             'path'              => $response['accessPath'],
             'document_type'     => $request->document_type,
             'storage_path'      => $response['storagePath'],
-            'status'            => 2,
-            'verified_by'       => null,
-            'verified_at'       => null,
-            'rejection_reason'  => null
-        ]);
+        ])->id;
 
-
-        if(!$docCreated)
+        if(!$docCreatedId)
         {
             unlink($response['storagePath']);
             return response()->json([
@@ -53,12 +105,7 @@ class DocumentsController extends Controller
             ], 400);
         }
 
-        return response()->json([
-            'status'    =>  'success',
-            'message'   =>  'Document uploaded successfully!'
-        ], 201);
-
-
+        return $docCreatedId;
     }
 
 
@@ -68,7 +115,25 @@ class DocumentsController extends Controller
     public function tutorsDocsList()
     {
         $tutorId = Auth::user()->id;
-        $documents = Document::where('tutor_id', $tutorId)->get();
+//        $documents = Document::where('tutor_id', $tutorId)->get();
+        $programSubjects = ProgramSubject::where('user_id', $tutorId)->with('program', 'subject', 'document')->get();
+        $documents = [];
+        foreach($programSubjects as $programSubject){
+            $data = [];
+            $data['id'] = $programSubject->document->id;//important to use document id here
+            $data['title'] = $programSubject->program->name.'('.$programSubject->subject->name.')';
+            $data['tutor_id'] = $tutorId;
+            $data['path'] = $programSubject->document->path;
+            $data['status'] = $programSubject->status;
+            $data['rejection_reason'] = $programSubject->rejection_reason;
+            $data['document_type'] = $programSubject->document->document_type;
+
+            $documents[] = $data;
+        }
+
+//        $cnicDocuments = Document::where('tutor_id',$tutorId)->where('document_type','like','cnic_%')->get();
+//        $documents = array_merge($documents,$cnicDocuments->toArray());
+
 
         return response()->json([
             'status'    =>  'success',
@@ -122,13 +187,21 @@ class DocumentsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function updateTutorsDoc(Request $request){
-
-        $this->validate($request, [
-            'document_id'       =>  'required',
-            'title'             =>  'required',
-            'document'          =>  'required|mimes:jpeg,bmp,png|min:1024',
-            'document_type'     =>  'required'
-        ]);
+        if ($request->has("device")){
+            $this->validate($request, [
+                'document_id'       =>  'required',
+                'title'             =>  'required',
+                'document'          =>  'required|mimes:jpeg,bmp,png',
+                'document_type'     =>  'required'
+            ]);
+        } else {
+            $this->validate($request, [
+                'document_id'       =>  'required',
+                'title'             =>  'required',
+                'document'          =>  'required|mimes:jpeg,bmp,png|min:1024',
+                'document_type'     =>  'required'
+            ]);
+        }
 
         $documentId = $request->document_id;
 
@@ -156,11 +229,25 @@ class DocumentsController extends Controller
             'path'              => $response['accessPath'],
             'document_type'     => $request->document_type,
             'storage_path'      => $response['storagePath'],
-            'status'            => 2,
-            'verified_by'       => null,
-            'verified_at'       => null,
-            'rejection_reason'  => null
         ]);
+
+        //Update in Program_subject table for program and subjects if status is rejected than update
+            $programSubjects = ProgramSubject::where('document_id', $documentId)->where('status', 0)->get();
+            if (!empty($programSubjects)){
+                foreach($programSubjects as $programSubject) {
+                    ProgramSubject::where('id', $programSubject->id)->update([
+                        'status' => 2,
+                        'verified_by' => null,
+                        'verified_at' => null,
+                        'rejection_reason' => null
+                    ]);
+                }
+        } else {
+                return response()->json([
+                    'status'    =>  'success',
+                    'message'   =>  "Document can't be uploaded as it's already in review!"
+                ]);
+        }
 
         return response()->json([
             'status'    =>  'success',
