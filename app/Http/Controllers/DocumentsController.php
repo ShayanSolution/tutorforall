@@ -119,16 +119,17 @@ class DocumentsController extends Controller
         $programSubjects = ProgramSubject::where('user_id', $tutorId)->with('program', 'subject', 'document')->get();
         $documents = [];
         foreach($programSubjects as $programSubject){
-            $data = [];
-            $data['id'] = $programSubject->document->id;//important to use document id here
-            $data['title'] = $programSubject->program->name.'('.$programSubject->subject->name.')';
-            $data['tutor_id'] = $tutorId;
-            $data['path'] = $programSubject->document->path;
-            $data['status'] = $programSubject->status;
-            $data['rejection_reason'] = $programSubject->rejection_reason;
-            $data['document_type'] = $programSubject->document->document_type;
-
-            $documents[] = $data;
+            if ($programSubject->document != null){
+                $data = [];
+                $data['id'] = $programSubject->document->id;//important to use document id here
+                $data['title'] = $programSubject->program->name.'('.$programSubject->subject->name.')';
+                $data['tutor_id'] = $tutorId;
+                $data['path'] = $programSubject->document->path;
+                $data['status'] = $programSubject->status;
+                $data['rejection_reason'] = $programSubject->rejection_reason;
+                $data['document_type'] = $programSubject->document->document_type;
+                $documents[] = $data;
+            }
         }
 
 //        $cnicDocuments = Document::where('tutor_id',$tutorId)->where('document_type','like','cnic_%')->get();
