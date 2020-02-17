@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Push;
+use App\Jobs\ReachedNotification;
 use App\Models\Notification;
 use App\Models\NotificationStatus;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 
 class NotificationController extends Controller
 {
@@ -57,6 +61,33 @@ class NotificationController extends Controller
                     'message' => 'Unable to find User'
                 ], 422
             );
+        }
+    }
+
+    public function reachedNotification(Request $request){
+        $this->validate($request,[
+            'device_token' => 'required',
+            'to' => 'required'
+        ]);
+        $device_token = $request->device_token;
+        $to = $request->to;
+        $user = User::where('device_token', $device_token)->first();
+        if ($user){
+            $customData = array(
+                'notification_type' => 'reached_notification',
+            );
+            $title = Config::get('');
+            $body = 'Your '. $to .' has arrived.';
+            Push::handle($title, $body, $customData, $user);
+            return [
+                'status' => 'success',
+                'messages' => 'Notification sent successfully',
+            ];
+        } else {
+            return [
+                'status' => 'error',
+                'messages' => 'Device token not exist.',
+                ];
         }
     }
 }
