@@ -55,9 +55,11 @@ class BookNotification extends Job implements ShouldQueue
         $sessionDateTime = Carbon::now()->toDateTimeString();
         $dateTime = explode(" ",$sessionDateTime);
         $sessionType = 'now';
+        $bookLaterAt  = '';
         if ($session->book_later_at != null){
             $sessionType = 'later';
             $sessionDateTime = $session->book_later_at;
+            $bookLaterAt = $session->book_later_at;
             $dateTime = explode(" ",$sessionDateTime);
         }
 
@@ -86,6 +88,8 @@ class BookNotification extends Job implements ShouldQueue
             'session_location' => $session->session_location,
             'session_rating' => number_format((float)$rating->avg('rating'), 1, '.', ''),
             'Profile_Image' => !empty($user->profileImage) ? env('ASSET_BASE_URL').'/images/'.$user->profileImage : '',
+            'book_later_at' => $bookLaterAt,
+            'dateTime' => $sessionDateTime,
             'date' => $dateTime[0],
             'time' => date("g:i a", strtotime($dateTime[1])),
             'session_type' => $sessionType
