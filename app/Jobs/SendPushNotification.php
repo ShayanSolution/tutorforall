@@ -89,6 +89,7 @@ class SendPushNotification extends Job implements ShouldQueue
                 $sessionData['is_home'] = $this->data['is_home'];
                 $sessionDateTime = Carbon::now()->toDateTimeString();
                 $dateTime = explode(" ",$sessionDateTime);
+                $sessionType = 'now';
                 if(isset($this->data['group_members'])){
                     $sessionData['group_members'] = $this->data['group_members'];
                 }else{
@@ -101,12 +102,14 @@ class SendPushNotification extends Job implements ShouldQueue
                     $sessionData['book_later_at'] = $this->data['book_later_date'].' '.date("H:i:s", strtotime($this->data['book_later_time']));
                     $sessionDateTime = $sessionData['book_later_at'];
                     $dateTime = explode(" ",$sessionDateTime);
+                    $sessionType = 'later';
                 }
 
                 //From Android
                 if(isset($this->data['book_type']) && $this->data['book_type'] == 'later'){
                     $sessionData['book_later_at'] = $this->data['session_time'];
                     $dateTime = explode(" ",$sessionData['book_later_at']);
+                    $sessionType = 'later';
                 }
 
 
@@ -151,6 +154,7 @@ class SendPushNotification extends Job implements ShouldQueue
                     'session_sent_group' => $sessionData['session_sent_group'],
                     'approaching_time' => $this->data['approaching_time'],
                     'distance' => $this->data['distance'],
+                    'session_type ' => $sessionType
                 );
                 $this->slackLog($user, env('TOOTAR_LOGGER_WEBHOOK_SLACK'));
                 Push::handle($title, $body, $customData, $user);
