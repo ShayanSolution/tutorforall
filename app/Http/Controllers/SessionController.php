@@ -606,6 +606,7 @@ class SessionController extends Controller
         Log::info('Get latest session of user role: '.$roleId);
         $session = '';
         $rating = '';
+        $sessionDateTime = Carbon::now()->toDateTimeString();
         $data = [];
         if($roleId == 2){
             $session = Session::where('tutor_id', $userId)->with('tutor','student')->orderBy('updated_at', 'desc')->first();
@@ -657,7 +658,12 @@ class SessionController extends Controller
             $data['student_name'] = "";
             $data['student_profile_img']  = '';
         }
-
+        if ($session->book_later_at == null){
+            $data['session_type'] = 'now';
+        } else {
+            $data['session_type'] = 'later';
+        }
+        $data['dateTime'] = $sessionDateTime;
 
         if($roleId == 3) {
             $data['tutor_rating'] = number_format((float)$tutor_rating->avg('rating'), 1, '.', '');
