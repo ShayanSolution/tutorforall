@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Helpers\Push;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Config;
@@ -50,7 +51,15 @@ class BookNotification extends Job implements ShouldQueue
         $title = Config::get('user-constants.APP_NAME');
         $body = $user->firstName.' '.$user->lastName.' accepted your request';
         //get tutor device token
-
+        // get session type
+        $sessionDateTime = Carbon::now()->toDateTimeString();
+        $dateTime = explode(" ",$sessionDateTime);
+        $sessionType = 'now';
+        if ($session->book_later_at != null){
+            $sessionType = 'later';
+            $sessionDateTime = $session->book_later_at;
+            $dateTime = explode(" ",$sessionDateTime);
+        }
 
 
         $customData = array(
@@ -77,6 +86,9 @@ class BookNotification extends Job implements ShouldQueue
             'session_location' => $session->session_location,
             'session_rating' => number_format((float)$rating->avg('rating'), 1, '.', ''),
             'Profile_Image' => !empty($user->profileImage) ? env('ASSET_BASE_URL').'/images/'.$user->profileImage : '',
+            'date' => $dateTime[0],
+            'time' => date("g:i a", strtotime($dateTime[1])),
+            'session_type' => $sessionType
         );
 
         Push::handle($title, $body, $customData, $student);
