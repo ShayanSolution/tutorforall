@@ -408,7 +408,7 @@ class SessionController extends Controller
             $bookLaterAt = Carbon::parse($session->book_later_at);//Carbon::createFromFormat('Y-m-d H:i:s', $session->book_later_at, env('APP_SERVER_TIMEZONE'));
 //                    $bookLaterAt->setTimezone(env('APP_TIMEZONE'));
             $now = Carbon::now();
-            $delay = $bookLaterAt->diffInMinutes($now) - 60; //Subtract 1 hour
+            $delay = $bookLaterAt->diffInMinutes($now) - 120; //Subtract 2 hour
 
             $tutorNotificationJob = (new BookLaterTutorNotification($sessionId))->delay(Carbon::now()->addMinutes($delay));
             dispatch($tutorNotificationJob);
