@@ -784,7 +784,10 @@ class UserController extends Controller
     {
         if (Auth::check()) {
             $user_id =  Auth::user()->id;
-            User::where('id', $user_id)->update(['is_online'=>$request->is_online]);
+            User::where('id', $user_id)->update([
+                'is_online'=>$request->is_online,
+                'last_login'=> Carbon::now()
+            ]);
 
             if($request->is_online == 1){
                 return response()->json(
