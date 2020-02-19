@@ -154,7 +154,7 @@ class SendPushNotification extends Job implements ShouldQueue
                     'session_sent_group' => $sessionData['session_sent_group'],
                     'approaching_time' => $this->data['approaching_time'],
                     'distance' => $this->data['distance'],
-                    'session_type ' => $sessionType
+                    'session_type' => $sessionType
                 );
                 $this->slackLog($user, env('TOOTAR_LOGGER_WEBHOOK_SLACK'));
                 Push::handle($title, $body, $customData, $user);
