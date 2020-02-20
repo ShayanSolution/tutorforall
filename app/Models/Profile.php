@@ -20,7 +20,9 @@ class Profile extends Model
         'one_on_one',
         'call_tutor',
         'call_student',
-        'teach_to'
+        'teach_to',
+        'min_slider_value',
+        'max_slider_value'
     ];
 
     public function user()
@@ -51,12 +53,16 @@ class Profile extends Model
             [
                 'is_mentor' => $isMentor,
                 'is_deserving' => 0,
-                'is_home' => 0,
-                'is_group' => 0,
+                'is_home' => 1,
+                'is_group' => 1,
                 'meeting_type_id' => 0,
-                'user_id'=>$tutor_id,
-                'programme_id'=>0,
-                'subject_id'=>0,
+                'user_id' => $tutor_id,
+                'programme_id' => 0,
+                'subject_id' => 0,
+                'call_student' => 1,
+                'one_on_one' => 1,
+                'min_slider_value' => 0,
+                'max_slider_value' => 1000,
         ])->id;
 
         
