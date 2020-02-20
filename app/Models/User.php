@@ -84,7 +84,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         $queryBuilder = self::whereHas('teaches', function($query) use ($classId, $subjectId){
-            return $query->where('program_id',$classId)->where('subject_id',$subjectId);
+            return $query->where('program_id',$classId)->where('subject_id',$subjectId)->where('status', 1);
         });
 
         if($is_home == 1 || $call_student == 1) {

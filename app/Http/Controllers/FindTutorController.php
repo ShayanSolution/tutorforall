@@ -133,7 +133,7 @@ $query = "SELECT DISTINCT users.id,users.firstName, users.role_id,
             LEFT JOIN `program_subject` ON users.id = program_subject.user_id
             LEFT JOIN sessions ON sessions.tutor_id = users.id AND sessions.student_id = $currentUserId 
             WHERE `role_id` = '$roleId'
-                AND (program_subject.program_id = '$studentClassId' AND program_subject.subject_id = '$studentSubjectId')
+                AND (program_subject.program_id = '$studentClassId' AND program_subject.subject_id = '$studentSubjectId' AND program_subject.status = 1)
                 AND profiles.is_mentor = '$isMentor'
                 AND ((profiles.is_home = '$isHome' AND profiles.call_student = '$callStudent') OR (profiles.is_home = '1' AND profiles.call_student = '1'))
                 AND ((profiles.is_group = '$studentIsGroup' AND profiles.one_on_one = '$oneOnOne') OR (profiles.is_group = '1' AND profiles.one_on_one = '1'))
