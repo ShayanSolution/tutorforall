@@ -41,7 +41,11 @@
                 number: number, // < note use of 'this' here
             },
             success: function(result) {
-                $('#numbers_listing_table > tbody').append(result);
+                if(!$.trim(result)){
+                    alert("Number not found")
+                } else {
+                    $('#numbers_listing_table > tbody').append(result);
+                }
             },
             error: function(result) {
                 alert('error');
