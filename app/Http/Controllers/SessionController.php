@@ -609,7 +609,7 @@ class SessionController extends Controller
         $sessionDateTime = Carbon::now()->toDateTimeString();
         $data = [];
         if($roleId == 2){
-            $session = Session::where('tutor_id', $userId)->with('tutor','student')->orderBy('updated_at', 'desc')->first();
+            $session = Session::where('tutor_id', $userId)->where('status', '!=', 'expired')->where('status', '!=', 'pending')->with('tutor','student')->orderBy('updated_at', 'desc')->first();
             if($session){
                 $rating = Rating::where('session_id', $session->id)->first();
                 $tutorPhone = User::where('id', $session->tutor_id)->first();
@@ -624,7 +624,7 @@ class SessionController extends Controller
             
         }
         else{
-            $session = Session::where('student_id', $userId)->with('tutor','student')->orderBy('updated_at', 'desc')->first();
+            $session = Session::where('student_id', $userId)->where('status', '!=', 'expired')->where('status', '!=', 'pending')->with('tutor','student')->orderBy('updated_at', 'desc')->first();
             if($session) {
                 $rating = Rating::where('session_id', $session->id)->first();
                 //get tutor avg rating
