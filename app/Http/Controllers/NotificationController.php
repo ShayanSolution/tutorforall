@@ -16,7 +16,7 @@ class NotificationController extends Controller
     public function getNotifications(Request $request){
         $userId = Auth::user()->id;
         if ($userId){
-            $notifications = NotificationStatus::with('notification')->where('receiver_id', $userId)->get();
+            $notifications = NotificationStatus::with('notification')->where('receiver_id', $userId)->orderBy('id', 'desc')->get();
             $UnReadNotification = NotificationStatus::where('receiver_id', $userId)->where('read_status', 0)->get();
             $unReadNotificationCount = count($UnReadNotification);
             return response()->json(
