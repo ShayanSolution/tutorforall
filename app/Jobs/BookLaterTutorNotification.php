@@ -69,7 +69,7 @@ class BookLaterTutorNotification extends Job implements ShouldQueue
             );
 
             $title = Config::get('user-constants.APP_NAME');
-            $body = 'Your session will start with '.$student->firstName.' '.$student->lastName.' within 2 hour.';
+            $body = 'Your session will start with '.$student->firstName.' '.$student->lastName.' in an hour.';
             Push::handle($title, $body, $customData, $tutor);
         }
 
