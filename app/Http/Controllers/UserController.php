@@ -608,12 +608,14 @@ class UserController extends Controller
             'min_slider_value' => 'numeric',
             'max_slider_value' => 'numeric',
             'offline_notification' => 'required',
+            'book_later_longitude' => 'required',
+            'book_later_latitude' => 'required',
         ]);
         $data = $request->all();
         $profile = new Profile();
         $update_profile = $profile->updateUserProfile(
             $data['tutor_id'],
-            $request->only(['is_home', 'is_group', 'is_mentor', 'teach_to', 'call_student', 'one_on_one', 'min_slider_value', 'max_slider_value'])
+            $request->only(['is_home', 'is_group', 'is_mentor', 'teach_to', 'call_student', 'one_on_one', 'min_slider_value', 'max_slider_value', 'book_later_longitude', 'book_later_latitude'])
         );
         User::where('id','=',$request->tutor_id)->update(['offline_notification'=>$request->offline_notification]);
         if($update_profile){
