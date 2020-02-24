@@ -22,7 +22,9 @@ class Profile extends Model
         'call_student',
         'teach_to',
         'min_slider_value',
-        'max_slider_value'
+        'max_slider_value',
+        'book_later_longitude',
+        'book_later_latitude'
     ];
 
     public function user()
