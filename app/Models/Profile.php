@@ -23,8 +23,11 @@ class Profile extends Model
         'teach_to',
         'min_slider_value',
         'max_slider_value',
+        'is_book_now',
+        'is_book_later',
         'book_later_longitude',
-        'book_later_latitude'
+        'book_later_latitude',
+        'book_later_address'
     ];
 
     public function user()
