@@ -610,14 +610,25 @@ class UserController extends Controller
             'offline_notification' => 'required',
             'book_later_longitude' => 'required',
             'book_later_latitude' => 'required',
+            'book_now_latitude' => 'required',
+            'book_now_longitude' => 'required',
+            'is_book_later' => 'required',
+            'is_book_now' => 'required',
+            'book_later_address' => 'required',
         ]);
         $data = $request->all();
         $profile = new Profile();
         $update_profile = $profile->updateUserProfile(
             $data['tutor_id'],
-            $request->only(['is_home', 'is_group', 'is_mentor', 'teach_to', 'call_student', 'one_on_one', 'min_slider_value', 'max_slider_value', 'book_later_longitude', 'book_later_latitude'])
+            $request->only([
+                    'is_home', 'is_group', 'is_mentor', 'teach_to', 'call_student', 'one_on_one', 'min_slider_value', 'max_slider_value', 'book_later_longitude', 'book_later_latitude', 'is_book_later', 'is_book_now', 'book_later_address'
+                ])
         );
-        User::where('id','=',$request->tutor_id)->update(['offline_notification'=>$request->offline_notification]);
+        User::where('id','=',$request->tutor_id)->update([
+            'offline_notification'=>$request->offline_notification,
+            'latitude' => $request->book_now_latitude,
+            'longitude' => $request->book_now_longitude
+        ]);
         if($update_profile){
             return response()->json(
                 [
