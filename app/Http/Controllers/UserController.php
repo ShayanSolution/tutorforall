@@ -320,6 +320,11 @@ class UserController extends Controller
                 'min_slider' => isset($sliderDefaultValue['tutor-setting-slider-min-value']) ? $sliderDefaultValue['tutor-setting-slider-min-value'] : '',
                 'max_slider' => isset($sliderDefaultValue['tutor-setting-slider-max-value']) ? $sliderDefaultValue['tutor-setting-slider-max-value'] : '',
                 'offline_notification' => $user->offline_notification,
+                'is_book_now' => $user->is_book_now,
+                'is_book_later' => $user->is_book_later,
+                'book_later_longitude' => $user->book_later_longitude,
+                'book_later_latitude' => $user->book_later_latitude,
+                'book_later_address' => $user->book_later_address
             );
             return $profile;
         }
