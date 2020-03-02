@@ -618,8 +618,7 @@ class UserController extends Controller
             'book_now_latitude' => 'required',
             'book_now_longitude' => 'required',
             'is_book_later' => 'required',
-            'is_book_now' => 'required',
-            'book_later_address' => 'required',
+            'is_book_now' => 'required'
         ]);
         $data = $request->all();
         $profile = new Profile();
