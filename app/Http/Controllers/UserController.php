@@ -613,10 +613,6 @@ class UserController extends Controller
             'min_slider_value' => 'numeric',
             'max_slider_value' => 'numeric',
             'offline_notification' => 'required',
-            'book_later_longitude' => 'required',
-            'book_later_latitude' => 'required',
-            'book_now_latitude' => 'required',
-            'book_now_longitude' => 'required',
             'is_book_later' => 'required',
             'is_book_now' => 'required'
         ]);
