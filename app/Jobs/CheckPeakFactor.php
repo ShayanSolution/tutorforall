@@ -4,8 +4,14 @@ namespace App\Jobs;
 
 use App\Models\PeakFactor;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Queue;
 
-class CheckPeakFactor extends Job
+
+
+class CheckPeakFactor extends Job implements ShouldQueue
 {
     public $peakFactorId;
     public $numTutorsPeakFactor;
@@ -28,7 +34,7 @@ class CheckPeakFactor extends Job
     public function handle()
     {
         $peakfactor = PeakFactor::find($this->peakFactorId);
-        $onlineTutorsCount = User::findOnlineTutors($peakfactor);
+        $onlineTutorsCount = User::findOnlineTutors($peakfactor, $hourlyRate=0);
         if ($onlineTutorsCount > $this->numTutorsPeakFactor) {
             $peakfactor->delete();
             delete_queued_job_tracking(['model_id' => $peakfactor->id]);

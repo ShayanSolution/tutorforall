@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\PercentageCostForMultistudentGroup;
 use App\Models\Profile;
+use App\Models\Programme;
 use App\Models\Setting;
 use App\Models\Subject;
 use App\Models\ProgramSubject;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\ApplyPeakFactor;
 use App\Services\CostCalculation\CategoryCost;
 use App\Services\CostCalculation\GroupCost;
+use App\Jobs\PeakFactorNotification;
 
 class PackageController extends Controller
 {
@@ -74,6 +76,22 @@ class PackageController extends Controller
             }
             // get peakfactor
             list($hourlyRate, $peakFactor) = $peakFactorAction->execute($onlineTutorsCount, $hourlyRate, $request, $peakFactor);
+            // Check if peakfactor send tutors notification
+            $isPeakFactor = Setting::where('group_name', 'peak-factor')->pluck('value', 'slug');
+            if ($isPeakFactor['peak-factor-on-off'] == 1 && $onlineTutorsCount <= $isPeakFactor['peak-factor-no-of-tutors']) {
+                $tutors = User::findTutorsRelatedClassSubject($request);
+                $classSubjectName = Subject::where('id', $subjectId)->where('programme_id', $classId)->with('programme')->first();
+                if ($classSubjectName){
+                    $className = $classSubjectName->programme->name;
+                    $subjectName = $classSubjectName->name;
+                    // Send tutors notification that peakfactor applied
+                    foreach ($tutors as $tutor){
+                        $tutorId = $tutor->id;
+                        $job = new PeakFactorNotification($tutorId, $className, $subjectName);
+                        dispatch($job);
+                    }
+                }
+            }
             // discount on go to tutor
             if ($goTutor != 0) {
                 $isDiscount = Setting::where('group_name', 'discount')->pluck('value', 'slug');
