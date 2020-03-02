@@ -474,4 +474,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             'message'   =>  'Eligible to request for reset password'
         ];
     }
+
+    public static function findTutorsRelatedClassSubject($request){
+        $classId = $request['class_id'];
+        $subjectId = $request['subject_id'];
+        if(!$classId || !$subjectId){
+            return false;
+        }
+        $queryBuilder = self::whereHas('teaches', function($query) use ($classId, $subjectId){
+            return $query->where('program_id',$classId)->where('subject_id',$subjectId)->where('status', 1);
+        });
+        $queryBuilder = $queryBuilder->where('is_online', 1)->orWhere('offline_notification',1);
+        $result = $queryBuilder->get();
+        return $result;
+    }
 }
