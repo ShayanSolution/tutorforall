@@ -72,11 +72,17 @@ class ApplicationSettingsSeeder extends Seeder
 //                "label"=> "Tutor Setting Slider Max Value",
 //                "group_name"=> "tutor-setting-slider"
 //            ],
+//            [
+//                "slug"=> "percent-discount-on-go-to-tutor-status",
+//                "value"=> "0",
+//                "label"=> "Discount on go to tutor status",
+//                "group_name"=> "discount"
+//            ],
             [
-                "slug"=> "percent-discount-on-go-to-tutor-status",
+                "slug"=> "book_later_find_tutor_restriction_hours",
                 "value"=> "0",
-                "label"=> "Discount on go to tutor status",
-                "group_name"=> "discount"
+                "label"=> "On book later find tutor restriction hours",
+                "group_name"=> "book-later-restrict-hr"
             ]
         ];
 
