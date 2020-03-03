@@ -51,7 +51,7 @@ class BookLaterTutorNotification extends Job implements ShouldQueue
         if(!empty($tutor->device_token)){
             //notification message
             $customData = array(
-                'notification_type' => 'tutor_session_start',
+                'notification_type' => 'book_later_alert_notification',
                 'session_id' => $this->sessionId,
                 'student_name' => $student->firstName." ".$student->lastName,
                 'student_id' => $student->id,
