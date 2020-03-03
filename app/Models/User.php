@@ -78,6 +78,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $is_group = isset($request['is_group']) ? $request['is_group'] : 0;
         $experience = $request['experience'];
         $gender_id = $request['gender_id'];
+        $bookLaterRestriction = Setting::where('group_name', 'book-later-restrict-hr')->pluck('value', 'slug');
 
         if(!$classId || !$subjectId){
             return false;
@@ -135,11 +136,28 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 unset($result[$key]);
 //                $result[] = $record->rating;
             }
-
+            // check student given last session rating to this tutor
             $lastSession = $record->sessions()->where('student_id', Auth::user()->id)->where('status', 'ended')->orderBy('id', 'desc')->first();
-
-            if($lastSession && $lastSession->rating && $lastSession->rating->rating <= 2)
+            // if student given  rating < 2 than exclude this tutor
+            if($lastSession && $lastSession->rating && $lastSession->rating->rating <= 2){
                 unset($result[$key]);
+            }
+            // Check tutor last session status
+            $lastTutorSession = $record->sessions()->where('tutor_id', $record->id)->orderBy('id', 'desc')->first();
+            // if tutor last session is booked or started and booked later pre and post 4 hours check than exclude this tutor
+            if ($lastTutorSession && $lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started'){
+                if ( $lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started' && $lastTutorSession->book_later_at != null){
+                    $bookLaterTime = Carbon::parse($lastTutorSession->book_later_at);
+                    $currentTime = Carbon::parse(Carbon::now());
+                    $hours = $currentTime->diffInHours($bookLaterTime);
+                    if ($hours <= $bookLaterRestriction['book_later_find_tutor_restriction_hours']) {
+                        unset($result[$key]);
+                    }
+                } else {
+                    unset($result[$key]);
+                }
+            }
+
         }
         $onlineTutorCount = count($result);
         return $onlineTutorCount;
