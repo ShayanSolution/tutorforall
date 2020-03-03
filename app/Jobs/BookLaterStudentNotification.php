@@ -49,7 +49,7 @@ class BookLaterStudentNotification extends Job implements ShouldQueue
             $body = 'Your session will start with '.$tutor->firstName.' '.$tutor->lastName.' in an hour.';
             //get tutor device token
             $customData = array(
-                'notification_type' => 'student_session_start',
+                'notification_type' => 'book_later_alert_notification',
                 'session_id' => $this->sessionId,
                 'tutor_name' => $tutor->firstName." ".$tutor->lastName,
                 'class_name' => $program->name,
