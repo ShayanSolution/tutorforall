@@ -624,7 +624,7 @@ class SessionController extends Controller
         $sessionDateTime = Carbon::now()->toDateTimeString();
         $data = [];
         if($roleId == 2){
-            $session = Session::where('tutor_id', $userId)->where('status', '!=', 'expired')->where('status', '!=', 'pending')->with('tutor','student')->orderBy('updated_at', 'desc')->first();
+            $session = Session::where('tutor_id', $userId)->whereIn('status', ['booked', 'started'])->with('tutor','student')->orderBy('updated_at', 'desc')->first();
             if($session){
                 $rating = Rating::where('session_id', $session->id)->first();
                 $tutorPhone = User::where('id', $session->tutor_id)->first();
@@ -637,16 +637,19 @@ class SessionController extends Controller
                 );
             }
             
-        }
-        else{
-            $session = Session::where('student_id', $userId)->where('status', '!=', 'expired')->where('status', '!=', 'pending')->with('tutor','student')->orderBy('updated_at', 'desc')->first();
+        } else {
+            $session = Session::where('student_id', $userId)->whereIn('status', ['booked', 'started', 'ended'])->with('tutor','student')->orderBy('updated_at', 'desc')->first();
             if($session) {
                 $rating = Rating::where('session_id', $session->id)->first();
+                if ($rating != null){
+                    $session = Session::where('student_id', $userId)->whereIn('status', ['booked', 'started'])->with('tutor','student')->orderBy('updated_at', 'desc')->first();
+                    $rating = null;
+                }
                 //get tutor avg rating
                 $rating_sessions = Session::where('tutor_id', $session->tutor_id)->where('hourly_rate', '!=', 0)->pluck('id');
                 $tutor_rating = Rating::whereIn('session_id', $rating_sessions)->get();
                 $tutorPhone = User::where('id', $session->tutor_id)->first();
-            }else{
+            } else {
                 return response()->json(
                     [
                         'status' => 'error',
@@ -675,11 +678,18 @@ class SessionController extends Controller
         }
         if ($session->book_later_at == null){
             $data['session_type'] = 'now';
+            $data['tracking_on'] = 0;
         } else {
             $data['session_type'] = 'later';
+            $bookLaterTime = Carbon::parse($session->book_later_at);
+            $currentTime = Carbon::parse(Carbon::now());
+            $hours = $currentTime->diffInHours($bookLaterTime);
+            $data['tracking_on'] = 0;
+            if ($hours <= 1) {
+                $data['tracking_on'] = 1;
+            }
         }
         $data['dateTime'] = $sessionDateTime;
-
         if($roleId == 3) {
             $data['tutor_rating'] = number_format((float)$tutor_rating->avg('rating'), 1, '.', '');
         }
