@@ -213,8 +213,17 @@ class Session extends Model
             }
             if($session->book_later_at != null || $session->book_later_at != ''){
                 $sessionDate = $session->book_later_at;
+                $sessionType = 'later';
+                $bookLaterTime = Carbon::parse($sessionDate);
+                $currentTime = Carbon::parse(Carbon::now());
+                $hours = $currentTime->diffInHours($bookLaterTime);
+                if ($hours <= 1) {
+                    $trackingON = 1;
+                }
             }else{
                 $sessionDate = $session->Session_created_date;
+                $sessionType = 'now';
+                $trackingON = 0;
             }
             $session_detail[$index]['session_id'] = $session->session_id;
             $session_detail[$index]['session_status'] = $session->session_status;
@@ -232,8 +241,10 @@ class Session extends Model
             $session_detail[$index]['is_home'] = $session->session_is_home;
             $session_detail[$index]['is_group'] = $session->session_is_group;
             $session_detail[$index]['group_members'] = $session->session_group_members;
-            $session_detail[$index]['Student_Longitude'] = $session->longitude;
-            $session_detail[$index]['Student_Latitude'] = $session->latitude;
+            $session_detail[$index]['tutor_Longitude'] = $session->longitude;
+            $session_detail[$index]['tutor_Latitude'] = $session->latitude;
+            $session_detail[$index]['Student_Longitude'] = $student_detail->longitude;
+            $session_detail[$index]['Student_Latitude'] = $student_detail->latitude;
             $session_detail[$index]['Session_Location'] = is_null($session->session_location)?'':$session->session_location;
             $session_detail[$index]['Session_Latitude'] = $session->session_latitude;
             $session_detail[$index]['Session_Longitude'] = $session->session_longitude;
@@ -243,6 +254,9 @@ class Session extends Model
             $session_detail[$index]['Date'] = $sessionDate;
             $session_detail[$index]['Age'] = Carbon::parse($session->dob)->age;
             $session_detail[$index]['Profile_image'] = !empty($student_detail->profileImage)?URL::to('/images').'/'.$student_detail->profileImage:'';
+            $session_detail[$index]['book_later_at'] = $session->book_later_at;
+            $session_detail[$index]['session_type'] = $sessionType;
+            $session_detail[$index]['tracking_on'] = $trackingON;
 
             $index++;
         }

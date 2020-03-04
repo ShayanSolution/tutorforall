@@ -53,7 +53,7 @@ class SessionController extends Controller
         else{
             $student_id = $data['student_id'];
             $user_session = $session->getStudentSessionDetail($student_id);
-
+            $studentObj = User::where('id', $student_id)->first();
         }
         if($user_session){
             $tutor_sessions = [];
@@ -69,6 +69,18 @@ class SessionController extends Controller
                     $sessionDate = $user->Session_created_date;
                 }
                 if ($user_details){
+                    $trackingON = 0;
+                    $sessionType = 'now';
+                    $checkTrackingOn = $user->book_later_at;
+                    if ($checkTrackingOn) {
+                        $sessionType = 'later';
+                        $bookLaterTime = Carbon::parse($checkTrackingOn);
+                        $currentTime = Carbon::parse(Carbon::now());
+                        $hours = $currentTime->diffInHours($bookLaterTime);
+                        if ($hours <= 1) {
+                            $trackingON = 1;
+                        }
+                    }
                     $tutor_sessions[] = [
                     'FullName' => $user_details->firstName.' '.$user_details->lastName,
                     'FirstName' => $user_details->firstName,
@@ -83,8 +95,8 @@ class SessionController extends Controller
                     'Status' => $user->session_status,
                     'Subject' => $user->s_name,
                     'Program' => $user->p_name,
-                    'Student_Longitude' => $user->longitude,
-                    'Student_Latitude' => $user->latitude,
+                    'Student_Longitude' => $studentObj->longitude,
+                    'Student_Latitude' => $studentObj->latitude,
                     'Session_Location' => is_null($user->session_location)?'':$user->session_location,
                     'Session_Duration' => $user->duration,
                     'Hour' => $user->duration,
@@ -99,7 +111,10 @@ class SessionController extends Controller
                     'paid_amount' => isset($paidAmount) ? $paidAmount : 0,
                     'Age' => Carbon::parse($user->dob)->age,
                     'Profile_image'=>!empty($user_details->profileImage)?URL::to('/images').'/'.$user_details->profileImage:'',
-                    'hourly_rate' => $user->hourly_rate
+                    'hourly_rate' => $user->hourly_rate,
+                    'book_later_at' => $user->book_later_at,
+                    'session_type' => $sessionType,
+                    'tracking_on' => $trackingON,
                     ];
                 }
 
