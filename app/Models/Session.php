@@ -206,6 +206,7 @@ class Session extends Model
         $session_detail=[];
         $index = 0;
         foreach ($tutor_session_detail as $session){
+            $trackingON = 0;
             $student_detail = User::where('id',$session->student_id)->first();
             $wallet = Wallet::where(['session_id'=>$session->session_id, 'type'=>'debit'])->first();
             if($wallet){
