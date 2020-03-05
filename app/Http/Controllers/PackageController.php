@@ -86,13 +86,17 @@ class PackageController extends Controller
             }
             //Get online tutors after checking tutor slider range
             $onlineTutorsCount = User::findOnlineTutors($request, $hourlyRate);
+            // next hour discount on subject price
+            $nextHrDiscount = Setting::where('group_name', 'next-hour-discount-on-subject-price-percentage')->pluck('value', 'slug');
+            $nextHrDiscountPercentage = $nextHrDiscount['flat_discount_next_hour_price_percentage'];
             if ($hourlyRate) {
                 return response()->json(
                     [
                         'status' => 'success',
                         'hourly_rate' => round($hourlyRate),
                         'online_tutors' => $onlineTutorsCount,
-                        'peak_factor' => $peakFactor
+                        'peak_factor' => $peakFactor,
+                        'next_hr_price_discount_percentage' => $nextHrDiscountPercentage
                     ]
                 );
             }
