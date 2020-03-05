@@ -89,6 +89,8 @@ class PackageController extends Controller
             // next hour discount on subject price
             $nextHrDiscount = Setting::where('group_name', 'next-hour-discount-on-subject-price-percentage')->pluck('value', 'slug');
             $nextHrDiscountPercentage = $nextHrDiscount['flat_discount_next_hour_price_percentage'];
+            $hourlyRatePastFirstCalculate = ($nextHrDiscountPercentage/100) * $hourlyRate;
+            $hourlyRatePastFirstHour = $hourlyRate - $hourlyRatePastFirstCalculate;
             if ($hourlyRate) {
                 return response()->json(
                     [
@@ -96,7 +98,7 @@ class PackageController extends Controller
                         'hourly_rate' => round($hourlyRate),
                         'online_tutors' => $onlineTutorsCount,
                         'peak_factor' => $peakFactor,
-                        'next_hr_price_discount_percentage' => $nextHrDiscountPercentage
+                        'hourly_rate_past_first_hour' => $hourlyRatePastFirstHour
                     ]
                 );
             }
