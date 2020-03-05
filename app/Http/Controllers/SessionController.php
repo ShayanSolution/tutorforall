@@ -8,6 +8,7 @@ use App\Exceptions\SessionBookedStartedOrEnded;
 use App\Exceptions\SessionExpired;
 use App\Jobs\BookNotification;
 use App\Jobs\SendNotificationOfCalculationCost;
+use App\Models\Setting;
 use App\Wallet;
 use Illuminate\Http\Request;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
@@ -567,9 +568,19 @@ class SessionController extends Controller
         $duration = $date->diffInHours($now);
 
         $durationInHour = $duration > 0 ? $duration : $duration+1;
-
-        $costPerHour = $findSession->hourly_rate;
-        $totalCostAccordingToHours = $costPerHour * $durationInHour;
+        if ($durationInHour > 1){
+            $excludeFirstHour = $durationInHour - 1;
+            $nextHrDiscount = Setting::where('group_name', 'next-hour-discount-on-subject-price-percentage')->pluck('value', 'slug');
+            $nextHrDiscountPercentage = $nextHrDiscount['flat_discount_next_hour_price_percentage'];
+            $hourlyRatePastFirstCalculate = ($nextHrDiscountPercentage/100) * $findSession->hourly_rate;
+            $hourlyRatePastFirstHour = $findSession->hourly_rate - $hourlyRatePastFirstCalculate;
+            $costNextHours = $hourlyRatePastFirstHour * $excludeFirstHour;
+            $costPerHour = $findSession->hourly_rate;
+            $totalCostAccordingToHours = $costPerHour + $costNextHours;
+        } else {
+            $costPerHour = $findSession->hourly_rate;
+            $totalCostAccordingToHours = $costPerHour * $durationInHour;
+        }
 
         if($findSession->student->profile->is_deserving == 0) {
             $findSession->ended_at = $now;
