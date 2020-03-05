@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Profile;
 use App\Models\Session;
+use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +55,8 @@ class FindTutorController extends Controller
         $distanceInKmMin = 0;
         $distanceInKmMax = 2;
         $currentTime = Carbon::parse(Carbon::now());
+        $bookLaterRestriction = Setting::where('group_name', 'book-later-restrict-hr')->pluck('value', 'slug');
+        $bookLaterRestrictionHours = $bookLaterRestriction['book_later_find_tutor_restriction_hours'];
 
         $studentProfile = Profile::where('user_id', $request->student_id)->first();
 
@@ -178,7 +181,7 @@ class FindTutorController extends Controller
             `ratings` >= 0
             AND `experience` >= 0
             AND (`book_now_session_status` is null OR `book_now_session_status` not in ('booked','started'))
-            AND (`hours_in_session_start` is null OR `hours_in_session_start` > 4)
+            AND (`hours_in_session_start` is null OR `hours_in_session_start` > '$bookLaterRestrictionHours')
             AND `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin AND (`rating_received` IS NULL OR `rating_received` > 2)";
 
             Log::info($query);
