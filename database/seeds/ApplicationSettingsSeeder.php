@@ -78,11 +78,17 @@ class ApplicationSettingsSeeder extends Seeder
 //                "label"=> "Discount on go to tutor status",
 //                "group_name"=> "discount"
 //            ],
+//            [
+//                "slug"=> "book_later_find_tutor_restriction_hours",
+//                "value"=> "0",
+//                "label"=> "On book later find tutor restriction hours",
+//                "group_name"=> "book-later-restrict-hr"
+//            ],
             [
-                "slug"=> "book_later_find_tutor_restriction_hours",
+                "slug"=> "flat_discount_next_hour_price_percentage",
                 "value"=> "0",
-                "label"=> "On book later find tutor restriction hours",
-                "group_name"=> "book-later-restrict-hr"
+                "label"=> "Next hour dicount on subject price percentage",
+                "group_name"=> "next-hour-discount-on-subject-price-percentage"
             ]
         ];
 
