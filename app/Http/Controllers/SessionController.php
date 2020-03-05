@@ -643,7 +643,16 @@ class SessionController extends Controller
                 $rating = Rating::where('session_id', $session->id)->first();
                 if ($rating != null){
                     $session = Session::where('student_id', $userId)->whereIn('status', ['booked', 'started'])->with('tutor','student')->orderBy('updated_at', 'desc')->first();
-                    $rating = null;
+                    if ($session){
+                        $rating = null;
+                    } else {
+                        return response()->json(
+                            [
+                                'status' => 'error',
+                                'message' => 'Session not found.'
+                            ]
+                        );
+                    }
                 }
                 //get tutor avg rating
                 $rating_sessions = Session::where('tutor_id', $session->tutor_id)->where('hourly_rate', '!=', 0)->pluck('id');
