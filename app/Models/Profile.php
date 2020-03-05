@@ -27,7 +27,8 @@ class Profile extends Model
         'is_book_later',
         'book_later_longitude',
         'book_later_latitude',
-        'book_later_address'
+        'book_later_address',
+        'book_later_current_location'
     ];
 
     public function user()

@@ -324,7 +324,8 @@ class UserController extends Controller
                 'is_book_later' => $user->is_book_later,
                 'book_later_longitude' => $user->book_later_longitude,
                 'book_later_latitude' => $user->book_later_latitude,
-                'book_later_address' => $user->book_later_address
+                'book_later_address' => $user->book_later_address,
+                'book_later_current_location' => $user->book_later_current_location,
             );
             return $profile;
         }
@@ -614,14 +615,15 @@ class UserController extends Controller
             'max_slider_value' => 'numeric',
             'offline_notification' => 'required',
             'is_book_later' => 'required',
-            'is_book_now' => 'required'
+            'is_book_now' => 'required',
+            'book_later_current_location' => 'required',
         ]);
         $data = $request->all();
         $profile = new Profile();
         $update_profile = $profile->updateUserProfile(
             $data['tutor_id'],
             $request->only([
-                    'is_home', 'is_group', 'is_mentor', 'teach_to', 'call_student', 'one_on_one', 'min_slider_value', 'max_slider_value', 'book_later_longitude', 'book_later_latitude', 'is_book_later', 'is_book_now', 'book_later_address'
+                    'is_home', 'is_group', 'is_mentor', 'teach_to', 'call_student', 'one_on_one', 'min_slider_value', 'max_slider_value', 'book_later_longitude', 'book_later_latitude', 'is_book_later', 'is_book_now', 'book_later_address', 'book_later_current_location'
                 ])
         );
         User::where('id','=',$request->tutor_id)->update([
