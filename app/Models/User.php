@@ -78,6 +78,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $is_group = isset($request['is_group']) ? $request['is_group'] : 0;
         $experience = $request['experience'];
         $gender_id = $request['gender_id'];
+        $session_type = $request['session_type'];
+//        $latitude = $request['latitude'];
+//        $longitude = $request['longitude'];
         $bookLaterRestriction = Setting::where('group_name', 'book-later-restrict-hr')->pluck('value', 'slug');
 
         if(!$classId || !$subjectId){
@@ -125,12 +128,27 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 return $q->where('min_slider_value', '<=', $hourlyRate)->where('max_slider_value', '>=', $hourlyRate);
             });
         }
+        // check tutor settings
+        if ($session_type == 'now'){
+            $queryBuilder = $queryBuilder->whereHas('profile', function($q)
+            {
+                return $q->where('is_book_now',  1);
+            });
+        } else {
+            $queryBuilder = $queryBuilder->whereHas('profile', function($q)
+            {
+                return $q->where('is_book_later',  1);
+            });
+        }
+        // check tutor distance
+//        $queryBuilder = $queryBuilder->selectRaw(" @distance_check := ((6371 * ACOS (COS (RADIANS( $latitude )) * COS(RADIANS(`users`.`latitude`)) * COS(RADIANS(`users`.`longitude`) - RADIANS($longitude)) + SIN (RADIANS($latitude)) * SIN(RADIANS(`users`.`latitude`)))) as distance");
+//        $queryBuilder->havingRaw('distance' <= 12);
 
         $queryBuilder = $queryBuilder->where('is_online', 1);
 
         $result = $queryBuilder->get();
 //        return $result = [$queryBuilder->toSql(), $queryBuilder->getBindings()];
-
+//dd($result->toArray());
         foreach($result as $key => $record){
             if (round($record->rating->avg('rating')) < $category_id){
                 unset($result[$key]);
