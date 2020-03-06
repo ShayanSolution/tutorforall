@@ -191,7 +191,8 @@ class FindTutorController extends Controller
 
             Log::info($query);
 
-            $tutors = \DB::select($query);
+//            $tutors = \DB::select($query);
+            $tutors = \DB::select(\DB::raw($query));
             dd($tutors);
             foreach($tutors as $tutor){
                 Log::info("send request to tutor ID is: ".$tutor->id);
