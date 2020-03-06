@@ -65,7 +65,7 @@ class FindTutorController extends Controller
         //@todo fix wrong logic here, booking preference will match with tutor gender (users.gender_id)
         //@todo add logic, match student gender (Auth::user()->gender_id) with profile.teach_to
         $genderMatchingQuery = $studyFrom == 0 ? "" : " AND users.gender_id = $studyFrom  AND profiles.teach_to IN (".Auth::user()->gender_id.",0) ";
-        $bookTypeColumnName = $bookType == 'now' ? 'profile.is_book_now' : 'profile.is_book_later';
+        $bookTypeColumnName = $bookType == 'now' ? 'profiles.is_book_now' : 'profiles.is_book_later';
         for( $i=0; $i<=3; $i++){
 
             // Query to find Tutors in range(KM)
