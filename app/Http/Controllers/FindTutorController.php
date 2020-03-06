@@ -158,7 +158,7 @@ class FindTutorController extends Controller
             profiles.teach_to, profiles.is_home, 
             profiles.call_student, profiles.is_group, 
             profiles.one_on_one, program_subject.program_id AS t_program_id,
-            @session_type:='now', 
+            @session_type:='$bookType', 
             @tutor_location_latitude:= IF(@session_type = 'now',users.latitude,IF(profiles.book_later_current_location = 1,users.latitude,profiles.book_later_latitude)) AS tutor_location_latitude,
             @tutor_location_longitude:= IF(@session_type = 'now',users.longitude,IF(profiles.book_later_current_location = 1,users.longitude,profiles.book_later_longitude)) AS tutor_location_longitude,
             program_subject.subject_id AS t_subject_id,(6371 * ACOS (COS (RADIANS(" . $studentLat . ")) * COS(RADIANS(@tutor_location_latitude)) * COS(RADIANS(@tutor_location_longitude) - RADIANS(" . $studentLong . ")) + SIN (RADIANS(" . $studentLat . ")) * SIN(RADIANS(@tutor_location_latitude)))) AS `distance`
@@ -192,7 +192,7 @@ class FindTutorController extends Controller
             Log::info($query);
 
             $tutors = \DB::select($query);
-            dd($tutors);
+            dd($bookType, $tutors);
             foreach($tutors as $tutor){
                 Log::info("send request to tutor ID is: ".$tutor->id);
                 $distanceInKms = number_format((float)$tutor->distance, 2, '.', '');
