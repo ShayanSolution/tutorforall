@@ -65,6 +65,7 @@ class FindTutorController extends Controller
         //@todo fix wrong logic here, booking preference will match with tutor gender (users.gender_id)
         //@todo add logic, match student gender (Auth::user()->gender_id) with profile.teach_to
         $genderMatchingQuery = $studyFrom == 0 ? "" : " AND users.gender_id = $studyFrom  AND profiles.teach_to IN (".Auth::user()->gender_id.",0) ";
+        $bookTypeColumnName = $bookType == 'now' ? 'profiles.is_book_now' : 'profiles.is_book_later';
         for( $i=0; $i<=3; $i++){
 
             // Query to find Tutors in range(KM)
@@ -150,14 +151,17 @@ class FindTutorController extends Controller
 //            `ratings` >= 0 AND
 //            `experience` >= 0 AND
 //            `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin AND (`rating_received` IS NULL OR `rating_received` > 2)";
-
+        //\DB::select("SET @session_type:='now'");
         $query = "SELECT DISTINCT users.id,users.firstName, users.role_id, 
             users.latitude, users.longitude, 
             users.device_token, profiles.is_mentor, 
             profiles.teach_to, profiles.is_home, 
             profiles.call_student, profiles.is_group, 
-            profiles.one_on_one, program_subject.program_id AS t_program_id, 
-            program_subject.subject_id AS t_subject_id,(6371 * ACOS (COS (RADIANS(" . $studentLat . ")) * COS(RADIANS(`users`.`latitude`)) * COS(RADIANS(`users`.`longitude`) - RADIANS(" . $studentLong . ")) + SIN (RADIANS(" . $studentLat . ")) * SIN(RADIANS(`users`.`latitude`)))) AS `distance`
+            profiles.one_on_one, program_subject.program_id AS t_program_id,
+            @session_type:='$bookType', 
+            @tutor_location_latitude:= IF(@session_type = 'now',users.latitude,IF(profiles.book_later_current_location = 1,users.latitude,profiles.book_later_latitude)) AS tutor_location_latitude,
+            @tutor_location_longitude:= IF(@session_type = 'now',users.longitude,IF(profiles.book_later_current_location = 1,users.longitude,profiles.book_later_longitude)) AS tutor_location_longitude,
+            program_subject.subject_id AS t_subject_id,(6371 * ACOS (COS (RADIANS(" . $studentLat . ")) * COS(RADIANS(@tutor_location_latitude)) * COS(RADIANS(@tutor_location_longitude) - RADIANS(" . $studentLong . ")) + SIN (RADIANS(" . $studentLat . ")) * SIN(RADIANS(@tutor_location_latitude)))) AS `distance`
             ,ROUND(IFNULL((SELECT AVG(ratings.rating) FROM ratings WHERE users.id = ratings.user_id), 1)) AS `ratings`
             ,@sum_of_students_whom_learned_in_group := (SELECT SUM(DISTINCT group_members) FROM sessions WHERE sessions.tutor_id = users.id AND sessions.`status` = 'ended' AND sessions.is_group = 1) AS `sum_of_students_whom_learned_in_group`
             ,@sum_of_students_whom_learned_individually := (SELECT COUNT(DISTINCT group_members) FROM sessions WHERE sessions.tutor_id = users.id AND sessions.`status` = 'ended' AND sessions.is_group = 0) AS `sum_of_students_whom_learned_individually`
@@ -175,6 +179,7 @@ class FindTutorController extends Controller
                 AND ((profiles.is_home = '$isHome' AND profiles.call_student = '$callStudent') OR (profiles.is_home = '1' AND profiles.call_student = '1'))
                 AND ((profiles.is_group = '$studentIsGroup' AND profiles.one_on_one = '$oneOnOne') OR (profiles.is_group = '1' AND profiles.one_on_one = '1'))
                 $genderMatchingQuery
+                AND $bookTypeColumnName = 1
                 AND (profiles.min_slider_value <= '$hourlyRate' AND profiles.max_slider_value >= '$hourlyRate')
                 AND (users.is_online = 1)
             HAVING 
