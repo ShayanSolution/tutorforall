@@ -157,11 +157,11 @@ class FindTutorController extends Controller
             users.device_token, profiles.is_mentor, 
             profiles.teach_to, profiles.is_home, 
             profiles.call_student, profiles.is_group, 
-            profiles.one_on_one, program_subject.program_id AS t_program_id, 
-            @session_type:=$bookType
-            @tutor_location_latitude:= IF(session_type)IF(profiles.book_later_current_location = 1,users.latitude,profiles.book_later_latitude)
-            @tutor_location_longitude:= IF(profiles.is_current_location = 1,users.latitude,profiles.book_later_latitude)
-            program_subject.subject_id AS t_subject_id,(6371 * ACOS (COS (RADIANS(" . $studentLat . ")) * COS(RADIANS(`users`.`latitude`)) * COS(RADIANS(`users`.`longitude`) - RADIANS(" . $studentLong . ")) + SIN (RADIANS(" . $studentLat . ")) * SIN(RADIANS(`users`.`latitude`)))) AS `distance`
+            profiles.one_on_one, program_subject.program_id AS t_program_id,
+            @session_type:='$bookType', 
+            @tutor_location_latitude:= IF(@session_type = 'now',users.latitude,IF(profiles.book_later_current_location = 1,users.latitude,profiles.book_later_latitude)) AS tutor_location_latitude,
+            @tutor_location_longitude:= IF(@session_type = 'now',users.longitude,IF(profiles.book_later_current_location = 1,users.longitude,profiles.book_later_longitude)) AS tutor_location_longitude,
+            program_subject.subject_id AS t_subject_id,(6371 * ACOS (COS (RADIANS(" . $studentLat . ")) * COS(RADIANS(@tutor_location_latitude)) * COS(RADIANS(@tutor_location_longitude) - RADIANS(" . $studentLong . ")) + SIN (RADIANS(" . $studentLat . ")) * SIN(RADIANS(@tutor_location_latitude)))) AS `distance`
             ,ROUND(IFNULL((SELECT AVG(ratings.rating) FROM ratings WHERE users.id = ratings.user_id), 1)) AS `ratings`
             ,@sum_of_students_whom_learned_in_group := (SELECT SUM(DISTINCT group_members) FROM sessions WHERE sessions.tutor_id = users.id AND sessions.`status` = 'ended' AND sessions.is_group = 1) AS `sum_of_students_whom_learned_in_group`
             ,@sum_of_students_whom_learned_individually := (SELECT COUNT(DISTINCT group_members) FROM sessions WHERE sessions.tutor_id = users.id AND sessions.`status` = 'ended' AND sessions.is_group = 0) AS `sum_of_students_whom_learned_individually`
