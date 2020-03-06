@@ -148,7 +148,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
         $result = $queryBuilder->get();
 //        return $result = [$queryBuilder->toSql(), $queryBuilder->getBindings()];
-//dd($result->toArray());
+dd($result->toArray());
         foreach($result as $key => $record){
             if (round($record->rating->avg('rating')) < $category_id){
                 unset($result[$key]);
