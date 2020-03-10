@@ -35,3 +35,14 @@ if (! function_exists('delete_queued_jobs')) {
         \DB::table('jobs')->whereIn('id', $ids)->delete();
     }
 }
+
+if (! function_exists('hourly_rate_past_first_hour')) {
+    function hourly_rate_past_first_hour($hourlyRate) {
+        $nextHrDiscount = \App\Models\Setting::where('group_name', 'next-hour-discount-on-subject-price-percentage')->pluck('value', 'slug');
+        $nextHrDiscountPercentage = $nextHrDiscount['flat_discount_next_hour_price_percentage'];
+        $hourlyRatePastFirstCalculate = ($nextHrDiscountPercentage/100) * $hourlyRate;
+        $hourlyRatePastFirstHour = $hourlyRate - $hourlyRatePastFirstCalculate;
+        return $hourlyRatePastFirstHour;
+    }
+}
+
