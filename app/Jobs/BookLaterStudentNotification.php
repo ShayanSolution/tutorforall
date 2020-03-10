@@ -61,6 +61,8 @@ class BookLaterStudentNotification extends Job implements ShouldQueue
                 'session_long' => $session->longitude,
                 'session_location' => $session->session_location,
                 'Profile_Image' => !empty($tutor->profileImage)?URL::to('/images').'/'.$tutor->profileImage:'',
+                'Hourly_Rate' => (string)$session->hourly_rate,
+                'hourly_rate_past_first_hour' => hourly_rate_past_first_hour((string)$session->hourly_rate)
             );
 
             Push::handle($title, $body, $customData, $student);
