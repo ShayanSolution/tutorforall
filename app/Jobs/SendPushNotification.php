@@ -126,6 +126,28 @@ class SendPushNotification extends Job implements ShouldQueue
                 $title = Config::get('user-constants.APP_NAME');
                 $isLocal = '';
                 $body = $this->student->firstName.' '.$this->student->lastName.' wants a session with you'.$isLocal;
+
+
+
+                $origin = [
+                    'latitude'  =>  (string)$this->student->latitude,
+                    'longitude' =>  (string)$this->student->longitude
+                ];
+
+                $destination = [
+                    'latitude'  =>  (string)$sessionData['latitude'],
+                    'longitude' =>  (string)$sessionData['longitude']
+                ];
+
+
+                $distanceAndTime = $this->getDistanceAndTime(
+                    'metric',
+                    $origin,
+                    $destination
+                );
+
+
+
                 $customData = array(
                     'notification_type' => 'session_request',
                     'session_id' => (string)$sessionRequest->id,
@@ -148,14 +170,15 @@ class SendPushNotification extends Job implements ShouldQueue
                     'Session_Location' => $sessionData['session_location'],
                     'Datetime' => $sessionDateTime,
                     'date' => $dateTime[0],
-                    'time' => date("g:i a", strtotime($dateTime[1])),
+                    'time' => $distanceAndTime['duration'],//date("g:i a", strtotime($dateTime[1])),
                     'Age' => $userAge>0?$userAge:'',
                     'Profile_Image' => !empty($this->student->profileImage)?env('ASSET_BASE_URL').'/images/'.$this->student->profileImage:'',
                     'session_sent_group' => $sessionData['session_sent_group'],
                     'approaching_time' => $this->data['approaching_time'],
-                    'distance' => $this->data['distance'],
+                    'distance' => $distanceAndTime['distance'],
                     'session_type' => $sessionType
                 );
+
                 $this->slackLog($user, env('TOOTAR_LOGGER_WEBHOOK_SLACK'));
                 Push::handle($title, $body, $customData, $user);
             }
@@ -173,5 +196,44 @@ class SendPushNotification extends Job implements ShouldQueue
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_exec($ch);
         curl_close($ch);
+    }
+
+    /**
+     * @param $unit
+     * @param $origin
+     * @param $destination
+     * @return array
+     */
+    private function getDistanceAndTime($unit, $origin, $destination){
+
+        $url = 'https://maps.googleapis.com/maps/api/directions/json?';
+
+        $url .= 'units='.$unit.'&';
+        $url .= 'origin='.$destination['latitude'].','.$destination['longitude'].'&';
+        $url .= 'destination='.$origin['latitude'].','.$origin['longitude'].'&';
+        $url .= 'key='.env('GOOGLE_API_KEY');
+
+        $ch = curl_init();
+
+        $headers = array(
+            'Accept: application/json',
+            'Content-Type: application/json',
+        );
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+        $result = curl_exec($ch);
+
+        $legOfGoogleRoutes = json_decode($result)->routes[0]->legs[0];
+
+        return [
+            'duration'  =>  $legOfGoogleRoutes->duration->text,
+            'distance'  =>  $legOfGoogleRoutes->distance->text,
+        ];
     }
 }
