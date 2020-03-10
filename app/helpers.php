@@ -42,7 +42,7 @@ if (! function_exists('hourly_rate_past_first_hour')) {
         $nextHrDiscountPercentage = $nextHrDiscount['flat_discount_next_hour_price_percentage'];
         $hourlyRatePastFirstCalculate = ($nextHrDiscountPercentage/100) * $hourlyRate;
         $hourlyRatePastFirstHour = $hourlyRate - $hourlyRatePastFirstCalculate;
-        return $hourlyRatePastFirstHour;
+        return (int)round($hourlyRatePastFirstHour);
     }
 }
 
