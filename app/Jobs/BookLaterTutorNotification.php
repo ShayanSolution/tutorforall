@@ -66,6 +66,8 @@ class BookLaterTutorNotification extends Job implements ShouldQueue
                 'Datetime' => $session->book_later_at,
                 'Age' => $studentAge>0?$studentAge:'',
                 'Profile_Image' => !empty($student->profileImage)?URL::to('/images').'/'.$student->profileImage:'',
+                'Hourly_Rate' => (string)$session->hourly_rate,
+                'hourly_rate_past_first_hour' => hourly_rate_past_first_hour((string)$session->hourly_rate)
             );
 
             $title = Config::get('user-constants.APP_NAME');
