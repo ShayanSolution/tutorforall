@@ -570,13 +570,10 @@ class SessionController extends Controller
 
         if ($durationInHour > 1){
             $excludeFirstHour = $durationInHour - 1;
-            $nextHrDiscount = Setting::where('group_name', 'next-hour-discount-on-subject-price-percentage')->pluck('value', 'slug');
-            $nextHrDiscountPercentage = $nextHrDiscount['flat_discount_next_hour_price_percentage'];
-            $hourlyRatePastFirstCalculate = ($nextHrDiscountPercentage/100) * $findSession->hourly_rate;
-            $hourlyRatePastFirstHour = $findSession->hourly_rate - $hourlyRatePastFirstCalculate;
+            $hourlyRatePastFirstHour = $findSession->hourly_rate_past_first_hour;
             $costNextHours = $hourlyRatePastFirstHour * $excludeFirstHour;
-            $costPerHour = $findSession->hourly_rate;
-            $totalCostAccordingToHours = $costPerHour + $costNextHours;
+            $costFirstHour = $findSession->hourly_rate;
+            $totalCostAccordingToHours = $costFirstHour + $costNextHours;
         } else {
             $costPerHour = $findSession->hourly_rate;
             $totalCostAccordingToHours = $costPerHour * $durationInHour;
