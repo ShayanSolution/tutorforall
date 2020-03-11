@@ -9,6 +9,7 @@ use App\Exceptions\SessionExpired;
 use App\Jobs\BookNotification;
 use App\Jobs\SendNotificationOfCalculationCost;
 use App\Models\Setting;
+use App\Services\CostCalculation\SessionCost;
 use App\Wallet;
 use Illuminate\Http\Request;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
@@ -546,7 +547,7 @@ class SessionController extends Controller
         ]);
     }
     
-    public function sessionCalculationCost(Request $request){
+    public function sessionCalculationCost(Request $request, SessionCost $sessionCost){
         $this->validate($request,[
             'session_id' => 'required',
             'duration' => 'required'
@@ -555,29 +556,16 @@ class SessionController extends Controller
         $hourlyRatePastFirstHour = (int)$findSession->hourly_rate_past_first_hour;
         $student_id  = $findSession->student_id;
         $user = User::find($student_id);
-        $duration = $request->duration;
-        $originalDuration = $request->duration;
-        $group_members = $findSession->group_members;
 
-        $twentyPercent = 20/100;
-        $thirtyPercent = 30/100;
-        $fortyPercent  = 40/100;
-        $fiftyPercent  = 50/100;
+        $originalDuration = $request->duration;
+
 
         $date = Carbon::parse($findSession->started_at);
         $now = Carbon::now();
 
         $durationInHour = ceil($date->diffInSeconds($now) / 60 / 60);
 
-        if ($durationInHour > 1){
-            $excludeFirstHour = $durationInHour - 1;
-            $costNextHours = $hourlyRatePastFirstHour * $excludeFirstHour;
-            $costFirstHour = $findSession->hourly_rate;
-            $totalCostAccordingToHours = $costFirstHour + $costNextHours;
-        } else {
-            $costPerHour = $findSession->hourly_rate;
-            $totalCostAccordingToHours = $costPerHour * $durationInHour;
-        }
+        $totalCostAccordingToHours = $sessionCost->execute($durationInHour, $findSession);
 
         if($findSession->student->profile->is_deserving == 0) {
             $findSession->ended_at = $now;
@@ -599,7 +587,7 @@ class SessionController extends Controller
                 [
                     'status' => 'success',
                     'totalCost' => $totalCostAccordingToHours,
-                    'hourly_rate' => $costPerHour,
+                    'hourly_rate' => $findSession->hourly_rate,
                     'hourly_rate_past_first_hour' =>  $hourlyRatePastFirstHour
                 ]
             );
@@ -617,7 +605,7 @@ class SessionController extends Controller
                 [
                     'status' => 'success',
                     'totalCost' => 0,
-                    'hourly_rate' => $costPerHour,
+                    'hourly_rate' => $findSession->hourly_rate,
                     'hourly_rate_past_first_hour' =>  $hourlyRatePastFirstHour
                 ]
             );
