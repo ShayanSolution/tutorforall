@@ -552,7 +552,7 @@ class SessionController extends Controller
             'duration' => 'required'
         ]);
         $findSession = Session::find($request->session_id);
-        $hourlyRatePastFirstHour = $findSession->hourly_rate_past_first_hour;
+        $hourlyRatePastFirstHour = (int)$findSession->hourly_rate_past_first_hour;
         $student_id  = $findSession->student_id;
         $user = User::find($student_id);
         $duration = $request->duration;
