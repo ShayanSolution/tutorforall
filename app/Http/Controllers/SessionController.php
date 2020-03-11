@@ -603,7 +603,8 @@ class SessionController extends Controller
                 [
                     'status' => 'success',
                     'totalCost' => $totalCostAccordingToHours,
-                    'hourly_rate' => $costPerHour
+                    'hourly_rate' => $costPerHour,
+                    'hourly_rate_past_first_hour' =>  hourly_rate_past_first_hour($costPerHour)
                 ]
             );
         }
