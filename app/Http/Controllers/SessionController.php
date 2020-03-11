@@ -552,6 +552,7 @@ class SessionController extends Controller
             'duration' => 'required'
         ]);
         $findSession = Session::find($request->session_id);
+        $hourlyRatePastFirstHour = $findSession->hourly_rate_past_first_hour;
         $student_id  = $findSession->student_id;
         $user = User::find($student_id);
         $duration = $request->duration;
@@ -570,7 +571,6 @@ class SessionController extends Controller
 
         if ($durationInHour > 1){
             $excludeFirstHour = $durationInHour - 1;
-            $hourlyRatePastFirstHour = $findSession->hourly_rate_past_first_hour;
             $costNextHours = $hourlyRatePastFirstHour * $excludeFirstHour;
             $costFirstHour = $findSession->hourly_rate;
             $totalCostAccordingToHours = $costFirstHour + $costNextHours;
@@ -600,7 +600,7 @@ class SessionController extends Controller
                     'status' => 'success',
                     'totalCost' => $totalCostAccordingToHours,
                     'hourly_rate' => $costPerHour,
-                    'hourly_rate_past_first_hour' =>  hourly_rate_past_first_hour($costPerHour)
+                    'hourly_rate_past_first_hour' =>  $hourlyRatePastFirstHour
                 ]
             );
         }
@@ -618,7 +618,7 @@ class SessionController extends Controller
                     'status' => 'success',
                     'totalCost' => 0,
                     'hourly_rate' => $costPerHour,
-                    'hourly_rate_past_first_hour' =>  hourly_rate_past_first_hour($costPerHour)
+                    'hourly_rate_past_first_hour' =>  $hourlyRatePastFirstHour
                 ]
             );
         }
