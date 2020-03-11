@@ -80,6 +80,8 @@ class PackageController extends Controller
             }
             // get peakfactor
             list($hourlyRate, $peakFactor) = $peakFactorAction->execute($onlineTutorsCount, $hourlyRate, $request, $peakFactor);
+            //save hourly rate before applying discount
+            $originalHourlyRate = $hourlyRate;
             // discount on go to tutor
             if ($callTutor == 0 && $callStudent == 1) {
                 $isDiscount = Setting::where('group_name', 'discount')->pluck('value', 'slug');
@@ -100,7 +102,7 @@ class PackageController extends Controller
                 return response()->json(
                     [
                         'status' => 'success',
-                        'original_hourly_rate' => round($hourlyRate + $discount),
+                        'original_hourly_rate' => round($originalHourlyRate),
                         'hourly_rate' => round($hourlyRate),
                         'online_tutors' => $onlineTutorsCount,
                         'peak_factor' => $peakFactor,
