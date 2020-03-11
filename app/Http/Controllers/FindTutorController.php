@@ -50,6 +50,8 @@ class FindTutorController extends Controller
         $callStudent = $request->call_student;
         $oneOnOne = $request->one_on_one;
         $hourlyRate = $request->hourly_rate;
+        $originalHourlyRate = $request->original_hourly_rate;
+        $originalHourlyRatePastFirstHour = $request->hourly_rate_past_first_hour;
         $bookType = $request->book_type;
         $sessionTime = $request->session_time;
         $distanceInKmMin = 0;
@@ -209,6 +211,8 @@ class FindTutorController extends Controller
                     'group_members' => (int)$studentGroupCount,
                     'is_home'=>$isHome,
                     'hourly_rate'=>$hourlyRate,
+                    'original_hourly_rate'=>$originalHourlyRate,
+                    'hourly_rate_past_first_hour'=>$originalHourlyRatePastFirstHour,
 
                     //-----New fields-----/
                     'call_student'=>$callStudent,
