@@ -113,7 +113,7 @@ class SessionController extends Controller
                     'Age' => Carbon::parse($user->dob)->age,
                     'Profile_image'=>!empty($user_details->profileImage)?URL::to('/images').'/'.$user_details->profileImage:'',
                     'hourly_rate' => $user->hourly_rate,
-                    'hourly_rate_past_first_hour' => hourly_rate_past_first_hour((string)$user->hourly_rate),
+                    'hourly_rate_past_first_hour' => $user->hourly_rate_past_first_hour,
                     'book_later_at' => $user->book_later_at,
                     'session_type' => $sessionType,
                     'tracking_on' => $trackingON,
