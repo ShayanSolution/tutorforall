@@ -566,7 +566,7 @@ class SessionController extends Controller
         $date = Carbon::parse($findSession->started_at);
         $now = Carbon::now();
 
-        $durationInHour = ceil($date->diffInMinutes($now) / 60);
+        $durationInHour = ceil($date->diffInSeconds($now) / 60 / 60);
 
         if ($durationInHour > 1){
             $excludeFirstHour = $durationInHour - 1;
