@@ -31,7 +31,9 @@ class Session extends Model
         'book_later_at',
         'hourly_rate',
         'is_home',
-        'session_sent_group'
+        'session_sent_group',
+        'hourly_rate_past_first_hour',
+        'original_hourly_rate'
     ];
 
     public function student()

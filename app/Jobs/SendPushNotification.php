@@ -86,6 +86,8 @@ class SendPushNotification extends Job implements ShouldQueue
 
                 $sessionData['is_group'] = $this->data['is_group'];
                 $sessionData['hourly_rate'] = $this->data['hourly_rate'];
+                $sessionData['original_hourly_rate'] = $this->data['original_hourly_rate'];
+                $sessionData['hourly_rate_past_first_hour'] = $this->data['hourly_rate_past_first_hour'];
                 $sessionData['is_home'] = $this->data['is_home'];
                 $sessionDateTime = Carbon::now()->toDateTimeString();
                 $dateTime = explode(" ",$sessionDateTime);
