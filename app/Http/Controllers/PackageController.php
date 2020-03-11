@@ -58,6 +58,7 @@ class PackageController extends Controller
         $isGroup = $request['is_group'];
         $groupCount = $request['group_count'];
         $callTutor = $request['is_home'];
+        $callStudent = $request['call_student'];
         $peakFactor = "off";
         //Get online tutors
         $onlineTutorsCount = User::findOnlineTutors($request, $hourlyRate=0);
@@ -80,7 +81,7 @@ class PackageController extends Controller
             // get peakfactor
             list($hourlyRate, $peakFactor) = $peakFactorAction->execute($onlineTutorsCount, $hourlyRate, $request, $peakFactor);
             // discount on go to tutor
-            if ($callTutor == 0) {
+            if ($callTutor == 0 && $callStudent == 1) {
                 $isDiscount = Setting::where('group_name', 'discount')->pluck('value', 'slug');
                 if ($isDiscount['percent-discount-on-go-to-tutor-status'] == 1) {
                     $discountPercentage = $isDiscount['percent-discount-on-go-to-tutor'];
