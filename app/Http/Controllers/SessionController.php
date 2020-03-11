@@ -566,9 +566,8 @@ class SessionController extends Controller
         $date = Carbon::parse($findSession->started_at);
         $now = Carbon::now();
 
-        $duration = $date->diffInHours($now);
+        $durationInHour = $date->diffInMinutes($now) / 60;
 
-        $durationInHour = $duration > 0 ? $duration : $duration+1;
         if ($durationInHour > 1){
             $excludeFirstHour = $durationInHour - 1;
             $nextHrDiscount = Setting::where('group_name', 'next-hour-discount-on-subject-price-percentage')->pluck('value', 'slug');

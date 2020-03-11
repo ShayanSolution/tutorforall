@@ -32,6 +32,10 @@ class PackageController extends Controller
      * @return mixed hourly package rate
      */
     public function packageCost(Request $request, ApplyPeakFactor $peakFactorAction, CategoryCost $categoryCostAction, GroupCost $groupCostAction){
+
+        $goToTutorFirstHourFlatDiscountApplied = false;
+        $discount = 0;
+
         $this->validate($request,[
             'class_id' => 'required',
             'subject_id'=> 'required',
@@ -82,13 +86,14 @@ class PackageController extends Controller
                     $discountPercentage = $isDiscount['percent-discount-on-go-to-tutor'];
                     $discount = ($discountPercentage/100) * $hourlyRate;
                     $hourlyRate = $hourlyRate - $discount;
+                    $goToTutorFirstHourFlatDiscountApplied = true;
                 }
             }
             //Get online tutors after checking tutor slider range
             $onlineTutorsCount = User::findOnlineTutors($request, $hourlyRate);
             // next hour discount on subject price
 
-            $hourlyRatePastFirstHour = hourly_rate_past_first_hour($hourlyRate);
+            $hourlyRatePastFirstHour = hourly_rate_past_first_hour($goToTutorFirstHourFlatDiscountApplied ? $hourlyRate + $discount : $hourlyRate);
 
             if ($hourlyRate) {
                 return response()->json(
