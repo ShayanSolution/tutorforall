@@ -100,6 +100,7 @@ class PackageController extends Controller
                 return response()->json(
                     [
                         'status' => 'success',
+                        'original_hourly_rate' => round($hourlyRate + $discount),
                         'hourly_rate' => round($hourlyRate),
                         'online_tutors' => $onlineTutorsCount,
                         'peak_factor' => $peakFactor,
