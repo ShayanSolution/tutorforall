@@ -252,6 +252,7 @@ class Session extends Model
             $session_detail[$index]['Hour'] = $session->duration;
             $session_detail[$index]['Price'] = $session->rate;
             $session_detail[$index]['hourly_rate'] = $session->hourly_rate;
+            $session_detail[$index]['hourly_rate_past_first_hour'] = hourly_rate_past_first_hour((string)$session->hourly_rate);
             $session_detail[$index]['Date'] = $sessionDate;
             $session_detail[$index]['Age'] = Carbon::parse($session->dob)->age;
             $session_detail[$index]['Profile_image'] = !empty($student_detail->profileImage)?URL::to('/images').'/'.$student_detail->profileImage:'';

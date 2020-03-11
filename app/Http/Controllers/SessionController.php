@@ -44,7 +44,6 @@ class SessionController extends Controller
         if(isset($data['tutor_id']) && !empty($data['tutor_id'])){
             $tutor_id = $data['tutor_id'];
             $user_session = $session->getTutorSessionDetail($tutor_id);
-            $user_session['hourly_rate_past_first_hour'] = hourly_rate_past_first_hour((string)$user_session->hourly_rate);
             return response()->json(
                 [
                     'data' => $user_session
