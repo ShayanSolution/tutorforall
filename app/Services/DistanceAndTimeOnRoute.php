@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+use Log;
 
 class DistanceAndTimeOnRoute{
 
@@ -64,6 +65,10 @@ class DistanceAndTimeOnRoute{
         $result = curl_exec($ch);
 
         $legOfGoogleRoutes = json_decode($result)->routes[0]->legs[0];
+
+        Log::info("Complete Object:",$result);
+        Log::info("calculated distance:",$legOfGoogleRoutes->distance->text);
+        Log::info("calculated time:",$legOfGoogleRoutes->duration->text);
 
         return [
             'duration'  =>  $legOfGoogleRoutes->duration->text,
