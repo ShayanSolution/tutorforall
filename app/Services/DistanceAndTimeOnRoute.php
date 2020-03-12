@@ -44,8 +44,8 @@ class DistanceAndTimeOnRoute{
         $url = 'https://maps.googleapis.com/maps/api/directions/json?';
 
         $url .= 'units='.$unit.'&';
-        $url .= 'origin='.$destination['latitude'].','.$destination['longitude'].'&';
-        $url .= 'destination='.$origin['latitude'].','.$origin['longitude'].'&';
+        $url .= 'destination='.$destination['latitude'].','.$destination['longitude'].'&';
+        $url .= 'origin='.$origin['latitude'].','.$origin['longitude'].'&';
         $url .= 'key='.env('GOOGLE_API_KEY');
 
         $ch = curl_init();
@@ -54,6 +54,8 @@ class DistanceAndTimeOnRoute{
             'Accept: application/json',
             'Content-Type: application/json',
         );
+
+        Log::info("Requested Direction URL:".$url);
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
