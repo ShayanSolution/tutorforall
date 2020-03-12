@@ -132,8 +132,8 @@ class SendPushNotification extends Job implements ShouldQueue
 
 
                 $origin = [
-                    'latitude'  =>  (string)$this->student->latitude,
-                    'longitude' =>  (string)$this->student->longitude
+                    'latitude'  =>  (string)$user->latitude,
+                    'longitude' =>  (string)$user->longitude
                 ];
 
                 $destination = [
