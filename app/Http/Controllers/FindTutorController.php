@@ -197,7 +197,6 @@ class FindTutorController extends Controller
             foreach($tutors as $tutor){
                 Log::info("send request to tutor ID is: ".$tutor->id);
                 $distanceInKms = number_format((float)$tutor->distance, 2, '.', '');
-                $approachingTime = $this->getApproachingTimeUsingDistance($distanceInKms);
                 $tutorId = $tutor->id;
                 $params = [
                     'student_id' => (int)$studentId,
@@ -221,7 +220,6 @@ class FindTutorController extends Controller
                     'book_type'=>$bookType,
                     'session_time'=>$sessionTime,
                     'distance'=>$distanceInKms.' km',
-                    'approaching_time'=>$approachingTime
                 ];
                 // dd($params);
                 $request->request->add($params);
@@ -248,15 +246,4 @@ class FindTutorController extends Controller
         );
     }
 
-    private function getApproachingTimeUsingDistance($distanceInKms){
-        $averageBikeSpeedInMetresPerSecond = '8.05556';
-        $timeInSeconds = ($distanceInKms * 1000 ) / $averageBikeSpeedInMetresPerSecond;
-
-        $hours = floor($timeInSeconds / 3600);
-        $minutes = floor(($timeInSeconds / 60) % 60);
-
-        return  ( $hours   != 0 ? "$hours h "     : '').
-                ( $minutes > 1 ? "$minutes mins" : '1 min')
-            ;
-    }
 }
