@@ -66,7 +66,7 @@ class DistanceAndTimeOnRoute{
 
         $legOfGoogleRoutes = json_decode($result)->routes[0]->legs[0];
 
-        Log::info("Complete Object:",$result);
+        Log::info("Complete Object:",json_decode($result));
         Log::info("calculated distance:",$legOfGoogleRoutes->distance->text);
         Log::info("calculated time:",$legOfGoogleRoutes->duration->text);
 
