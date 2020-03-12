@@ -30,13 +30,13 @@ class SendPushNotification extends Job implements ShouldQueue
     protected $student;
     protected $distanceAndTimeOnRoute;
 
-    public function __construct($data, $tutorsIds, $student, DistanceAndTimeOnRoute $distanceAndTimeOnRoute)
+    public function __construct($data, $tutorsIds, $student)
     {
         Log::info('Tutor request push notification constructor called at '.Carbon::now());
         $this->tutorsIds = $tutorsIds;
         $this->data = $data;
         $this->student = $student;
-        $this->distanceAndTimeOnRoute = $distanceAndTimeOnRoute;
+        $this->distanceAndTimeOnRoute = new DistanceAndTimeOnRoute();
 
     }
 
@@ -148,10 +148,6 @@ class SendPushNotification extends Job implements ShouldQueue
                 $title = Config::get('user-constants.APP_NAME');
                 $isLocal = '';
                 $body = $this->student->firstName.' '.$this->student->lastName.' wants a session with you'.$isLocal;
-
-
-
-
 
                 $distanceAndTime = $this->distanceAndTimeOnRoute->execute($this->student, $user, $sessionData, $this->data['is_home']);
 
