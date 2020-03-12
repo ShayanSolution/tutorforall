@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 use App\Helpers\Push;
+use App\Services\DistanceAndTimeOnRoute;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,13 +28,16 @@ class SendPushNotification extends Job implements ShouldQueue
     protected $tutorsIds;
     protected $data;
     protected $student;
+    protected $distanceAndTimeOnRoute;
 
-    public function __construct($data, $tutorsIds, $student)
+    public function __construct($data, $tutorsIds, $student, DistanceAndTimeOnRoute $distanceAndTimeOnRoute)
     {
         Log::info('Tutor request push notification constructor called at '.Carbon::now());
         $this->tutorsIds = $tutorsIds;
         $this->data = $data;
         $this->student = $student;
+        $this->distanceAndTimeOnRoute = $distanceAndTimeOnRoute;
+
     }
 
     /**
@@ -68,21 +72,7 @@ class SendPushNotification extends Job implements ShouldQueue
                 $sessionData['session_sent_group'] =  $this->data['session_sent_group'];
                 $sessionData['status'] =  'pending';
 
-                if($this->data['is_home'] == 0){
-                    $sessionData['latitude'] =  $user->latitude;
-                    $sessionData['longitude'] =  $user->longitude;
-                    $sessionData['session_location'] = $user->address;
-                }
-                else{
-                    $sessionData['latitude'] =  $this->data['latitude'];
-                    $sessionData['longitude'] =  $this->data['longitude'];
-                    if(isset($this->data['session_location'])) {
-                        $sessionData['session_location'] = $this->data['session_location'];
-                    }
-                    else{
-                        $sessionData['session_location'] = '';
-                    }
-                }
+
 
                 $sessionData['is_group'] = $this->data['is_group'];
                 $sessionData['hourly_rate'] = $this->data['hourly_rate'];
@@ -120,6 +110,36 @@ class SendPushNotification extends Job implements ShouldQueue
                 //Reject session request status is also updated. Means we will not have reject sessions history.
                 $sessionData['subscription_id']= 3;
                 $sessionData['meeting_type_id']= 1;
+
+                if($this->data['is_home'] == 0){
+
+                    $sessionData['latitude'] =  $user->latitude;
+                    $sessionData['longitude'] =  $user->longitude;
+
+
+                    if($sessionType == 'later'){
+                        if($user->profile){
+                            if($user->profile->book_later_current_location == 0){
+                                $sessionData['latitude'] =  $user->profile->book_later_latitude;
+                                $sessionData['longitude'] =  $user->profile->book_later_longitude;
+                            }
+                        }
+                    }
+
+                    $sessionData['session_location'] = $user->address;
+                }
+                else{
+                    $sessionData['latitude'] =  $this->data['latitude'];
+                    $sessionData['longitude'] =  $this->data['longitude'];
+
+                    if(isset($this->data['session_location'])) {
+                        $sessionData['session_location'] = $this->data['session_location'];
+                    }
+                    else{
+                        $sessionData['session_location'] = '';
+                    }
+                }
+
                 $sessionRequest = Session::create($sessionData);
                 //$session = new Session();
                 //$sessionRequest = $session->createOrUpdateSession($sessionData);
@@ -131,23 +151,9 @@ class SendPushNotification extends Job implements ShouldQueue
 
 
 
-                $origin = [
-                    'latitude'  =>  (string)$user->latitude,
-                    'longitude' =>  (string)$user->longitude
-                ];
-
-                $destination = [
-                    'latitude'  =>  (string)$sessionData['latitude'],
-                    'longitude' =>  (string)$sessionData['longitude']
-                ];
 
 
-                $distanceAndTime = $this->getDistanceAndTime(
-                    'metric',
-                    $origin,
-                    $destination
-                );
-
+                $distanceAndTime = $this->distanceAndTimeOnRoute->execute($this->student, $user, $sessionData, $this->data['is_home']);
 
 
                 $customData = array(
@@ -201,42 +207,5 @@ class SendPushNotification extends Job implements ShouldQueue
         curl_close($ch);
     }
 
-    /**
-     * @param $unit
-     * @param $origin
-     * @param $destination
-     * @return array
-     */
-    private function getDistanceAndTime($unit, $origin, $destination){
 
-        $url = 'https://maps.googleapis.com/maps/api/directions/json?';
-
-        $url .= 'units='.$unit.'&';
-        $url .= 'origin='.$destination['latitude'].','.$destination['longitude'].'&';
-        $url .= 'destination='.$origin['latitude'].','.$origin['longitude'].'&';
-        $url .= 'key='.env('GOOGLE_API_KEY');
-
-        $ch = curl_init();
-
-        $headers = array(
-            'Accept: application/json',
-            'Content-Type: application/json',
-        );
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
-        $result = curl_exec($ch);
-
-        $legOfGoogleRoutes = json_decode($result)->routes[0]->legs[0];
-
-        return [
-            'duration'  =>  $legOfGoogleRoutes->duration->text,
-            'distance'  =>  $legOfGoogleRoutes->distance->text,
-        ];
-    }
 }
