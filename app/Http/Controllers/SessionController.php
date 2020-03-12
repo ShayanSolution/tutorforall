@@ -621,11 +621,12 @@ class SessionController extends Controller
         $rating = '';
         $sessionDateTime = Carbon::now()->toDateTimeString();
         $data = [];
+
         if($roleId == 2){
+            //i am tutor
             $session = Session::where('tutor_id', $userId)->whereIn('status', ['booked', 'started'])->with('tutor','student')->orderBy('updated_at', 'desc')->first();
             if($session){
                 $rating = Rating::where('session_id', $session->id)->first();
-                $tutorPhone = User::where('id', $session->tutor_id)->first();
             }else{
                 return response()->json(
                     [
@@ -655,7 +656,6 @@ class SessionController extends Controller
                 //get tutor avg rating
                 $rating_sessions = Session::where('tutor_id', $session->tutor_id)->where('hourly_rate', '!=', 0)->pluck('id');
                 $tutor_rating = Rating::whereIn('session_id', $rating_sessions)->get();
-                $tutorPhone = User::where('id', $session->tutor_id)->first();
             } else {
                 return response()->json(
                     [
@@ -666,23 +666,15 @@ class SessionController extends Controller
             }
         }
 
+        $session->student->profileImage = \url("images/".$session->student->profileImage);
+        $session->tutor->profileImage = \url("images/".$session->tutor->profileImage);
+
+
         Log::info('Get latest session ID: '.$session->id);
 
         $data['program_name'] = $session->programme->name;
         $data['subject_name'] = $session->subject->name;
-        $data['tutor_name']   = $session->tutor->firstName." ".$session->tutor->lastName;
-        $data['tutor_phone']   = $tutorPhone->phone;
-        $data['device_token'] = $tutorPhone->device_token;
-        $data['latitude']     = $session->tutor->latitude;
-        $data['longitude']    = $session->tutor->longitude;
-        $data['tutor_profile_img']  = \url("images/".$session->tutor->profileImage);
-        if(isset($session->student->firstName)){
-            $data['student_name'] = $session->student->firstName." ".$session->student->lastName;
-            $data['student_profile_img']  = \url("images/".$session->student->profileImage);
-        }else{
-            $data['student_name'] = "";
-            $data['student_profile_img']  = '';
-        }
+
         if ($session->book_later_at == null){
             $data['session_type'] = 'now';
             $data['tracking_on'] = 0;
