@@ -115,18 +115,17 @@ class SendPushNotification extends Job implements ShouldQueue
 
                     $sessionData['latitude'] =  $user->latitude;
                     $sessionData['longitude'] =  $user->longitude;
-
+                    $sessionData['session_location'] = $user->address;
 
                     if($sessionType == 'later'){
                         if($user->profile){
                             if($user->profile->book_later_current_location == 0){
                                 $sessionData['latitude'] =  $user->profile->book_later_latitude;
                                 $sessionData['longitude'] =  $user->profile->book_later_longitude;
+                                $sessionData['session_location'] = $user->profile->book_later_address;
                             }
                         }
                     }
-
-                    $sessionData['session_location'] = $user->address;
                 }
                 else{
                     $sessionData['latitude'] =  $this->data['latitude'];
