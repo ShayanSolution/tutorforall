@@ -169,7 +169,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                         $bookLaterTime = Carbon::parse($lastTutorSession->book_later_at);
                         $currentTime = Carbon::parse(Carbon::now());
                         $hours = $currentTime->diffInHours($bookLaterTime);
-                        if ($hours <= $bookLaterRestriction['book_later_find_tutor_restriction_hours']) {
+                        if ($hours <= intval($bookLaterRestriction['book_later_find_tutor_restriction_hours'])) {
                             unset($result[$key]);
                         }
                     } else {

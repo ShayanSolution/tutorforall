@@ -58,7 +58,7 @@ class FindTutorController extends Controller
         $distanceInKmMax = 2;
         $currentTime = Carbon::parse(Carbon::now());
         $bookLaterRestriction = Setting::where('group_name', 'book-later-restrict-hr')->pluck('value', 'slug');
-        $bookLaterRestrictionHours = $bookLaterRestriction['book_later_find_tutor_restriction_hours'];
+        $bookLaterRestrictionHours = intval($bookLaterRestriction['book_later_find_tutor_restriction_hours']);
 
         $studentProfile = Profile::where('user_id', $request->student_id)->first();
 
