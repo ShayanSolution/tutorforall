@@ -168,7 +168,8 @@ class FindTutorController extends Controller
             ,@sum_of_students_whom_learned_individually := (SELECT COUNT(DISTINCT group_members) FROM sessions WHERE sessions.tutor_id = users.id AND sessions.`status` = 'ended' AND sessions.is_group = 0) AS `sum_of_students_whom_learned_individually`
             ,IFNULL(ROUND(@sum_of_students_whom_learned_in_group + @sum_of_students_whom_learned_individually),0) AS `experience`
             ,@rating_received := (SELECT ratings.rating FROM sessions JOIN ratings ON sessions.id = ratings.session_id WHERE sessions.student_id = $currentUserId AND sessions.tutor_id = users.id AND sessions.status = 'ended' ORDER BY ratings.rating ASC LIMIT 1)AS `rating_received`
-            ,@book_now_session_status := (select `status` from sessions where tutor_id = users.id and book_later_at is null and `STATUS` = 'booked'  order by id desc limit 1) AS `book_now_session_status`
+            ,@book_now_session_status := (select `status` from sessions where tutor_id = users.id and book_later_at is null order by id desc limit 1) AS `book_now_session_status`
+            ,@book_later_session_status := (select `status` from sessions where tutor_id = users.id and book_later_at is not null order by id desc limit 1) AS `book_later_session_status`
             ,@hours_in_session_start := (select abs(TIMESTAMPDIFF(HOUR, `book_later_at`, '$currentTime')) from sessions where tutor_id = users.id AND book_later_at IS NOT NULL ORDER BY id  DESC LIMIT 1)AS `hours_in_session_start`
             FROM `users`
             JOIN `profiles` ON users.id = profiles.user_id
@@ -187,7 +188,7 @@ class FindTutorController extends Controller
             `ratings` >= 0
             AND `experience` >= 0
             AND (`book_now_session_status` is null OR `book_now_session_status` not in ('booked','started'))
-            AND (`hours_in_session_start` is null OR `hours_in_session_start` > '$bookLaterRestrictionHours')
+            AND (book_later_session_status in ('reject','expired','ended') OR (`hours_in_session_start` is NULL  OR `hours_in_session_start` > '$bookLaterRestrictionHours'))
             AND `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin AND (`rating_received` IS NULL OR `rating_received` > 2)";
 
             Log::info($query);
