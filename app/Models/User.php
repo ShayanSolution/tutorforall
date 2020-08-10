@@ -164,18 +164,19 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             $lastTutorSession = $record->sessions()->where('tutor_id', $record->id)->orderBy('id', 'desc')->first();
             // if tutor last session is booked or started and booked later pre and post 4 hours check than exclude this tutor
             if ($lastTutorSession){
-                if ($lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started'){
-                    if ( $lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started' && $lastTutorSession->book_later_at != null){
+                // Needs to apply expired && rejected clause because these cases also didn't get request :(
+//                if ($lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started'){
+//                    if ( $lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started' && $lastTutorSession->book_later_at != null){
                         $bookLaterTime = Carbon::parse($lastTutorSession->book_later_at);
                         $currentTime = Carbon::parse(Carbon::now());
                         $hours = $currentTime->diffInHours($bookLaterTime);
                         if ($hours <= intval($bookLaterRestriction['book_later_find_tutor_restriction_hours'])) {
                             unset($result[$key]);
                         }
-                    } else {
-                        unset($result[$key]);
-                    }
-                }
+//                    } else {
+//                        unset($result[$key]);
+//                    }
+//                }
             }
 
         }
