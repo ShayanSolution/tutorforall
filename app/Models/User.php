@@ -173,6 +173,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                         if ($hours <= intval($bookLaterRestriction['book_later_find_tutor_restriction_hours'])) {
                             unset($result[$key]);
                         }
+                    } else {
+                        unset($result[$key]);
                     }
                 }
             }
