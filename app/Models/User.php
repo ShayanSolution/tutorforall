@@ -163,10 +163,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             // Check tutor last session status
             $lastTutorSession = $record->sessions()->where('tutor_id', $record->id)->orderBy('id', 'desc')->first();
             // if tutor last session is booked or started and booked later pre and post 4 hours check than exclude this tutor
-            if ($lastTutorSession){
+            if ($lastTutorSession) {
                 // Needs to apply expired && rejected clause because these cases also didn't get request :(
-                if ($lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started'){
-                    if ( $lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started' && $lastTutorSession->book_later_at != null){
+                if ($session_type == 'now') {
+                    if (($lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started') && $lastTutorSession->book_later_at == null) {
+                        unset($result[$key]);
+                    }
+                    if (($lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started') && $lastTutorSession->book_later_at != null) {
                         $bookLaterTime = Carbon::parse($lastTutorSession->book_later_at);
                         $currentTime = Carbon::parse(Carbon::now());
                         $hours = $currentTime->diffInHours($bookLaterTime);
@@ -174,12 +177,17 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                             unset($result[$key]);
                         }
                     }
-//                    else {
-//                        unset($result[$key]);
-//                    }
+                } else if ($session_type == 'later') {
+                    if (($lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started') && $lastTutorSession->book_later_at != null) {
+                        $bookLaterTime = Carbon::parse($lastTutorSession->book_later_at);
+                        $currentTime = Carbon::parse(Carbon::now());
+                        $hours = $currentTime->diffInHours($bookLaterTime);
+                        if ($hours <= intval($bookLaterRestriction['book_later_find_tutor_restriction_hours'])) {
+                            unset($result[$key]);
+                        }
+                    }
                 }
             }
-
         }
         $onlineTutorCount = count($result);
         return $onlineTutorCount;
