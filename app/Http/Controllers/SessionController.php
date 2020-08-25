@@ -425,6 +425,13 @@ class SessionController extends Controller
 
         //Book later notifications.
         if($session->book_later_at != null || $session->book_later_at != ''){
+            // tracking on for session
+            $session = Session::where('id', $sessionId)->first();
+            if ($session) {
+                $session->update([
+                    'tracking_on' => 1
+                ]);
+            }
 
             $bookLaterAt = Carbon::parse($session->book_later_at);//Carbon::createFromFormat('Y-m-d H:i:s', $session->book_later_at, env('APP_SERVER_TIMEZONE'));
 //                    $bookLaterAt->setTimezone(env('APP_TIMEZONE'));
