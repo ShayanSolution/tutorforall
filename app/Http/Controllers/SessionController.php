@@ -71,17 +71,17 @@ class SessionController extends Controller
                     $sessionDate = $user->Session_created_date;
                 }
                 if ($user_details){
-                    $trackingON = 0;
+//                    $trackingON = 0;
                     $sessionType = 'now';
                     $checkTrackingOn = $user->book_later_at;
                     if ($checkTrackingOn) {
                         $sessionType = 'later';
-                        $bookLaterTime = Carbon::parse($checkTrackingOn);
-                        $currentTime = Carbon::parse(Carbon::now());
-                        $hours = $currentTime->diffInHours($bookLaterTime);
-                        if ($hours <= 1) {
-                            $trackingON = 1;
-                        }
+//                        $bookLaterTime = Carbon::parse($checkTrackingOn);
+//                        $currentTime = Carbon::parse(Carbon::now());
+//                        $hours = $currentTime->diffInHours($bookLaterTime);
+//                        if ($hours <= 1) {
+//                            $trackingON = 1;
+//                        }
                     }
                     $tutor_sessions[] = [
                     'FullName' => $user_details->firstName.' '.$user_details->lastName,
@@ -117,7 +117,7 @@ class SessionController extends Controller
                     'hourly_rate_past_first_hour' => $user->hourly_rate_past_first_hour,
                     'book_later_at' => $user->book_later_at,
                     'session_type' => $sessionType,
-                    'tracking_on' => $trackingON,
+                    'tracking_on' => $user->tracking_on,
                     ];
                 }
 
