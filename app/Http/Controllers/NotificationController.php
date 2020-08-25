@@ -6,6 +6,7 @@ use App\Helpers\Push;
 use App\Jobs\ReachedNotification;
 use App\Models\Notification;
 use App\Models\NotificationStatus;
+use App\Models\Session;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -67,8 +68,15 @@ class NotificationController extends Controller
     public function reachedNotification(Request $request){
         $this->validate($request,[
             'device_token' => 'required',
-            'to' => 'required'
+            'to' => 'required',
+            'session_id' => 'required'
         ]);
+        $session = Session::where('id', $request->session_id)->first();
+        if ($session) {
+            $session->update([
+                'tracking_on' => 0
+            ]);
+        }
         $device_token = $request->device_token;
         $to = $request->to;
         $user = User::where('device_token', $device_token)->first();
