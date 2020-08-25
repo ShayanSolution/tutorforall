@@ -383,6 +383,9 @@ class SessionController extends Controller
                 if($session->id == $sessionId){
                     $session->status    = 'booked';
                     $session->rate      = $package_rate;
+                    if ($session->book_later_at == null) {
+                        $session->tracking_on = 1;
+                    }
                 }else
                     $session->status   =  'expired';
 
