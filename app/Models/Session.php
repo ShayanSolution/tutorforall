@@ -187,7 +187,7 @@ class Session extends Model
     }
 
     public function getTutorSessionDetail($tutor_id){
-        $tutor_session_detail = User::select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name', 'sessions.id as session_id', 'sessions.student_id'
+        $tutor_session_detail = User::select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name', 'sessions.id as session_id', 'sessions.student_id','sessions.tracking_on'
                                     ,'sessions.book_later_at','sessions.session_location','rate','sessions.hourly_rate','sessions.hourly_rate_past_first_hour','sessions.duration' ,'sessions.status as session_status', 'sessions.is_group as session_is_group'
                                     , 'sessions.is_home as session_is_home', 'sessions.latitude as session_latitude', 'sessions.longitude as session_longitude', 'sessions.group_members as session_group_members'
                                     ,'subjects.name as s_name','sessions.student_id as session_user_id'
@@ -208,7 +208,7 @@ class Session extends Model
         $session_detail=[];
         $index = 0;
         foreach ($tutor_session_detail as $session){
-            $trackingON = 0;
+//            $trackingON = 0;
             $student_detail = User::where('id',$session->student_id)->first();
             $wallet = Wallet::where(['session_id'=>$session->session_id, 'type'=>'debit'])->first();
             if($wallet){
@@ -217,16 +217,16 @@ class Session extends Model
             if($session->book_later_at != null || $session->book_later_at != ''){
                 $sessionDate = $session->book_later_at;
                 $sessionType = 'later';
-                $bookLaterTime = Carbon::parse($sessionDate);
-                $currentTime = Carbon::parse(Carbon::now());
-                $hours = $currentTime->diffInHours($bookLaterTime);
-                if ($hours <= 1) {
-                    $trackingON = 1;
-                }
+//                $bookLaterTime = Carbon::parse($sessionDate);
+//                $currentTime = Carbon::parse(Carbon::now());
+//                $hours = $currentTime->diffInHours($bookLaterTime);
+//                if ($hours <= 1) {
+//                    $trackingON = 1;
+//                }
             }else{
                 $sessionDate = $session->Session_created_date;
                 $sessionType = 'now';
-                $trackingON = 0;
+//                $trackingON = 0;
             }
             $session_detail[$index]['session_id'] = $session->session_id;
             $session_detail[$index]['session_status'] = $session->session_status;
@@ -260,7 +260,7 @@ class Session extends Model
             $session_detail[$index]['Profile_image'] = !empty($student_detail->profileImage)?URL::to('/images').'/'.$student_detail->profileImage:'';
             $session_detail[$index]['book_later_at'] = $session->book_later_at;
             $session_detail[$index]['session_type'] = $sessionType;
-            $session_detail[$index]['tracking_on'] = $trackingON;
+            $session_detail[$index]['tracking_on'] = $session->tracking_on;
 
             $index++;
         }
@@ -269,7 +269,7 @@ class Session extends Model
     }
     
     public function getStudentSessionDetail($student_id){
-        $student_session_detail = User::select('users.*', 'sessions.created_at as Session_created_date','sessions.longitude','sessions.latitude','sessions.hourly_rate','sessions.hourly_rate_past_first_hour','sessions.session_location','rate','sessions.duration'
+        $student_session_detail = User::select('users.*', 'sessions.created_at as Session_created_date','sessions.longitude','sessions.latitude','sessions.hourly_rate','sessions.tracking_on','sessions.hourly_rate_past_first_hour','sessions.session_location','rate','sessions.duration'
                                         ,'sessions.book_later_at','sessions.status as session_status','subjects.name as s_name', 'programmes.name as p_name','sessions.tutor_id as session_user_id','sessions.id as session_id'
                                         ,'sessions.is_home as session_is_home', 'sessions.is_group as session_is_group', 'sessions.group_members as session_group_members'
                                         ,'ratings.rating as session_rating','ratings.review as session_review')
