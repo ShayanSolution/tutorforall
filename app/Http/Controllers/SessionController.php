@@ -687,16 +687,17 @@ class SessionController extends Controller
 
         if ($session->book_later_at == null){
             $data['session_type'] = 'now';
-            $data['tracking_on'] = 0;
+            $data['tracking_on'] = $session->tracking_on;
         } else {
             $data['session_type'] = 'later';
-            $bookLaterTime = Carbon::parse($session->book_later_at);
-            $currentTime = Carbon::parse(Carbon::now());
-            $hours = $currentTime->diffInHours($bookLaterTime);
-            $data['tracking_on'] = 0;
-            if ($hours <= 1) {
-                $data['tracking_on'] = 1;
-            }
+            $data['tracking_on'] = $session->tracking_on;
+//            $bookLaterTime = Carbon::parse($session->book_later_at);
+//            $currentTime = Carbon::parse(Carbon::now());
+//            $hours = $currentTime->diffInHours($bookLaterTime);
+//            $data['tracking_on'] = 0;
+//            if ($hours <= 1) {
+//                $data['tracking_on'] = 1;
+//            }
         }
         $data['dateTime'] = $sessionDateTime;
         if($roleId == 3) {
