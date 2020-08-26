@@ -699,6 +699,7 @@ class SessionController extends Controller
 //                $data['tracking_on'] = 1;
 //            }
         }
+        $data['start_session_enable'] = $session->start_session_enable;
         $data['dateTime'] = $sessionDateTime;
         if($roleId == 3) {
             $data['tutor_rating'] = number_format((float)$tutor_rating->avg('rating'), 1, '.', '');
