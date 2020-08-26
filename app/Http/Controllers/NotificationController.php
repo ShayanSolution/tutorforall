@@ -74,7 +74,8 @@ class NotificationController extends Controller
         $session = Session::where('id', $request->session_id)->first();
         if ($session) {
             $session->update([
-                'tracking_on' => 0
+                'tracking_on' => 0,
+                'start_session_enable' => 1
             ]);
         }
         $device_token = $request->device_token;
