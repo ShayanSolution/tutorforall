@@ -188,7 +188,7 @@ class Session extends Model
     }
 
     public function getTutorSessionDetail($tutor_id){
-        $tutor_session_detail = User::select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name', 'sessions.id as session_id', 'sessions.student_id','sessions.tracking_on'
+        $tutor_session_detail = User::select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name', 'sessions.id as session_id', 'sessions.student_id','sessions.tracking_on','sessions.start_session_enable'
                                     ,'sessions.book_later_at','sessions.session_location','rate','sessions.hourly_rate','sessions.hourly_rate_past_first_hour','sessions.duration' ,'sessions.status as session_status', 'sessions.is_group as session_is_group'
                                     , 'sessions.is_home as session_is_home', 'sessions.latitude as session_latitude', 'sessions.longitude as session_longitude', 'sessions.group_members as session_group_members'
                                     ,'subjects.name as s_name','sessions.student_id as session_user_id'
@@ -262,6 +262,7 @@ class Session extends Model
             $session_detail[$index]['book_later_at'] = $session->book_later_at;
             $session_detail[$index]['session_type'] = $sessionType;
             $session_detail[$index]['tracking_on'] = $session->tracking_on;
+            $session_detail[$index]['start_session_enable'] = $session->start_session_enable;
 
             $index++;
         }
