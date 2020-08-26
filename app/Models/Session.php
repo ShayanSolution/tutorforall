@@ -34,7 +34,8 @@ class Session extends Model
         'session_sent_group',
         'hourly_rate_past_first_hour',
         'original_hourly_rate',
-        'tracking_on'
+        'tracking_on',
+        'start_session_enable'
     ];
 
     public function student()
