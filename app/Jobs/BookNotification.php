@@ -92,7 +92,8 @@ class BookNotification extends Job implements ShouldQueue
             'dateTime' => $sessionDateTime,
             'date' => $dateTime[0],
             'time' => date("g:i a", strtotime($dateTime[1])),
-            'session_type' => $sessionType
+            'session_type' => $sessionType,
+            'tracking_on' => $session->tracking_on
         );
 
         Push::handle($title, $body, $customData, $student);
