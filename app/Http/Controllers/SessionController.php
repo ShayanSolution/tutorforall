@@ -383,7 +383,7 @@ class SessionController extends Controller
                 if($session->id == $sessionId){
                     $session->status    = 'booked';
                     $session->rate      = $package_rate;
-                    if ($session->book_later_at == null) {
+                    if (is_null($session->book_later_at)) {
                         $session->tracking_on = 1;
                     }
                 }else
