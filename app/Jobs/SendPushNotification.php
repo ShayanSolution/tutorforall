@@ -100,6 +100,7 @@ class SendPushNotification extends Job implements ShouldQueue
                 //From Android
                 if(isset($this->data['book_type']) && $this->data['book_type'] == 'later'){
                     $sessionData['book_later_at'] = $this->data['session_time'];
+                    $sessionDateTime = $sessionData['book_later_at'];
                     $dateTime = explode(" ",$sessionData['book_later_at']);
                     $sessionType = 'later';
                 }
