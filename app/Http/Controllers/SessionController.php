@@ -634,7 +634,7 @@ class SessionController extends Controller
 
         if($roleId == 2){
             //i am tutor
-            $session = Session::where('tutor_id', $userId)->whereIn('status', ['booked', 'started'])->with('tutor','student')->orderBy('updated_at', 'desc')->first();
+            $session = Session::where('tutor_id', $userId)->whereIn('status', ['booked', 'started'])->with('tutor','student')->orderBy('updated_at', 'asc')->first();
             if($session){
                 $rating = Rating::where('session_id', $session->id)->first();
             }else{
@@ -647,11 +647,11 @@ class SessionController extends Controller
             }
             
         } else {
-            $session = Session::where('student_id', $userId)->whereIn('status', ['booked', 'started', 'ended'])->with('tutor','student')->orderBy('updated_at', 'desc')->first();
+            $session = Session::where('student_id', $userId)->whereIn('status', ['booked', 'started', 'ended'])->with('tutor','student')->orderBy('updated_at', 'asc')->first();
             if($session) {
                 $rating = Rating::where('session_id', $session->id)->first();
                 if ($rating != null){
-                    $session = Session::where('student_id', $userId)->whereIn('status', ['booked', 'started'])->with('tutor','student')->orderBy('updated_at', 'desc')->first();
+                    $session = Session::where('student_id', $userId)->whereIn('status', ['booked', 'started'])->with('tutor','student')->orderBy('updated_at', 'asc')->first();
                     if ($session){
                         $rating = null;
                     } else {
