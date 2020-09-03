@@ -44,7 +44,13 @@ class BookLaterStudentNotification extends Job implements ShouldQueue
         $subject = Subject::find($session->subject_id);
 
         if(!empty($student->device_token)){
-
+//             tracking on for session
+            $session = Session::where('id', $session->id)->first();
+            if ($session) {
+                $session->update([
+                    'tracking_on' => 1
+                ]);
+            }
             $title = Config::get('user-constants.APP_NAME');
             $body = 'Your session will start with '.$tutor->firstName.' '.$tutor->lastName.' in an hour.';
             //get tutor device token
