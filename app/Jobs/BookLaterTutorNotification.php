@@ -49,6 +49,13 @@ class BookLaterTutorNotification extends Job implements ShouldQueue
         $subject = Subject::find($session->subject_id);
 
         if(!empty($tutor->device_token)){
+            //             tracking on for session
+            $session = Session::where('id', $session->id)->first();
+            if ($session) {
+                $session->update([
+                    'tracking_on' => 1
+                ]);
+            }
             //notification message
             $customData = array(
                 'notification_type' => 'book_later_alert_notification',
