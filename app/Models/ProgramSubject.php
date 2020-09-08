@@ -46,7 +46,7 @@ class ProgramSubject extends Model
 
         // @todo after M-3 release uper code comment and down code uncomment
         $subjects = [];
-        $programSubjects = $this->where('user_id', $userId)->with('program', 'subject')->get();
+        $programSubjects = $this->where('user_id', $userId)->where('status', self::STATUS_ACCEPTED)->with('program', 'subject')->get();
         foreach ($programSubjects as $programSubject){
             if (!key_exists($programSubject->program->name, $subjects))
                 $subjects[$programSubject->program->name] = '';
