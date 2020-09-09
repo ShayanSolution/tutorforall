@@ -274,6 +274,9 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     Route::post('/notification_read_status', 'NotificationController@notificationReadStatus');
     //tutor reached notification
     Route::post('/reached_notification', 'NotificationController@reachedNotification');
+    // Search location
+    Route::post('/search_location', 'SearchLocationController@createSearchLocation');
+    Route::get('/get_search_location/{id}', 'SearchLocationController@getSearchLocation');
 });
 
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');
