@@ -51,22 +51,13 @@ class SearchLocationController extends Controller
         $user = Auth::user($id);
         if ($user) {
             $searchLocations = $this->searchLocationInterface->locations($id);
-            if ($searchLocations) {
-                return response()->json(
-                    [
-                        'status' => 'success',
-                        'message' => 'Search Location',
-                        'data' => $searchLocations,
-                    ], 200
-                );
-            } else {
-                return response()->json(
-                    [
-                        'status' => 'error',
-                        'message' => 'Search location error'
-                    ], 422
-                );
-            }
+            return response()->json(
+                [
+                    'status' => 'success',
+                    'message' => 'Search Location',
+                    'data' => $searchLocations,
+                ], 200
+            );
         } else {
             return response()->json(
                 [
