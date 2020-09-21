@@ -112,6 +112,7 @@ $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(\SwaggerLume\ServiceProvider::class);
 $app->register('Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider');
 $app->register(\LaravelFCM\FCMServiceProvider::class);
+$app->register(Jcf\Geocode\GeocodeServiceProvider::class);
 
 LumenPassport::routes($app);
 
