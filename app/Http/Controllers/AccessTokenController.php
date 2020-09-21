@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Repositories\Contracts\UserRepository;
+use Carbon\Carbon;
 
 class AccessTokenController extends Controller
 {
@@ -48,7 +49,11 @@ class AccessTokenController extends Controller
         if($user->is_active == 0){
             return response()->json(['error'=>'error', 'message'=>'Unauthorized'], 401);
         }
-
+        // last login update column
+        $user_id =  $user->id;
+        User::where('id', $user_id)->update([
+            'last_login'=> Carbon::now()
+        ]);
         $roleInMessage = $request->role_id == 2 ? 'Tutor' : 'Student';
 
 //        if($user->role_id != $request->role_id)
