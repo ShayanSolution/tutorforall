@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LastLogin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Repositories\Contracts\UserRepository;
@@ -49,10 +50,15 @@ class AccessTokenController extends Controller
         if($user->is_active == 0){
             return response()->json(['error'=>'error', 'message'=>'Unauthorized'], 401);
         }
-        // last login update column
+        // last login update column and entry in lasat logins table
         $user_id =  $user->id;
+        $role_id =  $user->role_id;
         User::where('id', $user_id)->update([
             'last_login'=> Carbon::now()
+        ]);
+        LastLogin::create([
+            'user_id' =>  $user_id,
+            'role_id' => $role_id
         ]);
         $roleInMessage = $request->role_id == 2 ? 'Tutor' : 'Student';
 
