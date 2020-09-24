@@ -35,7 +35,11 @@ class Session extends Model
         'hourly_rate_past_first_hour',
         'original_hourly_rate',
         'tracking_on',
-        'start_session_enable'
+        'start_session_enable',
+        'area',
+        'city',
+        'province',
+        'country',
     ];
 
     public function student()
