@@ -346,7 +346,16 @@ class AuthenticationController extends Controller
         $user = User::where('id', '=', $user_id)->first();
         if($user){
             $location = User::updateTutorLocation($user_id,$longitude,$latitude, $address);
-            $geoReverseCoding = ReverseGeocode::reverseGeoCoding($latitude, $longitude, $user_id);
+            $geoReverseCoding = ReverseGeocode::reverseGeoCoding($latitude, $longitude);
+            if($geoReverseCoding){
+                $user->update([
+                    'area' => $geoReverseCoding['full_area'],
+                    'city' => $geoReverseCoding['city'],
+                    'province' => $geoReverseCoding['province'],
+                    'country' => $geoReverseCoding['country'],
+                    'reverse_geocode_address' => $geoReverseCoding['reverse_geocode_address'],
+                ]);
+            }
         }else{
 
             return response()->json(
