@@ -147,7 +147,7 @@ class SendPushNotification extends Job implements ShouldQueue
                     $sessionData['city'] = $geoReverseCoding['city'];
                     $sessionData['province'] = $geoReverseCoding['province'];
                     $sessionData['country'] = $geoReverseCoding['country'];
-                    $sessionData['reverse_geocode_address'] = $geoReverseCoding['reverse_geocode_address'];
+                    $sessionData['session_location'] = $geoReverseCoding['reverse_geocode_address'];
                 }
                 $sessionRequest = Session::create($sessionData);
                 //$session = new Session();
