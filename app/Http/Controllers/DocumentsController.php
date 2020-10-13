@@ -41,6 +41,7 @@ class DocumentsController extends Controller
         }
 
         $tutorId = Auth::user()->id;
+        // CNIC Front & Back
         if ($request->document_type == "cnic_front" || $request->document_type == "cnic_back"){
 
             if ($request->title == "CNIC Front" || $request->title == "Front Side"){
@@ -67,8 +68,29 @@ class DocumentsController extends Controller
                 'status'    =>  'success',
                 'message'   =>  'Document uploaded successfully!'
             ], 201);
-
-        } else {
+        }
+        // Profile Photo
+        elseif ($request->document_type == "profile_photo"){
+            $profilePhotoProgram = Programme::where('name', '=', 'ProfilePhoto')->first();
+            $profilePhotoSubject = Subject::where('programme_id', $profilePhotoProgram->id)->first();
+            $docCreatedId = $this->createDocument($request, $tutorId);
+            ProgramSubject::create([
+                'program_id' => $profilePhotoProgram->id,
+                'subject_id' => $profilePhotoSubject->id,
+                'user_id' => Auth::user()->id,
+                'document_id' => $docCreatedId,
+                'status' => 2,
+                'verified_by' => null,
+                'verified_at' => null,
+                'rejection_reason' => null
+            ]);
+            return response()->json([
+                'status'    =>  'success',
+                'message'   =>  'Profile Photo uploaded successfully!'
+            ], 201);
+        }
+        // Documents
+        else {
             $programId = Programme::where('name', '=', $request->title)->first();
             $docCreatedId = $this->createDocument($request, $tutorId);
             $tutorClassesSubjects = ProgramSubject::where('user_id', $tutorId)->where('program_id', $programId->id)->get();
@@ -78,7 +100,6 @@ class DocumentsController extends Controller
                     ProgramSubject::where('id', $classesSubject->id)->update(['document_id' => $docCreatedId]);
                 }
             }
-
             return response()->json([
                 'status'    =>  'success',
                 'message'   =>  'Document uploaded successfully!'
