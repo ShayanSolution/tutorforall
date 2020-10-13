@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 use App\Helpers\Push;
+use App\Helpers\ReverseGeocode;
 use App\Services\DistanceAndTimeOnRoute;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -139,7 +140,15 @@ class SendPushNotification extends Job implements ShouldQueue
                         $sessionData['session_location'] = '';
                     }
                 }
-
+                //reverse geocoding
+                $geoReverseCoding = ReverseGeocode::reverseGeoCoding($sessionData['latitude'], $sessionData['longitude']);
+                if($geoReverseCoding){
+                    $sessionData['area'] = $geoReverseCoding['full_area'];
+                    $sessionData['city'] = $geoReverseCoding['city'];
+                    $sessionData['province'] = $geoReverseCoding['province'];
+                    $sessionData['country'] = $geoReverseCoding['country'];
+                    $sessionData['session_location'] = $geoReverseCoding['reverse_geocode_address'];
+                }
                 $sessionRequest = Session::create($sessionData);
                 //$session = new Session();
                 //$sessionRequest = $session->createOrUpdateSession($sessionData);
