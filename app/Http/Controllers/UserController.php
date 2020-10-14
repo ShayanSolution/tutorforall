@@ -326,6 +326,8 @@ class UserController extends Controller
                 'book_later_latitude' => $user->book_later_latitude,
                 'book_later_address' => $user->book_later_address,
                 'book_later_current_location' => $user->book_later_current_location,
+                'is_hourly' => $user->is_hourly,
+                'is_monthly' => $user->is_monthly,
             );
             return $profile;
         }
@@ -617,13 +619,30 @@ class UserController extends Controller
             'is_book_later' => 'required',
             'is_book_now' => 'required',
             'book_later_current_location' => 'required',
+            'is_hourly' => 'required',
+            'is_monthly' => 'required',
         ]);
         $data = $request->all();
         $profile = new Profile();
         $update_profile = $profile->updateUserProfile(
             $data['tutor_id'],
             $request->only([
-                    'is_home', 'is_group', 'is_mentor', 'teach_to', 'call_student', 'one_on_one', 'min_slider_value', 'max_slider_value', 'book_later_longitude', 'book_later_latitude', 'is_book_later', 'is_book_now', 'book_later_address', 'book_later_current_location'
+                'is_home',
+                'is_group',
+                'is_mentor',
+                'teach_to',
+                'call_student',
+                'one_on_one',
+                'min_slider_value',
+                'max_slider_value',
+                'book_later_longitude',
+                'book_later_latitude',
+                'is_book_later',
+                'is_book_now',
+                'book_later_address',
+                'book_later_current_location',
+                'is_hourly',
+                'is_monthly'
                 ])
         );
         User::where('id','=',$request->tutor_id)->update([
