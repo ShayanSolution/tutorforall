@@ -112,6 +112,30 @@ class AuthenticationController extends Controller
         }
     }
 
+    public function generateRandomCodeAndSendThroughEmail($phone, $phoneCode = null, $roleId, $userEmail, $userFirstName, $userLastName){
+        $code = $this->generateRandomCode();
+        $toNumber = $this->sanitizePhoneNumber($phone);
+        $subject = env("MAIL_SUBJECT", "Verification Code is: ");
+        // Email with verification code
+        $data['code'] = $code;
+        $data['userFirstName'] = $userFirstName;
+        $data['userLastName'] = $userLastName;
+        Mail::send('emails.resetpassword', $data, function($message) use ($userEmail, $subject, $userFirstName, $userLastName) {
+            $message->to($userEmail, $userFirstName." ".$userLastName)->subject($subject);
+        });
+        //save code in DB
+        $phoneCode = new PhoneCode();
+        $phoneCode->phone  = $toNumber;
+        $phoneCode->code = $code;
+        $phoneCode->save();
+
+        return JsonResponse::generateResponse(
+            [
+                'status' => 'success',
+                'message' => 'Phone code created successfully'
+            ],200
+        );
+    }
 
     public function generateRandomCode($digits = 4){
         return rand(pow(10, $digits-1), pow(10, $digits)-1);
@@ -475,8 +499,14 @@ class AuthenticationController extends Controller
 
         if($isEligibleOrNot['status'] == 'error')
             return response()->json($isEligibleOrNot);
-
-        return $this->generateRandomCodeAndSendThroughTwilio($phone, $phoneCode = null, $roleId);
+        if ($isEligibleOrNot['is_approved'] == 0) {
+            $userEmail = $isEligibleOrNot['user_email'];
+            $userFirstName = $isEligibleOrNot['user_first_name'];
+            $userLastName = $isEligibleOrNot['user_last_name'];
+            return $this->generateRandomCodeAndSendThroughEmail($phone, $phoneCode = null, $roleId, $userEmail, $userFirstName, $userLastName);
+        } else {
+            return $this->generateRandomCodeAndSendThroughTwilio($phone, $phoneCode = null, $roleId);
+        }
     }
 
     public function resetPassword(Request $request){

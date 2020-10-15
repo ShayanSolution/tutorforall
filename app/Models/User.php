@@ -523,7 +523,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
         return [
             'status'    =>  'success',
-            'message'   =>  'Eligible to request for reset password'
+            'message'   =>  'Eligible to request for reset password',
+            'is_approved' => $user->is_approved,
+            'user_email' => $user->email,
+            'user_first_name' => $user->firstName,
+            'user_last_name' => $user->lastName
         ];
     }
 
