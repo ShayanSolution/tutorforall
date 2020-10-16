@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\User;
 use App\Models\Document;
 use App\Models\Programme;
 use App\Models\ProgramSubject;
@@ -295,5 +295,23 @@ class DocumentsController extends Controller
             'accessPath'    =>  $fullyQualifiedPath,
             'storagePath'   =>  $storagePath
         ];
+    }
+
+    public function allDocumentsSubmitted(Request $request) {
+        $userId = Auth::user()->id;
+        if ($userId) {
+            User::where('id', $userId)->update([
+                'is_documents_uploaded' => 1
+            ]);
+            return response()->json([
+                'status'    =>  'success',
+                'message'   =>  "All documents uploaded successfully"
+            ]);
+        } else {
+            return response()->json([
+                'status'    =>  'error',
+                'message'   =>  "Some thing went wrong No user found"
+            ]);
+        }
     }
 }

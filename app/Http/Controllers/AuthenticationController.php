@@ -539,4 +539,58 @@ class AuthenticationController extends Controller
         return response()->json(['status'=>'success', 'message'=>'Password updated successfully']);
 
     }
+
+    public function getFinalVerificationCode(Request $request){
+        $this->validate($request,[
+            'phone' => 'required|digits_between:11,20',
+            'role_id'=> 'required'
+        ]);
+        $userId = Auth::user()->id;
+        $phone = $request->phone;
+        $roleId = $request->role_id;
+        // check phone number exist
+        $user = new User;
+        $phoneExist = $user->findByExactPhoneNumber($phone, $roleId);
+        if ($phoneExist && $phoneExist->id != $userId) {
+            return JsonResponse::generateResponse([
+                'status' => 'error',
+                'message' => 'This phone number have already active account. Please use another phone number.'
+            ],500);
+        }
+        // update phone number
+        User::where('id', $userId)->update([
+            'phone' => $phone,
+        ]);
+        // send SMS
+        return $this->generateRandomCodeAndSendThroughTwilio($phone, $phoneCode = null,$roleId);
+    }
+
+    public function postVerifyFinalVerificationCode(Request $request){
+        $this->validate($request,[
+            'phone' => 'required_without:|digits_between:11,20',
+            'code' => 'required_without:|digits:4',
+        ]);
+        $userId = Auth::user()->id;
+        $request = $request->all();
+        $phone_code = new PhoneCode();
+        $phone_verified = $phone_code->verifyPhoneCode($request);
+        if ($phone_verified){
+            User::where('id', $userId)->update([
+                'final_phone_verification' => 1,
+            ]);
+            return JsonResponse::generateResponse(
+                [
+                    'status'    =>  'success',
+                    'message'   =>  'Phone code verified successfully!'
+                ],200
+            );
+        }else{
+            return JsonResponse::generateResponse(
+                [
+                    'status'    => 'error',
+                    'message'   => 'Unable to verify phone number'
+                ],500
+            );
+        }
+    }
 }

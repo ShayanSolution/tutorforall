@@ -69,7 +69,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'last_login',
         'area',
         'province',
-        'reverse_geocode_address'
+        'reverse_geocode_address',
+        'final_phone_verification',
+        'is_documents_uploaded',
     ];
 
     public static function findOnlineTutors($request, $hourlyRate){

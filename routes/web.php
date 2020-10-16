@@ -167,6 +167,10 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     $router->get('tutors-documents-list', 'DocumentsController@tutorsDocsList');
     $router->post('delete-tutors-document', 'DocumentsController@deleteTutorsDoc');
     $router->post('update-tutors-document', 'DocumentsController@updateTutorsDoc');
+    $router->post('all-documents-submitted', 'DocumentsController@allDocumentsSubmitted');
+
+    $router->get('get-final-verification-code', 'AuthenticationController@getFinalVerificationCode');
+    $router->post('verify-final-verification-code', 'AuthenticationController@postVerifyFinalVerificationCode');
 
     $router->post('add-tutors-classes-and-subjects', 'ProgrammeSubjectController@addTutorsClassesAndSubjects');
 
