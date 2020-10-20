@@ -118,6 +118,7 @@ class SessionController extends Controller
                     'hourly_rate_past_first_hour' => $user->hourly_rate_past_first_hour,
                     'book_later_at' => $user->book_later_at,
                     'session_type' => $sessionType,
+                    'is_hourly' => $user->is_hourly,
                     'tracking_on' => $user->tracking_on,
                     ];
                 }
