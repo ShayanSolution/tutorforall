@@ -85,6 +85,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $experience = $request['experience'];
         $gender_id = $request['gender_id'];
         $session_type = $request['session_type'];
+        $is_hourly = $request['is_hourly'];
 //        $latitude = $request['latitude'];
 //        $longitude = $request['longitude'];
         $bookLaterRestriction = Setting::where('group_name', 'book-later-restrict-hr')->pluck('value', 'slug');
@@ -146,6 +147,20 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 return $q->where('is_book_later',  1);
             });
         }
+
+        // check tutor settings fo hourly or monthly
+        if ($is_hourly == 1){
+            $queryBuilder = $queryBuilder->whereHas('profile', function($q)
+            {
+                return $q->where('is_hourly',  1);
+            });
+        } else {
+            $queryBuilder = $queryBuilder->whereHas('profile', function($q)
+            {
+                return $q->where('is_monthly',  1);
+            });
+        }
+
         // check tutor distance
 //        $queryBuilder = $queryBuilder->selectRaw(" @distance_check := ((6371 * ACOS (COS (RADIANS( $latitude )) * COS(RADIANS(`users`.`latitude`)) * COS(RADIANS(`users`.`longitude`) - RADIANS($longitude)) + SIN (RADIANS($latitude)) * SIN(RADIANS(`users`.`latitude`)))) as distance");
 //        $queryBuilder->havingRaw('distance' <= 12);
