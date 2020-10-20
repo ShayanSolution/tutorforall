@@ -7,6 +7,7 @@ use App\Exceptions\CouldNotMarkSessionAsBooked;
 use App\Exceptions\SessionBookedStartedOrEnded;
 use App\Exceptions\SessionExpired;
 use App\Jobs\BookNotification;
+use App\Jobs\CancelledSessionNotification;
 use App\Jobs\SendNotificationOfCalculationCost;
 use App\Models\Setting;
 use App\Services\CostCalculation\SessionCost;
@@ -725,15 +726,30 @@ class SessionController extends Controller
 
     public function cancelSession(Request $request){
         $this->validate($request, [
-            'session_id' => 'required'
+            'session_id' => 'required',
+            'cancelled_from' => 'required'
         ]);
         $userId = Auth::user()->id;
         $session = Session::where('id', $request->session_id)->first();
+        $studentId = $session->student_id;
+        $tutorId = $session->tutor_id;
+        $cancelledFrom = $request->cancelled_from;
         if ($session){
             $session->update([
                 'status' => 'cancelled',
-                'cancelled_by' => $userId
+                'cancelled_by' => $userId,
+                'cancelled_from' => $cancelledFrom,
             ]);
+            if ($cancelledFrom == 'tutor') {
+                //send cancelled notification to student
+                $job = new CancelledSessionNotification($studentId, $cancelledFrom);
+                dispatch($job);
+            } else {
+                //send cancelled notification to tutor
+                $job = new CancelledSessionNotification($tutorId, $cancelledFrom);
+                dispatch($job);
+            }
+
             return response()->json([
                 'status' => 'success',
                 'messages' => 'Session cancelled successfully'

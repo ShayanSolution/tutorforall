@@ -40,7 +40,8 @@ class Session extends Model
         'city',
         'province',
         'country',
-        'cancelled_by'
+        'cancelled_by',
+        'cancelled_from'
     ];
 
     public function student()
