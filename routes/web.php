@@ -281,6 +281,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     // Search location
     Route::post('/search_location', 'SearchLocationController@createSearchLocation');
     Route::get('/get_search_location/{id}', 'SearchLocationController@getSearchLocation');
+    // Cancel Session
+    Route::post('/cancel_session', 'SessionController@cancelSession');
 });
 
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');

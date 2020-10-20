@@ -722,5 +722,28 @@ class SessionController extends Controller
             );
         }
     }
+
+    public function cancelSession(Request $request){
+        $this->validate($request, [
+            'session_id' => 'required'
+        ]);
+        $userId = Auth::user()->id;
+        $session = Session::where('id', $request->session_id)->first();
+        if ($session){
+            $session->update([
+                'status' => 'cancelled',
+                'cancelled_by' => $userId
+            ]);
+            return response()->json([
+                'status' => 'success',
+                'messages' => 'Session cancelled successfully'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'messages' => 'Session not found'
+            ]);
+        }
+    }
     
 }
