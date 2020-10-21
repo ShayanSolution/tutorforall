@@ -80,6 +80,7 @@ class SendPushNotification extends Job implements ShouldQueue
                 $sessionData['original_hourly_rate'] = $this->data['original_hourly_rate'];
                 $sessionData['hourly_rate_past_first_hour'] = $this->data['hourly_rate_past_first_hour'];
                 $sessionData['is_home'] = $this->data['is_home'];
+                $sessionData['is_hourly'] = $this->data['is_hourly'];
                 $sessionDateTime = Carbon::now()->toDateTimeString();
                 $dateTime = explode(" ",$sessionDateTime);
                 $sessionType = 'now';
@@ -189,7 +190,8 @@ class SendPushNotification extends Job implements ShouldQueue
                     'Profile_Image' => !empty($this->student->profileImage)?env('ASSET_BASE_URL').'/images/'.$this->student->profileImage:'',
                     'session_sent_group' => $sessionData['session_sent_group'],
                     'distance' => $distanceAndTime['distance'],
-                    'session_type' => $sessionType
+                    'session_type' => $sessionType,
+                    'is_hourly' => $sessionData['is_hourly']
                 );
 
                 $this->slackLog($user, env('TOOTAR_LOGGER_WEBHOOK_SLACK'));

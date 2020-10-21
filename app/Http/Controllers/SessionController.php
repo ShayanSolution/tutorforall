@@ -190,7 +190,8 @@ class SessionController extends Controller
                     'SessionLocation' => is_null($tutor->session_location)?'':$tutor->session_location,
                     'HourlyRate' => $tutor->hourly_rate,
                     'Hour' => $tutor->duration,
-                    'Profile_image'=>!empty($student->profileImage)?URL::to('/images').'/'.$student->profileImage:''
+                    'Profile_image'=>!empty($student->profileImage)?URL::to('/images').'/'.$student->profileImage:'',
+                    'is_hourly' => $tutor->is_hourly
                 ];
             }
 

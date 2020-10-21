@@ -29,7 +29,8 @@ class FindTutorController extends Controller
             'one_on_one' => 'required',
             'book_type'=>'required',
             'experience' => 'required',
-            'category_id' => 'required'
+            'category_id' => 'required',
+            'is_hourly' => 'required'
         ]);
         //@todo add validation check for studyFrom
         //@todo receive experience info
@@ -54,6 +55,7 @@ class FindTutorController extends Controller
         $originalHourlyRatePastFirstHour = $request->hourly_rate_past_first_hour;
         $bookType = $request->book_type;
         $sessionTime = $request->session_time;
+        $isHourly = $request->is_hourly;
         $distanceInKmMin = 0;
         $distanceInKmMax = 2;
         $currentTime = Carbon::parse(Carbon::now());
@@ -221,6 +223,7 @@ class FindTutorController extends Controller
                     'book_type'=>$bookType,
                     'session_time'=>$sessionTime,
                     'distance'=>$distanceInKms.' km',
+                    'is_hourly' => $isHourly
                 ];
                 // dd($params);
                 $request->request->add($params);
