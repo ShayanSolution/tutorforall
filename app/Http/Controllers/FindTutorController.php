@@ -36,6 +36,16 @@ class FindTutorController extends Controller
         //@todo receive experience info
         //@todo receive category_id / skill level
 
+        //Check monthly or hourly session
+        $getIsHourly = $request->is_hourly;
+        if ($getIsHourly == 1){
+            $isHourly = 1;
+            $isMonthly = 0;
+        } else {
+            $isHourly = 0;
+            $isMonthly = 1;
+        }
+
         $currentUserId = Auth::user()->id;
         $categoryId = $request->category_id;
         $experience = $request->experience;
@@ -55,7 +65,6 @@ class FindTutorController extends Controller
         $originalHourlyRatePastFirstHour = $request->hourly_rate_past_first_hour;
         $bookType = $request->book_type;
         $sessionTime = $request->session_time;
-        $isHourly = $request->is_hourly;
         $distanceInKmMin = 0;
         $distanceInKmMax = 2;
         $currentTime = Carbon::parse(Carbon::now());
@@ -182,6 +191,7 @@ class FindTutorController extends Controller
                 AND profiles.is_mentor = '$isMentor'
                 AND ((profiles.is_home = '$isHome' AND profiles.call_student = '$callStudent') OR (profiles.is_home = '1' AND profiles.call_student = '1'))
                 AND ((profiles.is_group = '$studentIsGroup' AND profiles.one_on_one = '$oneOnOne') OR (profiles.is_group = '1' AND profiles.one_on_one = '1'))
+                AND ((profiles.is_hourly = '$isHourly' AND profiles.is_monthly = '$isMonthly') OR (profiles.is_hourly = '1' AND profiles.is_monthly = '1'))
                 $genderMatchingQuery
                 AND $bookTypeColumnName = 1
                 AND (profiles.min_slider_value <= '$hourlyRate' AND profiles.max_slider_value >= '$hourlyRate')
@@ -191,7 +201,7 @@ class FindTutorController extends Controller
             AND `experience` >= 0
             AND (`book_now_session_status` is null OR `book_now_session_status` not in ('booked','started'))
             AND (book_later_session_status in ('reject','expired','ended') OR (`hours_in_session_start` is NULL  OR `hours_in_session_start` > '$bookLaterRestrictionHours'))
-            AND `distance` < $distanceInKmMax AND `distance` > $distanceInKmMin AND (`rating_received` IS NULL OR `rating_received` > 2)";
+            AND `distance` < $distanceInKmMax AND `distance` >= $distanceInKmMin AND (`rating_received` IS NULL OR `rating_received` > 2)";
 
             Log::info($query);
 

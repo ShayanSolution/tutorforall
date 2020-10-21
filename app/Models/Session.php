@@ -41,7 +41,8 @@ class Session extends Model
         'province',
         'country',
         'cancelled_by',
-        'cancelled_from'
+        'cancelled_from',
+        'is_hourly'
     ];
 
     public function student()

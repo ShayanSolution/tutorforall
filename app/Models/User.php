@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
@@ -168,7 +169,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $queryBuilder = $queryBuilder->where('is_online', 1);
 
         $result = $queryBuilder->get();
-//        return $result = [$queryBuilder->toSql(), $queryBuilder->getBindings()];
+        Log::info($queryBuilder->toSql());
 //dd($result->toArray());
         foreach($result as $key => $record){
             if (round($record->rating->avg('rating')) < $category_id){
