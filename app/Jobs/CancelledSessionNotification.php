@@ -41,7 +41,7 @@ class CancelledSessionNotification extends Job implements ShouldQueue
         if(!empty($user->device_token)){
             Log::info('Cancelled Session Send TO => UserId'.$userId);
             $title  = Config::get('user-constants.APP_NAME');
-            $body   = 'Session cancelled by'.$cancelledFrom;
+            $body   = 'Session cancelled by '.$cancelledFrom;
             $customData = array(
                 'notification_type' => 'session_cancelled',
             );
