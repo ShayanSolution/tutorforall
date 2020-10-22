@@ -732,10 +732,29 @@ class SessionController extends Controller
             'cancelled_from' => 'required'
         ]);
         $userId = Auth::user()->id;
+        $cancelledFrom = $request->cancelled_from;
         $session = Session::where('id', $request->session_id)->first();
+        if ($session->start_session_enable == 1) {
+            if ($cancelledFrom == 'tutor') {
+                return response()->json([
+                    'status' => 'error',
+                    'messages' => 'Unable to cancel session because your student has arrived'
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'messages' => 'Unable to cancel session because your tutor has arrived'
+                ]);
+            }
+        }
+        if ($session->status == 'started') {
+            return response()->json([
+                'status' => 'error',
+                'messages' => 'Unable to cancel session because your session has started'
+            ]);
+        }
         $studentId = $session->student_id;
         $tutorId = $session->tutor_id;
-        $cancelledFrom = $request->cancelled_from;
         if ($session){
             $session->update([
                 'status' => 'cancelled',
