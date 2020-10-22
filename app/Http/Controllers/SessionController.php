@@ -744,12 +744,16 @@ class SessionController extends Controller
             ]);
             if ($cancelledFrom == 'tutor') {
                 //send cancelled notification to student
+                Log::info('Send student to cancelled session by tutor');
                 $job = new CancelledSessionNotification($studentId, $cancelledFrom);
                 dispatch($job);
+                Log::info('Cancelled session dispatch job DONE');
             } else {
                 //send cancelled notification to tutor
+                Log::info('Send tutor to cancelled session by student');
                 $job = new CancelledSessionNotification($tutorId, $cancelledFrom);
                 dispatch($job);
+                Log::info('Cancelled session dispatch job DONE');
             }
 
             return response()->json([
