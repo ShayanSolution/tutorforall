@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 
 class CancelledSessionNotification extends Job implements ShouldQueue
 {
@@ -37,6 +38,7 @@ class CancelledSessionNotification extends Job implements ShouldQueue
 
         //get student device token to send notification
         $user = User::where('id','=', $userId)->first();
+        Log::info('Cancelled Session Send TO => UserId'.$userId);
         if(!empty($user->device_token)){
 
             $title  = Config::get('user-constants.APP_NAME');
