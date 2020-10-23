@@ -287,6 +287,26 @@ class AuthenticationController extends Controller
         $role_id = $request->role_id;
         $device_token = $request->device_token;
         $genderId = 0;
+        // check already account
+        $user = new User;
+        $phoneExist = $user->findByExactPhoneNumber($phone, $role_id);
+        //if both account have than show error
+        if ($phoneExist && $phoneExist->deleted_at == null){
+            if ($role_id == 2) {
+                $appNameForCode = 'Tootar Teacher';
+            } else {
+                $appNameForCode = 'Tootar';
+            }
+            return JsonResponse::generateResponse([
+                'status' => 'error',
+                'message' => 'You have already '.$appNameForCode.' account. Please login'
+            ],500);
+        }
+        // If account soft delete than set deleted_at null
+        if ($phoneExist && $phoneExist->deleted_at){
+            $phoneExist->restore();
+        }
+
         if ($request->has('gender_id')) {
             $genderId = $request->gender_id;
         }
