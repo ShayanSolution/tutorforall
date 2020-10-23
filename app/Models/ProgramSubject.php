@@ -48,12 +48,15 @@ class ProgramSubject extends Model
         $subjects = [];
         $programSubjects = $this->where('user_id', $userId)->where('status', self::STATUS_ACCEPTED)->with('program', 'subject')->get();
         foreach ($programSubjects as $programSubject){
-            if (!key_exists($programSubject->program->name, $subjects))
-                $subjects[$programSubject->program->name] = '';
+            if ($programSubject->program['status'] != 2) {
+                if (!key_exists($programSubject->program->name, $subjects)){
+                    $subjects[$programSubject->program->name] = '';
 
-            $isComma =  !empty($subjects[$programSubject->program->name]) ? $subjects[$programSubject->program->name].', ' : $subjects[$programSubject->program->name];
+                $isComma =  !empty($subjects[$programSubject->program->name]) ? $subjects[$programSubject->program->name].', ' : $subjects[$programSubject->program->name];
 
-            $subjects[$programSubject->program->name] = $isComma.$programSubject->subject->name;
+                $subjects[$programSubject->program->name] = $isComma.$programSubject->subject->name;
+                }
+            }
         }
         return $string = $subjects;
     }
