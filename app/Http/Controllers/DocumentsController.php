@@ -98,7 +98,7 @@ class DocumentsController extends Controller
             if ($tutorClassesSubjects){
                 foreach ($tutorClassesSubjects as $classesSubject){
                     ProgramSubject::where('id', $classesSubject->id)->update(['document_id' => $docCreatedId]);
-                    if($classesSubject->status == 0) {
+                    if($classesSubject->status == "Rejected") {
                         ProgramSubject::where('id', $classesSubject->id)->update(['status' => 2]);
                     }
                 }
