@@ -123,6 +123,10 @@ class DocumentsController extends Controller
             'document_type'     => $request->document_type,
             'storage_path'      => $response['storagePath'],
         ])->id;
+        // update user profile
+        User::where('id', $tutorId)->update([
+            'profileImage' => $response['accessPath'],
+        ]);
 
         if(!$docCreatedId)
         {
@@ -263,6 +267,13 @@ class DocumentsController extends Controller
             'document_type'     => $request->document_type,
             'storage_path'      => $response['storagePath'],
         ]);
+
+        if ($request->document_type == "profile_photo") {
+            // update user profile
+            User::where('id', $tutorId)->update([
+                'profileImage' => $response['accessPath'],
+            ]);
+        }
 
         //Update in Program_subject table for program and subjects if status is rejected than update
             $programSubjects = ProgramSubject::where('document_id', $documentId)->where('status', 0)->get();

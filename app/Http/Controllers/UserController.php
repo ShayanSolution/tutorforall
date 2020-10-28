@@ -313,7 +313,7 @@ class UserController extends Controller
                 'Subject Id'=>$user->subject_id,
                 'Subjects List'=>$subjectList,
                 'Rating' => number_format((float)$user_rating, 1, '.', ''),
-                'Profile_Image' => URL::to('/images').'/'.$user->profileImage,
+                'Profile_Image' => $user->profileImage,
                 'teach_to' => $user->teach_to,
                 'min_thumb_slider' => $user->min_slider_value,
                 'max_thumb_slider' => $user->max_slider_value,
