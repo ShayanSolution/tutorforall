@@ -40,7 +40,11 @@ class DocumentsController extends Controller
             ]);
         }
 
-        $tutorId = Auth::user()->id;
+        if ($request->has("id")) {
+            $tutorId = $request->id;
+        } else {
+            $tutorId = Auth::user()->id;
+        }
         // CNIC Front & Back
         if ($request->document_type == "cnic_front" || $request->document_type == "cnic_back"){
 
@@ -56,7 +60,7 @@ class DocumentsController extends Controller
             ProgramSubject::create([
                 'program_id' => $cnicProgram->id,
                 'subject_id' => $cnicSubject->id,
-                'user_id' => Auth::user()->id,
+                'user_id' => $tutorId,
                 'document_id' => $docCreatedId,
                 'status' => 2,
                 'verified_by' => null,
@@ -77,7 +81,7 @@ class DocumentsController extends Controller
             ProgramSubject::create([
                 'program_id' => $profilePhotoProgram->id,
                 'subject_id' => $profilePhotoSubject->id,
-                'user_id' => Auth::user()->id,
+                'user_id' => $tutorId,
                 'document_id' => $docCreatedId,
                 'status' => 2,
                 'verified_by' => null,
@@ -227,7 +231,11 @@ class DocumentsController extends Controller
                 'document_type'     =>  'required'
             ]);
         }
-
+        if ($request->has("id")) {
+            $tutorId = $request->id;
+        } else {
+            $tutorId = Auth::user()->id;
+        }
         $documentId = $request->document_id;
 
         $document = Document::find($documentId);
@@ -249,7 +257,7 @@ class DocumentsController extends Controller
         $response = $this->uploadDocumentImage($request);
 
         $document->update([
-            'tutor_id'          => Auth::user()->id,
+            'tutor_id'          => $tutorId,
             'title'             => $request->title,
             'path'              => $response['accessPath'],
             'document_type'     => $request->document_type,

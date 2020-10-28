@@ -159,6 +159,8 @@ $router->get('/user/active/{id}', 'UserController@updateUserActiveStatus');
 
 $router->get('/user/profile/{id}', 'UserController@userProfile');
 $router->post('/update-user', 'AuthenticationController@updateUser');
+$router->post('admin-upload-documents', 'DocumentsController@uploadDocs');
+$router->post('admin-update-tutors-document', 'DocumentsController@updateTutorsDoc');
 
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
