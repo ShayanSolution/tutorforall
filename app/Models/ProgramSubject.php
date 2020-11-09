@@ -46,19 +46,20 @@ class ProgramSubject extends Model
 
         // @todo after M-3 release uper code comment and down code uncomment
         $subjects = [];
+
         $programSubjects = $this->where('user_id', $userId)->where('status', self::STATUS_ACCEPTED)->with('program', 'subject')->get();
         foreach ($programSubjects as $programSubject){
             if ($programSubject->program['status'] != 2) {
-                if (!key_exists($programSubject->program->name, $subjects)){
-                    $subjects[$programSubject->program->name] = '';
-
-                $isComma =  !empty($subjects[$programSubject->program->name]) ? $subjects[$programSubject->program->name].', ' : $subjects[$programSubject->program->name];
-
-                $subjects[$programSubject->program->name] = $isComma.$programSubject->subject->name;
-                }
+                $subjects[$programSubject->program->name][] = $programSubject->subject->name;
             }
         }
-        return $string = $subjects;
+
+        $programSubjectsArray = [];
+        foreach ($subjects as $program => $subject){
+            $programSubjectsArray[$program] = implode(', ', $subject);
+        }
+
+        return $string = $programSubjectsArray;
     }
 
     public function document(){
