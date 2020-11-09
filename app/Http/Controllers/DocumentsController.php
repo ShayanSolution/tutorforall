@@ -123,11 +123,12 @@ class DocumentsController extends Controller
             'document_type'     => $request->document_type,
             'storage_path'      => $response['storagePath'],
         ])->id;
-        // update user profile
-        User::where('id', $tutorId)->update([
-            'profileImage' => $response['accessPath'],
-        ]);
-
+        if ($request->document_type == "profile_photo") {
+            // update user profile
+            User::where('id', $tutorId)->update([
+                'profileImage' => $response['accessPath'],
+            ]);
+        }
         if(!$docCreatedId)
         {
             unlink($response['storagePath']);
