@@ -575,7 +575,7 @@ class AuthenticationController extends Controller
         if ($userId->final_phone_verification == 1) {
             return JsonResponse::generateResponse([
                 'status' => 'error',
-                'message' => 'Your account against this '.$userId->phone.' number already verified.'
+                'message' => $userId->phone.' is already verified.'
             ],500);
         }
         // if already account
