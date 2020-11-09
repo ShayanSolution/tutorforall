@@ -565,20 +565,28 @@ class AuthenticationController extends Controller
             'phone' => 'required|digits_between:11,20',
             'role_id'=> 'required'
         ]);
-        $userId = Auth::user()->id;
+        $userId = Auth::user();
         $phone = $request->phone;
         $roleId = $request->role_id;
         // check phone number exist
         $user = new User;
         $phoneExist = $user->findByExactPhoneNumber($phone, $roleId);
-        if ($phoneExist && $phoneExist->id != $userId) {
+        // if user already verified phone number
+        if ($userId->final_phone_verification == 1) {
+            return JsonResponse::generateResponse([
+                'status' => 'error',
+                'message' => 'Your account against this '.$userId->phone.' number already verified.'
+            ],500);
+        }
+        // if already account
+        if ($phoneExist && $phoneExist->id != $userId->id) {
             return JsonResponse::generateResponse([
                 'status' => 'error',
                 'message' => 'This phone number have already active account. Please use another phone number.'
             ],500);
         }
         // update phone number
-        User::where('id', $userId)->update([
+        User::where('id', $userId->id)->update([
             'phone' => $phone,
         ]);
         // send SMS
