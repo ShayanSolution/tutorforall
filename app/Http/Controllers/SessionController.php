@@ -9,6 +9,8 @@ use App\Exceptions\SessionExpired;
 use App\Jobs\BookNotification;
 use App\Jobs\CancelledSessionNotification;
 use App\Jobs\SendNotificationOfCalculationCost;
+use App\Jobs\SessionPaidNotificationToTutor;
+use App\Models\SessionPayment;
 use App\Models\Setting;
 use App\Services\CostCalculation\SessionCost;
 use App\Wallet;
@@ -785,6 +787,81 @@ class SessionController extends Controller
                 'messages' => 'Session not found'
             ]);
         }
+    }
+
+    public function sessionPayment(Request $request){
+        //card
+        if ($request->transaction_platform == "card"){
+            $this->validate($request,[
+                'session_id' => 'required',
+                'transaction_ref_no' => 'required',
+                'transaction_type' => 'required',
+                'amount' => 'required',
+                'insert_date_time' => 'required',
+                'transaction_status' => 'required',
+            ]);
+        }
+        //JazzCash
+        if ($request->transaction_platform == "jazzcash"){
+            $this->validate($request,[
+                'session_id' => 'required',
+                'transaction_ref_no' => 'required',
+                'transaction_type' => 'required',
+                'amount' => 'required',
+                'insert_date_time' => 'required',
+                'transaction_status' => 'required',
+                'mobile_number' => 'required',
+                'cnic_last_six_digits' => 'required',
+            ]);
+        }
+        //Cash
+        if ($request->transaction_platform == "cash"){
+            $this->validate($request,[
+                'session_id' => 'required',
+                'transaction_type' => 'required',
+                'insert_date_time' => 'required',
+            ]);
+        }
+
+        // save
+        $sessionPayment = SessionPayment::create($request->all());
+        if ($sessionPayment){
+            $findSession = Session::find($request->session_id);
+            if($findSession){
+                if ($request->transaction_platform == "jazzcash" || $request->transaction_platform == "card"){
+                    $job = (new SessionPaidNotificationToTutor($request->session_id,$findSession->tutor_id, $request->transaction_platform));
+                    dispatch($job);
+                    Log::info('Send Noti to tutorId '.$findSession->tutor_id.' DONE');
+                    return response()->json(
+                        [
+                            'status' => 'success',
+                            'transaction_platform' => $request->transaction_platform,
+                            'message' => 'Payment Successfully'
+                        ]
+                    );
+                }
+                if ($request->transaction_platform == "cash"){
+                    return response()->json(
+                        [
+                            'status' => 'success',
+                            'transaction_platform' => $request->transaction_platform,
+                            'message' => 'Pay your session amount to tutor inform of cash. '
+                        ]
+                    );
+                }
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'messages' => 'Session not found.'
+                ]);
+            }
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'messages' => 'Session payment not saved. Some thing went wrong'
+            ]);
+        }
+
     }
     
 }
