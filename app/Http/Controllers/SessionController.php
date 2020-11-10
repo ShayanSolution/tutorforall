@@ -824,14 +824,15 @@ class SessionController extends Controller
         }
 
         // save
+        $transactionPlatform = $request->transaction_platform;
         $sessionPayment = SessionPayment::create($request->all());
         if ($sessionPayment){
             $findSession = Session::find($request->session_id);
             if($findSession){
-                if ($request->transaction_platform == "jazzcash" || $request->transaction_platform == "card"){
-                    $job = (new SessionPaidNotificationToTutor($request->session_id,$findSession->tutor_id, $request->transaction_platform));
+                if ($transactionPlatform == "jazzcash" || $transactionPlatform == "card"){
+                    $job = (new SessionPaidNotificationToTutor($request->session_id,$findSession->tutor_id, $transactionPlatform));
                     dispatch($job);
-                    Log::info('Send Noti to tutorId '.$findSession->tutor_id.' DONE');
+                    Log::info('Send Noti to tutorId '.$findSession->tutor_id.' DONE '.$transactionPlatform);
                     return response()->json(
                         [
                             'status' => 'success',
@@ -840,12 +841,15 @@ class SessionController extends Controller
                         ]
                     );
                 }
-                if ($request->transaction_platform == "cash"){
+                if ($transactionPlatform == "cash"){
+                    $job = (new SessionPaidNotificationToTutor($request->session_id,$findSession->tutor_id, $transactionPlatform));
+                    dispatch($job);
+                    Log::info('Send Noti to tutorId '.$findSession->tutor_id.' DONE '.$transactionPlatform);
                     return response()->json(
                         [
                             'status' => 'success',
                             'transaction_platform' => $request->transaction_platform,
-                            'message' => 'Pay your session amount to tutor inform of cash. '
+                            'message' => 'Pay your session amount to tutor. Thank You! '
                         ]
                     );
                 }
