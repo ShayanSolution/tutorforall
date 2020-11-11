@@ -8,6 +8,7 @@ use App\Exceptions\SessionBookedStartedOrEnded;
 use App\Exceptions\SessionExpired;
 use App\Jobs\BookNotification;
 use App\Jobs\CancelledSessionNotification;
+use App\Jobs\ReceivedPaymentNotification;
 use App\Jobs\SendNotificationOfCalculationCost;
 use App\Jobs\SessionPaidNotificationToTutor;
 use App\Models\SessionPayment;
@@ -832,7 +833,10 @@ class SessionController extends Controller
                 if ($transactionPlatform == "jazzcash" || $transactionPlatform == "card"){
                     $job = (new SessionPaidNotificationToTutor($request->session_id,$findSession->tutor_id, $transactionPlatform));
                     dispatch($job);
-                    Log::info('Send Noti to tutorId '.$findSession->tutor_id.' DONE '.$transactionPlatform);
+                    Log::info('Confirm Noti to tutor '.$findSession->tutor_id.' that Payment DONE '.$transactionPlatform);
+                    $jobReceivedPaymentStudent = (new ReceivedPaymentNotification($request->session_id, $findSession->student_id));
+                    dispatch($jobReceivedPaymentStudent);
+                    Log::info('Confirm Noti to student '.$findSession->student_id.' that session payment DONE '.$transactionPlatform);
                     return response()->json(
                         [
                             'status' => 'success',
