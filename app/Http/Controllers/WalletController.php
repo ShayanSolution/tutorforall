@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SessionPaymentEmail;
 use App\Wallet;
 use App\Models\Session;
 use Illuminate\Http\Request;
@@ -25,6 +26,9 @@ class WalletController extends Controller
             $wallet->save();
 
             dispatch((new ReceivedPaymentNotification($request->session_id, $session->student_id)));
+            //Send Email to student
+            $jobSendEmailToStudent = (new SessionPaymentEmail($request->session_id, $session->student_id, $session->tutor_id));
+            dispatch($jobSendEmailToStudent);
 
             return response()->json(
                 [

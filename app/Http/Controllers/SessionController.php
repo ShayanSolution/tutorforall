@@ -11,6 +11,7 @@ use App\Jobs\CancelledSessionNotification;
 use App\Jobs\ReceivedPaymentNotification;
 use App\Jobs\SendNotificationOfCalculationCost;
 use App\Jobs\SessionPaidNotificationToTutor;
+use App\Jobs\SessionPaymentEmail;
 use App\Models\SessionPayment;
 use App\Models\Setting;
 use App\Services\CostCalculation\SessionCost;
@@ -830,6 +831,8 @@ class SessionController extends Controller
         if ($sessionPayment){
             $findSession = Session::find($request->session_id);
             if($findSession){
+                $tutorId = $findSession->tutor_id;
+                $studentId = $findSession->student_id;
                 if ($transactionPlatform == "jazzcash" || $transactionPlatform == "card"){
                     $job = (new SessionPaidNotificationToTutor($request->session_id,$findSession->tutor_id, $transactionPlatform));
                     dispatch($job);
@@ -837,6 +840,9 @@ class SessionController extends Controller
                     $jobReceivedPaymentStudent = (new ReceivedPaymentNotification($request->session_id, $findSession->student_id));
                     dispatch($jobReceivedPaymentStudent);
                     Log::info('Confirm Noti to student '.$findSession->student_id.' that session payment DONE '.$transactionPlatform);
+                    //Send Email to student
+                    $jobSendEmailToStudent = (new SessionPaymentEmail($request->session_id, $studentId, $tutorId));
+                    dispatch($jobSendEmailToStudent);
                     return response()->json(
                         [
                             'status' => 'success',
