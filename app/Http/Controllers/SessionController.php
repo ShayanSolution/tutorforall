@@ -12,6 +12,7 @@ use App\Jobs\ReceivedPaymentNotification;
 use App\Jobs\SendNotificationOfCalculationCost;
 use App\Jobs\SessionPaidNotificationToTutor;
 use App\Jobs\SessionPaymentEmail;
+use App\Models\Disbursement;
 use App\Models\SessionPayment;
 use App\Models\Setting;
 use App\Services\CostCalculation\SessionCost;
@@ -597,7 +598,22 @@ class SessionController extends Controller
             $wallet->from_user_id = $findSession->student_id;
             $wallet->to_user_id = $findSession->tutor_id;
             $wallet->save();
-
+            //update session Payment
+            $sessionPayment = SessionPayment::where('session_id', $request->session_id)->first();
+            if($sessionPayment){
+                $sessionPayment->update([
+                    'transaction_status' => 'Paid'
+                ]);
+                // Create disbursement
+                $payType = 'earn';
+                $disbursement = Disbursement::create([
+                    'tutor_id' => $findSession->tutor_id,
+                    'type' => $payType,
+                    'amount' => $sessionPayment->amount,
+                    'paymentable_type' => $sessionPayment->getMorphClass(),
+                    'paymentable_id' => $sessionPayment->id
+                ]);
+            }
             $job = (new SendNotificationOfCalculationCost($totalCostAccordingToHours, $request->session_id, json_encode($user), 'commercial'));
             dispatch($job);
             return response()->json(
@@ -834,6 +850,15 @@ class SessionController extends Controller
                 $tutorId = $findSession->tutor_id;
                 $studentId = $findSession->student_id;
                 if ($transactionPlatform == "jazzcash" || $transactionPlatform == "card"){
+                    // create disbursement insertion
+                    $payType = 'earn';
+                    $disbursement = Disbursement::create([
+                        'tutor_id' => $sessionPayment->tutor_id,
+                        'type' => $payType,
+                        'amount' => $sessionPayment->amount,
+                        'paymentable_type' => $sessionPayment->getMorphClass(),
+                        'paymentable_id' => $sessionPayment->id
+                    ]);
                     $job = (new SessionPaidNotificationToTutor($request->session_id,$findSession->tutor_id, $transactionPlatform));
                     dispatch($job);
                     Log::info('Confirm Noti to tutor '.$findSession->tutor_id.' that Payment DONE '.$transactionPlatform);
