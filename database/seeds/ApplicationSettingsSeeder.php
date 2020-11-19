@@ -94,19 +94,19 @@ class ApplicationSettingsSeeder extends Seeder
                 "slug"=> "tutor_invoice_generate_days",
                 "value"=> "0",
                 "label"=> "Tutor Invoice Generate Days",
-                "group_name"=> "tutor_invoice_settings"
+                "group_name"=> "tutor-invoice-settings"
             ],
             [
                 "slug"=> "tutor_invoice_due_days",
                 "value"=> "0",
                 "label"=> "Tutor Invoice Due Days",
-                "group_name"=> "tutor_invoice_settings"
+                "group_name"=> "tutor-invoice-settings"
             ],
             [
                 "slug"=> "tutor_invoice_due_amount",
                 "value"=> "0",
                 "label"=> "Tutor Invoice Due Amount",
-                "group_name"=> "tutor_invoice_settings"
+                "group_name"=> "tutor-invoice-settings"
             ]
         ];
 
