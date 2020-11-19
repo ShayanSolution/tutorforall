@@ -853,7 +853,7 @@ class SessionController extends Controller
                     // create disbursement insertion
                     $payType = 'earn';
                     $disbursement = Disbursement::create([
-                        'tutor_id' => $sessionPayment->tutor_id,
+                        'tutor_id' => $tutorId,
                         'type' => $payType,
                         'amount' => $sessionPayment->amount,
                         'paymentable_type' => $sessionPayment->getMorphClass(),
