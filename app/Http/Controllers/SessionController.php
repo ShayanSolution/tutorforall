@@ -877,5 +877,65 @@ class SessionController extends Controller
         }
 
     }
+
+    public function studentSessionPaymentsDetail(){
+        $userId = Auth::user()->id;
+        $session = new Session();
+        $data = $session->getStudentSessionPaymentDetail($userId);
+        $sessionPaymentDetail = [];
+        if ($data) {
+            foreach ($data as $user) {
+                $user_details = User::where('id', $user->session_user_id)->first();
+                if ($user->book_later_at != null || $user->book_later_at != '') {
+                    $sessionDate = $user->book_later_at;
+                } else {
+                    $sessionDate = $user->Session_created_date;
+                }
+                if ($user_details) {
+                    $sessionType = 'now';
+                    $checkTrackingOn = $user->book_later_at;
+                    if ($checkTrackingOn) {
+                        $sessionType = 'later';
+                    }
+                    $sessionPaymentDetail[] = [
+                        'tutorName' => $user_details->firstName . ' ' . $user_details->lastName,
+                        'tutor_phone' => $user_details->phone,
+                        'status' => $user->session_status,
+                        'subject' => $user->s_name,
+                        'program' => $user->p_name,
+                        'session_Location' => is_null($user->session_location) ? '' : $user->session_location,
+                        'session_Duration' => $user->duration,
+                        'is_home' => $user->session_is_home,
+                        'session_id' => $user->session_id,
+                        'session_status' => $user->session_status,
+                        'is_group' => $user->session_is_group,
+                        'group_members' => $user->session_group_members,
+                        'session_rating' => is_null($user->session_rating) ? '' : number_format((float)$user->session_rating, 1, '.', ''),
+                        'session_review' => is_null($user->session_review) ? '' : (string)$user->session_review,
+                        'Profile_image' => !empty($user_details->profileImage) ? URL::to('/images') . '/' . $user_details->profileImage : '',
+                        'book_later_at' => $user->book_later_at,
+                        'session_type' => $sessionType,
+                        'is_hourly' => $user->is_hourly,
+                        'sessionPaymentId' => $user->sessionPaymentId,
+                        'sessionPaymentTransactionPlatform' => $user->sessionPaymentTransactionPlatform,
+                        'sessionPaymentAmount' => $user->sessionPaymentAmount,
+                        'sessionPaymentCreatedAt' => $user->sessionPaymentCreatedAt
+                    ];
+                }
+            }
+            return response()->json(
+                [
+                    'data' => $sessionPaymentDetail
+                ]
+            );
+        } else{
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Unable to get session payment'
+                ], 422
+            );
+        }
+    }
     
 }

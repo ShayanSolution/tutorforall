@@ -286,6 +286,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     Route::get('/get_search_location/{id}', 'SearchLocationController@getSearchLocation');
     // Cancel Session
     Route::post('/cancel_session', 'SessionController@cancelSession');
+    // Student Payment against session
+    Route::post('/student_session_payments_detail', 'SessionController@studentSessionPaymentsDetail');
 });
 
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');
