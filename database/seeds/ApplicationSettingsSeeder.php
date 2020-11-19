@@ -84,11 +84,29 @@ class ApplicationSettingsSeeder extends Seeder
 //                "label"=> "On book later find tutor restriction hours",
 //                "group_name"=> "book-later-restrict-hr"
 //            ],
+//            [
+//                "slug"=> "flat_discount_next_hour_price_percentage",
+//                "value"=> "0",
+//                "label"=> "Next hour dicount on subject price percentage",
+//                "group_name"=> "next-hour-discount-on-subject-price-percentage"
+//            ],
             [
-                "slug"=> "flat_discount_next_hour_price_percentage",
+                "slug"=> "tutor_invoice_generate_days",
                 "value"=> "0",
-                "label"=> "Next hour dicount on subject price percentage",
-                "group_name"=> "next-hour-discount-on-subject-price-percentage"
+                "label"=> "Tutor Invoice Generate Days",
+                "group_name"=> "tutor_invoice_settings"
+            ],
+            [
+                "slug"=> "tutor_invoice_due_days",
+                "value"=> "0",
+                "label"=> "Tutor Invoice Due Days",
+                "group_name"=> "tutor_invoice_settings"
+            ],
+            [
+                "slug"=> "tutor_invoice_due_amount",
+                "value"=> "0",
+                "label"=> "Tutor Invoice Due Amount",
+                "group_name"=> "tutor_invoice_settings"
             ]
         ];
 
