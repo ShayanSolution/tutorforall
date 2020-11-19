@@ -288,6 +288,10 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     Route::post('/cancel_session', 'SessionController@cancelSession');
     // Student Payment against session
     Route::post('/student_session_payments_detail', 'SessionController@studentSessionPaymentsDetail');
+    //Tutor get Invoice
+    Route::get('/get_tutor_invoices', 'TutorInvoiceController@getTutorInvoice');
+    //Tutor pay invoice
+    Route::post('/tutor_pay_invoice', 'TutorInvoiceController@tutorPayInvoice');
 });
 
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');
