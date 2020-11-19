@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SessionPaymentEmail;
+use App\Models\Disbursement;
+use App\Models\SessionPayment;
 use App\Wallet;
 use App\Models\Session;
 use Illuminate\Http\Request;
@@ -24,17 +26,32 @@ class WalletController extends Controller
             $wallet->from_user_id     =   $session->tutor_id;
             $wallet->to_user_id       =   $session->student_id;
             $wallet->save();
+        //update session Payment
+        $sessionPayment = SessionPayment::where('session_id', $request->session_id)->first();
+        if($sessionPayment){
+            $sessionPayment->update([
+                'transaction_status' => 'Paid'
+            ]);
+            // Create disbursement
+            $payType = 'earn';
+            $disbursement = Disbursement::create([
+                'tutor_id' => $session->tutor_id,
+                'type' => $payType,
+                'amount' => $sessionPayment->amount,
+                'paymentable_type' => $sessionPayment->getMorphClass(),
+                'paymentable_id' => $sessionPayment->id
+            ]);
+        }
+        dispatch((new ReceivedPaymentNotification($request->session_id, $session->student_id)));
+        //Send Email to student
+        $jobSendEmailToStudent = (new SessionPaymentEmail($request->session_id, $session->student_id, $session->tutor_id));
+        dispatch($jobSendEmailToStudent);
 
-            dispatch((new ReceivedPaymentNotification($request->session_id, $session->student_id)));
-            //Send Email to student
-            $jobSendEmailToStudent = (new SessionPaymentEmail($request->session_id, $session->student_id, $session->tutor_id));
-            dispatch($jobSendEmailToStudent);
-
-            return response()->json(
-                [
-                   'status'=> 'success',
-                ]
-            );
+        return response()->json(
+            [
+               'status'=> 'success',
+            ]
+        );
     }
 
     public function walletStudent(Request $request){

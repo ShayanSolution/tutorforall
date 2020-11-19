@@ -598,22 +598,7 @@ class SessionController extends Controller
             $wallet->from_user_id = $findSession->student_id;
             $wallet->to_user_id = $findSession->tutor_id;
             $wallet->save();
-            //update session Payment
-            $sessionPayment = SessionPayment::where('session_id', $request->session_id)->first();
-            if($sessionPayment){
-                $sessionPayment->update([
-                    'transaction_status' => 'Paid'
-                ]);
-                // Create disbursement
-                $payType = 'earn';
-                $disbursement = Disbursement::create([
-                    'tutor_id' => $findSession->tutor_id,
-                    'type' => $payType,
-                    'amount' => $sessionPayment->amount,
-                    'paymentable_type' => $sessionPayment->getMorphClass(),
-                    'paymentable_id' => $sessionPayment->id
-                ]);
-            }
+
             $job = (new SendNotificationOfCalculationCost($totalCostAccordingToHours, $request->session_id, json_encode($user), 'commercial'));
             dispatch($job);
             return response()->json(
