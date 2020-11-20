@@ -111,7 +111,7 @@ class ApplicationSettingsSeeder extends Seeder
             [
                 "slug"=> "session_commission_percentage",
                 "value"=> "0",
-                "label"=> "session_commission_percentage",
+                "label"=> "session commission percentage",
                 "group_name"=> "session-commission-percentage-settings"
             ],
         ];
