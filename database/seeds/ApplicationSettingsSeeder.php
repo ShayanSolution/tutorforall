@@ -107,7 +107,13 @@ class ApplicationSettingsSeeder extends Seeder
                 "value"=> "0",
                 "label"=> "Tutor Invoice Due Amount",
                 "group_name"=> "tutor-invoice-settings"
-            ]
+            ],
+            [
+                "slug"=> "session_commission_percentage",
+                "value"=> "0",
+                "label"=> "session_commission_percentage",
+                "group_name"=> "session-commission-percentage-settings"
+            ],
         ];
 
         foreach($entries as $entry)
