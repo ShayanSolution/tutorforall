@@ -10,8 +10,7 @@ class TutorInvoiceController extends Controller
 {
     public function getTutorInvoice(){
         $tutorId = Auth::user()->id;
-        $tutorInvoices = TutorInvoice::where('id', $tutorId)->get();
-
+        $tutorInvoices = TutorInvoice::where('tutor_id', $tutorId)->get();
         if ($tutorInvoices) {
             return response()->json(
                 [
