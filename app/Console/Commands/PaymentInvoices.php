@@ -2,13 +2,16 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\SendInvoiceNotification;
 use App\Models\Disbursement;
 use App\Models\SessionPayment;
 use App\Models\Setting;
 use App\Models\TutorInvoice;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Log;
+use Illuminate\Support\Facades\Mail;
 
 class PaymentInvoices extends Command {
 
@@ -103,7 +106,38 @@ class PaymentInvoices extends Command {
 				Disbursement::where('tutor_id', $tutor_id[0]->tutor_id)->update([
 					'invoice_id' => $invoice->id
 				]);
-				// @todo trigger email and notifications
+				Log::info("Inoivce generated for " . $invoice->tutor_id);
+				$user                   = User::find($tutor_id[0]->tutor_id);
+				$studentEmail           = $user->email;
+				$Emailsubject           = env("SESSION_PAYMENT_MAIL_SUBJECT", "Tutor Payment Invoice");
+				$tutorFirstName         = $user->firstName;
+				$tutorLastName          = $user->lastName;
+				$data['tutorFirstName'] = $tutorFirstName;
+				$data['tutorLastName']  = $tutorLastName;
+				$data['earning']        = $invoice->amount;
+				$data['commission']     = $invoice->commission;
+				$data['cash']           = $payment['cash'];
+				$data['jazzcash']       = $payment['jazzcash'];
+				$data['card']           = $payment['card'];
+				if ($invoice->payable > 0) {
+					$data['invoice_message']  = "Your pending amount is " . $invoice->payable . ' We will pay as per our policy';
+					$data['due_date_message'] = "";
+				} else {
+					$data['invoice_message']  = "Your due amount is " . $invoice->receiveable;
+					$data['due_date_message'] = "Invoice due date is " . Carbon::make($invoice->due_date)->format('d-m-y') .
+						' please pay your invoice with in due date';
+				}
+
+				Mail::send('emails.tutorInvoice',
+					$data,
+					function ($message) use ($studentEmail, $Emailsubject, $tutorFirstName, $tutorLastName) {
+						$message->to($studentEmail, $tutorFirstName . " " . $tutorLastName)->subject($Emailsubject);
+					});
+				Log::info("Email generated for " . $invoice->tutor_id);
+				$job = new SendInvoiceNotification($invoice);
+				dispatch($job);
+
+				Log::info("Notification generated for " . $invoice->tutor_id);
 			}
 		});
 	}
