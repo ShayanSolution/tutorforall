@@ -929,7 +929,7 @@ class SessionController extends Controller
                         'sessionPaymentId' => $user->sessionPaymentId,
                         'sessionPaymentTransactionPlatform' => $user->sessionPaymentTransactionPlatform,
                         'sessionPaymentAmount' => $user->sessionPaymentAmount,
-                        'sessionPaymentCreatedAt' => $user->sessionPaymentCreatedAt
+                        'sessionPaymentCreatedAta' => Carbon::parse($user->sessionPaymentCreatedAt)->format('d-m-Y h:iA')
                     ];
                 }
             }
