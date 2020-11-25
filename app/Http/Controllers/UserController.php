@@ -817,12 +817,15 @@ class UserController extends Controller
 	public function online(Request $request) {
 		if (Auth::check()) {
 			$user_id = Auth::user()->id;
-			User::where('id', $user_id)->update([
-				'is_online'  => $request->is_online,
-				'last_login' => Carbon::now()
-			]);
-
 			$user = User::find($user_id);
+			if($user->is_blocked != 1)
+			{
+				User::where('id', $user_id)->update([
+					'is_online'  => $request->is_online,
+					'last_login' => Carbon::now()
+				]);
+			}
+
 
 			if ($request->is_online == 1) {
 				if ($user->is_blocked == 1) {
