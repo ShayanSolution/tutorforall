@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class TutorInvoice extends Model {
@@ -21,4 +22,14 @@ class TutorInvoice extends Model {
 			"transaction_status",
 			"commission_percentage"
 		];
+
+	protected function tutor() {
+		return $this->belongsTo(User::class, 'tutor_id');
+	}
+
+	public function scopeBlockable($query) {
+		return $query->where('status', 'pending')->where('payable', '<', 0)->whereDate('due_date',
+			'<',
+			Carbon::now()->format('y-m-d'));
+	}
 }
