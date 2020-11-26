@@ -101,7 +101,10 @@ class PaymentInvoices extends Command {
 					'transaction_type'      => null,
 					'transaction_platform'  => null,
 					'transaction_status'    => null,
-					'commission_percentage' => doubleval($commsionSettings->value)
+					'commission_percentage' => doubleval($commsionSettings->value),
+					'cash_payment'          => $payment['cash'],
+					'jazzcash_payment'      => $payment['jazzcash'],
+					'card_payment'          => $payment['card'],
 				]);
 				Disbursement::where('tutor_id', $tutor_id[0]->tutor_id)->update([
 					'invoice_id' => $invoice->id

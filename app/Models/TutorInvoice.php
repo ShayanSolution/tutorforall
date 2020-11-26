@@ -20,7 +20,10 @@ class TutorInvoice extends Model {
 			"transaction_type",
 			"transaction_platform",
 			"transaction_status",
-			"commission_percentage"
+			"commission_percentage",
+			"cash_payment",
+			"jazzcash_payment",
+			"card_payment"
 		];
 
 	protected function tutor() {
