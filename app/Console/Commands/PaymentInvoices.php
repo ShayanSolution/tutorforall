@@ -106,7 +106,7 @@ class PaymentInvoices extends Command {
 					'jazzcash_payment'      => $payment['jazzcash'],
 					'card_payment'          => $payment['card'],
 				]);
-				Disbursement::where('tutor_id', $tutor_id[0]->tutor_id)->update([
+				Disbursement::where('tutor_id', $tutor_id[0]->tutor_id)->where('invoice_id', null)->update([
 					'invoice_id' => $invoice->id
 				]);
 				Log::info("Inoivce generated for " . $invoice->tutor_id);
