@@ -642,7 +642,7 @@ class SessionController extends Controller
 
         if($roleId == 2){
             //i am tutor
-            $session = Session::where('tutor_id', $userId)->whereIn('status', ['booked', 'started'])->with('tutor','student')->orderBy('book_later_at', 'asc')->first();
+            $session = Session::where('tutor_id', $userId)->whereIn('status', ['booked', 'started'])->with('tutor','student')->orderBy('id', 'desc')->first();
             if($session){
                 $rating = Rating::where('session_id', $session->id)->first();
             }else{
@@ -655,22 +655,9 @@ class SessionController extends Controller
             }
             
         } else {
-            $session = Session::where('student_id', $userId)->whereIn('status', ['booked', 'started', 'ended'])->with('tutor','student')->orderBy('book_later_at', 'asc')->first();
+            $session = Session::where('student_id', $userId)->whereIn('status', ['booked', 'started', 'ended'])->with('tutor','student')->orderBy('id', 'desc')->first();
             if($session) {
                 $rating = Rating::where('session_id', $session->id)->first();
-                if ($rating != null){
-                    $session = Session::where('student_id', $userId)->whereIn('status', ['booked', 'started'])->with('tutor','student')->orderBy('book_later_at', 'asc')->first();
-                    if ($session){
-                        $rating = null;
-                    } else {
-                        return response()->json(
-                            [
-                                'status' => 'error',
-                                'message' => 'Session not found.'
-                            ]
-                        );
-                    }
-                }
                 //get tutor avg rating
                 $rating_sessions = Session::where('tutor_id', $session->tutor_id)->where('hourly_rate', '!=', 0)->pluck('id');
                 $tutor_rating = Rating::whereIn('session_id', $rating_sessions)->get();
@@ -684,6 +671,9 @@ class SessionController extends Controller
             }
         }
 
+        if ($session) {
+            $paid = SessionPayment::where('session_id', $session->id)->first();
+        }
         $session->student->profileImage = \url("images/".$session->student->profileImage);
         $session->tutor->profileImage = \url("images/".$session->tutor->profileImage);
 
@@ -699,13 +689,6 @@ class SessionController extends Controller
         } else {
             $data['session_type'] = 'later';
             $data['tracking_on'] = $session->tracking_on;
-//            $bookLaterTime = Carbon::parse($session->book_later_at);
-//            $currentTime = Carbon::parse(Carbon::now());
-//            $hours = $currentTime->diffInHours($bookLaterTime);
-//            $data['tracking_on'] = 0;
-//            if ($hours <= 1) {
-//                $data['tracking_on'] = 1;
-//            }
         }
         $data['start_session_enable'] = $session->start_session_enable;
         $data['dateTime'] = $sessionDateTime;
@@ -718,7 +701,8 @@ class SessionController extends Controller
                     'status' => 'success',
                     'session' => $session,
                     'rating' => $rating,
-                    'data'   => $data
+                    'data'   => $data,
+                    'paid' => $paid
                 ]
             );
         }else{
