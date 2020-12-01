@@ -57,7 +57,7 @@ return [
 
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'info@yoursite.com'),
-        'name' => env('MAIL_FROM_NAME', 'Your Name'),
+        'name' => env('MAIL_FROM_NAME', 'Tootar Support'),
     ],
 
     /*
