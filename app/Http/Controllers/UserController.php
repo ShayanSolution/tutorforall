@@ -259,7 +259,7 @@ class UserController extends Controller
     public function getStudents()
     {
        return $students =  User::getStudents();
-        
+
     }
 
     public function getUserProfile(Request $request){
@@ -356,7 +356,7 @@ class UserController extends Controller
         $data['is_deserving'] = $userProfile->is_deserving;
         $user = new User();
         $users = $user->getTutorProfile($data);
-        
+
 
         if($users){
             return response()->json(['data' => $users]);
@@ -370,7 +370,7 @@ class UserController extends Controller
         }
 
     }
-    
+
     public function tutorSessionInfo(Request $request){
         $data = $request->all();
 
@@ -388,7 +388,7 @@ class UserController extends Controller
                     ->where('users.role_id','=',3)
                     ->where('users.id','=',$student_id)
                     ->first();
-        
+
         if($student){
 
             //send student info to tutor
@@ -411,7 +411,7 @@ class UserController extends Controller
 
     }
 
-    
+
 
     public function updateStudentProfile(Request $request){
         $this->validate($request,[
@@ -527,7 +527,7 @@ class UserController extends Controller
         $experience = isset($data['experience'])?$data['experience']:'';
         $qualification = isset($data['qualification'])?$data['qualification']:'';
         $dob = isset($data['dob'])?$data['dob']:'';
-        
+
 
         if(!empty($firstName)){$update_array['firstName'] = $firstName;}
         if(!empty($lastName)){$update_array['lastName'] = $lastName;}
@@ -540,7 +540,7 @@ class UserController extends Controller
         if(!empty($experience)){$update_array['experience'] = $experience;}
         if(!empty($qualification)){$update_array['qualification'] = $qualification;}
         if(!empty($dob)){$update_array['dob'] = $dob;}
-        
+
         return $update_array;
     }
 
@@ -575,7 +575,7 @@ class UserController extends Controller
         return $update_array;
 
     }
-    
+
     public function getProfileUpdatedValues($data){
         $update_array = array();
 
@@ -601,7 +601,7 @@ class UserController extends Controller
 //        if(!empty($call_tutor) || ($call_tutor == 0)){$update_array['call_tutor'] = $call_tutor;}
 //        if(!empty($call_student) || ($call_student == 0)){$update_array['call_student'] = $call_student;}
         return $update_array;
-        
+
     }
 
     public function updateTutorProfileSetting(Request $request)
@@ -715,7 +715,7 @@ class UserController extends Controller
     public function userProfile($id){
         $user = new User();
         return $user->userProfile($id);
-        
+
     }
 
 
@@ -759,9 +759,9 @@ class UserController extends Controller
                 ], 422
             );
         }
-        
-        
-        
+
+
+
 
     }
 
@@ -793,7 +793,7 @@ class UserController extends Controller
             );
         }
 
-    }
+	}
 
     public function logout()
     {
@@ -814,40 +814,57 @@ class UserController extends Controller
         }
     }
 
-    public function online(Request $request)
-    {
-        if (Auth::check()) {
-            $user_id =  Auth::user()->id;
-            User::where('id', $user_id)->update([
-                'is_online'=>$request->is_online,
-                'last_login'=> Carbon::now()
-            ]);
+	public function online(Request $request) {
+		if (Auth::check()) {
+			$user_id = Auth::user()->id;
+			$user = User::find($user_id);
+			if($user->is_blocked != 1)
+			{
+				User::where('id', $user_id)->update([
+					'is_online'  => $request->is_online,
+					'last_login' => Carbon::now()
+				]);
+			}
 
-            if($request->is_online == 1){
-                return response()->json(
-                    [
-                        'status' => 'success',
-                        'message' => 'Successfully online',
-                    ], 200
-                );
-            }else{
 
-                return response()->json(
-                    [
-                        'status' => 'success',
-                        'message' => 'Successfully Offline'
-                    ], 200
-                );
-            }
-        } else{
-            return response()->json(
-                [
-                    'status' => 'error',
-                    'message' => 'Not Authorized'
-                ], 422
-            );
-        }
-    }
+			if ($request->is_online == 1) {
+				if ($user->is_blocked == 1) {
+					return response()->json(
+						[
+							'status'  => 'error',
+							'message' => 'You are blocked due to unpaid invoice.',
+						],
+						200
+					);
+				} else {
+					return response()->json(
+						[
+							'status'  => 'success',
+							'message' => 'Successfully online',
+						],
+						200
+					);
+				}
+			} else {
+
+				return response()->json(
+					[
+						'status'  => 'success',
+						'message' => 'Successfully Offline'
+					],
+					200
+				);
+			}
+		} else {
+			return response()->json(
+				[
+					'status'  => 'error',
+					'message' => 'Not Authorized'
+				],
+				422
+			);
+		}
+	}
 
     public function scriptNumber(Request $request){
        return view('partials.number_list');

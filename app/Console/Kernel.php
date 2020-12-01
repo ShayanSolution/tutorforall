@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\BlockUnPaidInvoiceUsers;
 use App\Console\Commands\PaymentInvoices;
 use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
@@ -15,7 +16,8 @@ class Kernel extends ConsoleKernel {
 	 */
 	protected $commands
 		= [
-			PaymentInvoices::Class
+			PaymentInvoices::Class,
+			BlockUnPaidInvoiceUsers::class
 		];
 
 	/**
@@ -25,6 +27,7 @@ class Kernel extends ConsoleKernel {
 	 * @return void
 	 */
 	protected function schedule(Schedule $schedule) {
+		$schedule->command('block:unpaid')->dailyAt('12 : 00');
 		$schedule->command('payment:invoices')->dailyAt('12 : 05');
 	}
 }
