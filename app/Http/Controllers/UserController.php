@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CreditCard;
 use App\Models\Invoice;
 use App\Models\Profile;
 use App\Models\ProgramSubject;
@@ -243,18 +244,42 @@ class UserController extends Controller
         return $rules;
     }
 
-    public function getDashboardTotalOfPieCharts(){
-        $users = User::all();
-        $invoice = Invoice::all();
-        $sessions = Session::all();
-        return [
-            'users' => count($users),
-            'students' => count($users->where('role_id', 3)),
-            'tutors' => count($users->where('role_id', 3)),
-            'sessions' => count($sessions),
-            'earning' => $invoice->sum('total_cost'),
-        ];
-    }
+	private function updateCardRequestValidationRules(Request $request) {
+		$rules = [
+			'user_id'      => 'required',
+			'is_default'   => 'required',
+			'brand_name'   => 'required',
+			'name_on_card' => 'required',
+			'card_number'  => 'required',
+			'token_id'     => 'required',
+			'session_id'   => 'required',
+			'agreement_id' => 'required'
+		];
+
+		$requestUser = $request->user();
+
+		// Only admin user can update admin role.
+		if ($requestUser instanceof User && $requestUser->role === User::ADMIN_ROLE) {
+			$rules['role'] = 'in:BASIC_USER,ADMIN_USER';
+		} else {
+			$rules['role'] = 'in:BASIC_USER';
+		}
+
+		return $rules;
+	}
+
+	public function getDashboardTotalOfPieCharts() {
+		$users    = User::all();
+		$invoice  = Invoice::all();
+		$sessions = Session::all();
+		return [
+			'users'    => count($users),
+			'students' => count($users->where('role_id', 3)),
+			'tutors'   => count($users->where('role_id', 3)),
+			'sessions' => count($sessions),
+			'earning'  => $invoice->sum('total_cost'),
+		];
+	}
 
     public function getStudents()
     {
@@ -899,21 +924,61 @@ class UserController extends Controller
                 );
             }else{
 
-                return response()->json(
-                    [
-                        'status' => 'success',
-                        'message' => 'You will not get notifications when you offline'
-                    ], 200
-                );
-            }
-        } else{
-            return response()->json(
-                [
-                    'status' => 'error',
-                    'message' => 'Not Authorized'
-                ], 422
-            );
-        }
-    }
+				return response()->json(
+					[
+						'status'  => 'success',
+						'message' => 'You will not get notifications when you offline'
+					],
+					200
+				);
+			}
+		} else {
+			return response()->json(
+				[
+					'status'  => 'error',
+					'message' => 'Not Authorized'
+				],
+				422
+			);
+		}
+	}
+
+	public function addCard(Request $request) {
+		// Validation
+		$validatorResponse = $this->validateRequest($request, $this->updateCardRequestValidationRules($request));
+
+		// Send failed response if validation fails
+		if ($validatorResponse !== true) {
+			return $this->sendInvalidFieldResponse($validatorResponse);
+		}
+
+		$card =  CreditCard::create($request->all());
+
+		if ($card) {
+			return response()->json(
+				[
+					'status'  => 'success',
+					'message' => 'Card added successfully!',
+				],
+				200
+			);
+		} else {
+			return response()->json(
+				[
+					'status'  => 'error',
+					'message' => 'Card not added successfully!',
+				],
+				200
+			);
+		}
+
+		//		$user = $this->userRepository->save($request->all());
+		//
+		//		if (!$user instanceof User) {
+		//			return $this->sendCustomResponse(500, 'Error occurred on creating User');
+		//		}
+		//
+		//		return $this->setStatusCode(201)->respondWithItem($user, $this->userTransformer);
+	}
 
 }
