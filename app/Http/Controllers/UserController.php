@@ -974,9 +974,9 @@ class UserController extends Controller
 	}
 	public function getCard(Request $request)
 	{
-		if($request->user_id)
+		if(Auth::user()->id)
 		{
-			$cards = CreditCard::whereUserId($request->user_id)->get();
+			$cards = CreditCard::whereUserId(Auth::user()->id)->get();
 			return response()->json(
 				[
 					'status'  => 'success',
