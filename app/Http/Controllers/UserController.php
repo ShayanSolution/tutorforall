@@ -971,14 +971,31 @@ class UserController extends Controller
 				200
 			);
 		}
-
-		//		$user = $this->userRepository->save($request->all());
-		//
-		//		if (!$user instanceof User) {
-		//			return $this->sendCustomResponse(500, 'Error occurred on creating User');
-		//		}
-		//
-		//		return $this->setStatusCode(201)->respondWithItem($user, $this->userTransformer);
+	}
+	public function getCard(Request $request)
+	{
+		if($request->user_id)
+		{
+			$cards = CreditCard::whereUserId($request->user_id)->get();
+			return response()->json(
+				[
+					'status'  => 'success',
+					'message' => 'Card getting successfully!',
+					'data' => $cards
+				],
+				200
+			);
+		}
+		else {
+			return response()->json(
+				[
+					'status'  => 'error',
+					'message' => 'Error getting cards!',
+					'data' => []
+				],
+				200
+			);
+		}
 	}
 
 }

@@ -163,6 +163,7 @@ $router->post('admin-upload-documents', 'DocumentsController@uploadDocs');
 $router->post('admin-update-tutors-document', 'DocumentsController@updateTutorsDoc');
 
 $router->post('add_card', 'UserController@addCard');
+$router->get('get_card', 'UserController@getCard');
 
 
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
