@@ -166,6 +166,8 @@ $router->post('add_card', 'UserController@addCard');
 $router->get('get_card', 'UserController@getCard');
 
 
+
+
 $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($router) {
 
     $router->post('upload-documents', 'DocumentsController@uploadDocs');
@@ -218,6 +220,9 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     $router->post('/session-start', 'SessionController@sessionStart');
     $router->post('/session-calculation-cost', 'SessionController@sessionCalculationCost');
     $router->post('/session-payment', 'SessionController@sessionPayment');
+
+	$router->post('/student-card-session-payment', 'SessionController@studentCardSessionPayment');
+
     $router->post('/get-latest-session', 'SessionController@getLatestSession');
     $router->post('/receive_payment', 'WalletController@receivePayment');
     $router->post('/wallet_student', 'WalletController@walletStudent');

@@ -464,7 +464,7 @@ class SessionController extends Controller
     /**
      * @param Request $request
      * @return insert session with status rejected.
-     * 
+     *
      */
     public function sessionRejected(Request $request){
         $this->validate($request,[
@@ -503,7 +503,7 @@ class SessionController extends Controller
         $user_session = $session->getTutorSessionDetail($user_id);
         return $user_session;
     }
-    
+
     public function updateDeserveStudentStatus($student_id){
         //update student deserving status
         Profile::updateDerserveStatus($student_id);
@@ -527,7 +527,7 @@ class SessionController extends Controller
             'status' => 'required'
         ]);
         $data = $request->all();
-        
+
         $session = new Session();
         $session = $session->updateSession(['id'=>$data['session_id']], ['status'=> $data['status']]);
         if($session){
@@ -558,13 +558,13 @@ class SessionController extends Controller
         //send student info to tutor
         $job = new StartSessionNotification($request->session_id);
         dispatch($job);
-        
+
         return response()->json([
             'status' => 'success',
             'messages' => 'Session updated successfully'
         ]);
     }
-    
+
     public function sessionCalculationCost(Request $request, SessionCost $sessionCost){
         $this->validate($request,[
             'session_id' => 'required',
@@ -629,7 +629,7 @@ class SessionController extends Controller
             );
         }
     }
-    
+
     public function getLatestSession(){
         $userId = Auth::user()->id;
         $roleId = Auth::user()->role_id;
@@ -653,7 +653,7 @@ class SessionController extends Controller
                     ]
                 );
             }
-            
+
         } else {
             $session = Session::where('student_id', $userId)->whereIn('status', ['booked', 'started', 'ended'])->with('tutor','student')->orderBy('id', 'desc')->first();
             if($session) {
@@ -931,5 +931,154 @@ class SessionController extends Controller
             );
         }
     }
-    
+	public function studentCardSessionPayment(Request $request) {
+		// Ensure cURL is active on server.
+		//		echo 'Curl: ', function_exists('curl_version') ? 'Enabled' : 'Disabled';
+		// echo "<br /> <br />" ;
+
+		// Generating Random Order Number
+		$orderId = rand();
+
+		//PURCHASE
+		$requestBody
+			= '{
+			"apiOperation": "CREATE_CHECKOUT_SESSION",
+			"interaction": {
+			"operation": "PURCHASE"
+			},
+			"order": {
+			"id" : "' . $orderId . '",
+				"currency" : "PKR"
+			}}';
+		// print $requestBody;
+
+		$ch = curl_init();
+		curl_setopt($ch,
+			CURLOPT_URL,
+			"https://test-bankalfalah.gateway.mastercard.com/api/rest/version/56/merchant/Tootar_IO/session");// Merchant ID instead of bafl10002
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);  //Post Fields
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+		$headers = [
+			'Authorization: Basic ' . base64_encode("merchant.Tootar_IO:021f3dc88dcd5f2af85b2d856281f941"),// merchant."Merchant ID":"API Password"
+			'Content-Type: application/json',
+			'Host: test-bankalfalah.gateway.mastercard.com',
+			'Referer: http://tutor4all-api.shayansolutions.com/checkout.php', //Your referrer address
+			'cache-control: no-cache',
+			'Accept: application/json'
+		];
+
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		$server_output = curl_exec($ch);
+		curl_close($ch);
+
+
+		$json = json_decode($server_output, true);
+		// echo "Response from cURL request: <br />" ;
+		$sessionId = $json['session']['id'];
+
+		if ($sessionId) {
+			$amount        = $request->amount;
+			$payment_token = $request->payment_token;
+			$agreementID   = $request->agreement;
+			$session       = $request->sessionId;
+
+
+			$orderId = rand(1000000000, 100000000000000);
+			$transactionId = rand(1, 10);
+			$requestBodyPayment
+				= '{
+				"apiOperation": "PAY",
+				"agreement":{
+						"id":"' . $agreementID . '",
+						"type":"RECURRING",
+						"recurring": {
+							"amountVariability":"VARIABLE",
+							"daysBetweenPayments":"999"
+						}
+				},
+				"session":{
+					"id": "' . $sessionId . '"
+				},
+				"sourceOfFunds": {
+					"provided":{
+						"card":{
+							"storedOnFile":"STORED"
+						}
+					},
+					"type": "SCHEME_TOKEN",
+					"token":"' . $payment_token . '"
+				},
+				"transaction":{
+					"source":"MERCHANT"
+				},
+				"order":{
+					"amount":"' . $amount . '",
+					"currency": "PKR"
+				}
+            }';
+			$ch = curl_init();
+			curl_setopt($ch,
+				CURLOPT_URL,
+				"https://test-bankalfalah.gateway.mastercard.com/api/rest/version/56/merchant/Tootar_IO/order/" . $orderId . "/transaction/" . $transactionId);// Merchant ID instead of bafl10002
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBodyPayment);  //Post Fields
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+
+			$headers = [
+				'Authorization: Basic ' . base64_encode("merchant.Tootar_IO:021f3dc88dcd5f2af85b2d856281f941"),// merchant."Merchant ID":"API Password"
+				'Content-Type: application/json',
+				'Host: test-bankalfalah.gateway.mastercard.com',
+				'Referer: http://tutor4all-api.shayansolutions.com/checkout.php', //Your referrer address
+				'cache-control: no-cache',
+				'Accept: application/json'
+			];
+
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			$server_output = curl_exec($ch);
+			curl_close($ch);
+
+			$json = json_decode($server_output, true);
+			if ($json['result'] == 'SUCCESS') {
+				$request = new \Illuminate\Http\Request();
+				$request->replace([
+					'transaction_platform' => 'card',
+					'session_id'           => $session,
+					'transaction_ref_no'   => $sessionId,
+					'transaction_type'     => 'card',
+					'amount'               => $amount,
+					'insert_date_time'     => Carbon::now()->format('yymdhis'),
+					'transaction_status'   => 'Paid'
+				]);
+				return $this->sessionPayment($request);
+
+			} else {
+				return response()->json(
+					[
+						'status'  => 'error',
+						'message' => 'payment failed'
+					],
+					422
+				);
+			}
+		}
+
+		// Response from Server --- Must be 'success' to proceed further.
+		//print $server_output ;
+
+		// echo "<br /> <br />" ;
+
+		// echo "Session Id: ". $sessionId ;
+
+		// echo "<br /> <br />" ;
+
+		// echo "Order Id: ". $orderId ;
+
+		// echo "<br /> <br />" ;
+
+
+	}
+
 }
