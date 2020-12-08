@@ -91,10 +91,10 @@ class PaymentInvoices extends Command {
 				$due_date = Carbon::now()->addDays($dueDays)->format('Y-m-d');
 				$invoice  = TutorInvoice::create([
 					'tutor_id'              => $tutor_id[0]->tutor_id,
-					'amount'                => $payment['total'],
-					'commission'            => $commission,
-					'payable'               => $payable,
-					'receiveable'           => $receiveable,
+					'amount'                => round($payment['total']),
+					'commission'            => round($commission),
+					'payable'               => round($payable),
+					'receiveable'           => round($receiveable),
 					'due_date'              => $due_date,
 					'status'                => 'pending',
 					'transaction_ref_no'    => null,
@@ -102,9 +102,9 @@ class PaymentInvoices extends Command {
 					'transaction_platform'  => null,
 					'transaction_status'    => null,
 					'commission_percentage' => doubleval($commsionSettings->value),
-					'cash_payment'          => $payment['cash'],
-					'jazzcash_payment'      => $payment['jazzcash'],
-					'card_payment'          => $payment['card'],
+					'cash_payment'          => round($payment['cash']),
+					'jazzcash_payment'      => round($payment['jazzcash']),
+					'card_payment'          => round($payment['card']),
 				]);
 				Disbursement::where('tutor_id', $tutor_id[0]->tutor_id)->where('invoice_id', null)->update([
 					'invoice_id' => $invoice->id
@@ -119,9 +119,9 @@ class PaymentInvoices extends Command {
 				$data['tutorLastName']  = $tutorLastName;
 				$data['earning']        = $invoice->amount;
 				$data['commission']     = $invoice->commission;
-				$data['cash']           = $payment['cash'];
-				$data['jazzcash']       = $payment['jazzcash'];
-				$data['card']           = $payment['card'];
+				$data['cash']           = round($payment['cash']);
+				$data['jazzcash']       = round($payment['jazzcash']);
+				$data['card']           = round($payment['card']);
 				if ($invoice->payable > 0) {
 					$data['invoice_message']  = "Your pending amount is " . $invoice->payable . ' We will pay as per our policy';
 					$data['due_date_message'] = "";
