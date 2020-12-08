@@ -997,5 +997,42 @@ class UserController extends Controller
 			);
 		}
 	}
+	public function deleteCard(Request $request)
+	{
+		if(Auth::user()->id)
+		{
+			$cards = CreditCard::find($request->id)->delete();
+			if($cards)
+			{
+				return response()->json(
+					[
+						'status'  => 'success',
+						'message' => 'Card deleted successfully!'
+					],
+					200
+				);
+			}
+			else{
+				return response()->json(
+					[
+						'status'  => 'error',
+						'message' => 'Card not deleted successfully!'
+					],
+					200
+				);
+			}
+		}
+		else {
+			return response()->json(
+				[
+					'status'  => 'error',
+					'message' => 'Error getting cards!',
+					'data' => []
+				],
+				200
+			);
+		}
+	}
+
 
 }

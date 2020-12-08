@@ -932,14 +932,7 @@ class SessionController extends Controller
         }
     }
 	public function studentCardSessionPayment(Request $request) {
-		// Ensure cURL is active on server.
-		//		echo 'Curl: ', function_exists('curl_version') ? 'Enabled' : 'Disabled';
-		// echo "<br /> <br />" ;
-
-		// Generating Random Order Number
-		$orderId = rand();
-
-		//PURCHASE
+		$orderId = rand(1000000000, 100000000000000);
 		$requestBody
 			= '{
 			"apiOperation": "CREATE_CHECKOUT_SESSION",
@@ -950,8 +943,6 @@ class SessionController extends Controller
 			"id" : "' . $orderId . '",
 				"currency" : "PKR"
 			}}';
-		// print $requestBody;
-
 		$ch = curl_init();
 		curl_setopt($ch,
 			CURLOPT_URL,
@@ -972,10 +963,7 @@ class SessionController extends Controller
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		$server_output = curl_exec($ch);
 		curl_close($ch);
-
-
 		$json = json_decode($server_output, true);
-		// echo "Response from cURL request: <br />" ;
 		$sessionId = $json['session']['id'];
 
 		if ($sessionId) {
@@ -1047,7 +1035,7 @@ class SessionController extends Controller
 					'transaction_platform' => 'card',
 					'session_id'           => $session,
 					'transaction_ref_no'   => $sessionId,
-					'transaction_type'     => 'card',
+					'transaction_type'     => 'CARD',
 					'amount'               => $amount,
 					'insert_date_time'     => Carbon::now()->format('yymdhis'),
 					'transaction_status'   => 'Paid'
@@ -1064,21 +1052,6 @@ class SessionController extends Controller
 				);
 			}
 		}
-
-		// Response from Server --- Must be 'success' to proceed further.
-		//print $server_output ;
-
-		// echo "<br /> <br />" ;
-
-		// echo "Session Id: ". $sessionId ;
-
-		// echo "<br /> <br />" ;
-
-		// echo "Order Id: ". $orderId ;
-
-		// echo "<br /> <br />" ;
-
-
 	}
 
 }

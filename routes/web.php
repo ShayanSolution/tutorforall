@@ -164,6 +164,7 @@ $router->post('admin-update-tutors-document', 'DocumentsController@updateTutorsD
 
 $router->post('add_card', 'UserController@addCard');
 $router->get('get_card', 'UserController@getCard');
+$router->post('delete_card', 'UserController@deleteCard');
 
 
 
@@ -300,6 +301,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     Route::get('/get_tutor_invoices', 'TutorInvoiceController@getTutorInvoice');
     //Tutor pay invoice
     Route::post('/tutor_pay_invoice', 'TutorInvoiceController@tutorPayInvoice');
+
+	Route::post('/teacher-card-invoice-payment', 'TutorInvoiceController@teacherCardInvoicePayment');
 });
 
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');
