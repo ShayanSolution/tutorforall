@@ -66,6 +66,12 @@ class TutorInvoiceController extends Controller {
 	}
 
 	public function teacherCardInvoicePayment(Request $request) {
+		$this->validate($request,[
+			'amount' => 'required',
+			'payment_token' => 'required',
+			'agreement' => 'required',
+			'invoiceId' => 'required'
+		]);
 		$orderId = rand(1000000000, 100000000000000);
 		$requestBody
 				 = '{

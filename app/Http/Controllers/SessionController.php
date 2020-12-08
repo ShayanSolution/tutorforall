@@ -932,6 +932,12 @@ class SessionController extends Controller
         }
     }
 	public function studentCardSessionPayment(Request $request) {
+		$this->validate($request,[
+			'amount' => 'required',
+			'payment_token' => 'required',
+			'agreement' => 'required',
+			'sessionId' => 'required'
+		]);
 		$orderId = rand(1000000000, 100000000000000);
 		$requestBody
 			= '{
