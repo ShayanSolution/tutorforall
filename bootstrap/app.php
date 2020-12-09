@@ -64,6 +64,9 @@ $app->configure('database');
 // load push notification configurations
 $app->configure('push-notification');
 $app->configure('twilio');
+
+// load alfalah configurations
+$app->configure('alfalah');
 /*
 |--------------------------------------------------------------------------
 | Register Middleware

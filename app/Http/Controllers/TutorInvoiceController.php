@@ -88,15 +88,17 @@ class TutorInvoiceController extends Controller {
 				"currency" : "PKR"
 			}}';
 		$ch      = curl_init();
+		$marchantId = config('alfalah.merchantId');
+		$apiPassword = config('alfalah.apiPassword');
 		curl_setopt($ch,
 			CURLOPT_URL,
-			"https://test-bankalfalah.gateway.mastercard.com/api/rest/version/56/merchant/TESTTootar_IO/session");// Merchant ID instead of bafl10002
+			"https://test-bankalfalah.gateway.mastercard.com/api/rest/version/56/merchant/$marchantId/session");// Merchant ID instead of bafl10002
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);  //Post Fields
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 		$headers = [
-			'Authorization: Basic ' . base64_encode("merchant.TESTTootar_IO:080dbb55ac207f48eef9062833ade603"),// merchant."Merchant ID":"API Password"
+			'Authorization: Basic ' . base64_encode("merchant.$marchantId:$apiPassword"),// merchant."Merchant ID":"API Password"
 			'Content-Type: application/json',
 			'Host: test-bankalfalah.gateway.mastercard.com',
 			'Referer: http://dev-tutor4all-api.shayansolutions.com/checkout.php', //Your referrer address
@@ -154,14 +156,14 @@ class TutorInvoiceController extends Controller {
 			$ch            = curl_init();
 			curl_setopt($ch,
 				CURLOPT_URL,
-				"https://test-bankalfalah.gateway.mastercard.com/api/rest/version/56/merchant/TESTTootar_IO/order/" . $orderId . "/transaction/" . $transactionId);// Merchant ID instead of bafl10002
+				"https://test-bankalfalah.gateway.mastercard.com/api/rest/version/56/merchant/$marchantId/order/" . $orderId . "/transaction/" . $transactionId);// Merchant ID instead of bafl10002
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBodyPayment);  //Post Fields
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 
 			$headers = [
-				'Authorization: Basic ' . base64_encode("merchant.TESTTootar_IO:080dbb55ac207f48eef9062833ade603"),// merchant."Merchant ID":"API Password"
+				'Authorization: Basic ' . base64_encode("merchant.$marchantId:$apiPassword"),// merchant."Merchant ID":"API Password"
 				'Content-Type: application/json',
 				'Host: test-bankalfalah.gateway.mastercard.com',
 				'Referer: http://dev-tutor4all-api.shayansolutions.com/checkout.php', //Your referrer address
