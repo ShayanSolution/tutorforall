@@ -723,6 +723,12 @@ class SessionController extends Controller
         $userId = Auth::user()->id;
         $cancelledFrom = $request->cancelled_from;
         $session = Session::where('id', $request->session_id)->first();
+        if ($session->status = "cancelled") {
+            return response()->json([
+                'status' => 'success',
+                'messages' => 'Session cancelled'
+            ]);
+        }
         if ($session->start_session_enable == 1) {
             if ($cancelledFrom == 'tutor') {
                 return response()->json([
