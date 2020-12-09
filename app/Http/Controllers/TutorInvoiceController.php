@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CreditCard;
 use App\Models\TutorInvoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,11 +40,13 @@ class TutorInvoiceController extends Controller {
 			]);
 		$invoiceId                  = $request->invoice_id;
 		$payInvoice                 = TutorInvoice::where('id', $invoiceId)->update([
-			'status'               => 'paid',
-			'transaction_ref_no'   => $request->transaction_ref_no,
-			'transaction_type'     => $request->transaction_type,
-			'transaction_platform' => $request->transaction_platform,
-			'transaction_status'   => $request->transaction_status,
+			'status'                 => 'paid',
+			'transaction_ref_no'     => $request->transaction_ref_no,
+			'transaction_type'       => $request->transaction_type,
+			'transaction_platform'   => $request->transaction_platform,
+			'transaction_status'     => $request->transaction_status,
+			'transaction_session_id' => $request->transaction_session_id ?? NULL,
+			'credit_card_id'         => $request->credit_card_id ?? NULL
 		]);
 		$invoice                    = TutorInvoice::find($invoiceId);
 		$invoice->tutor->is_blocked = 0;
@@ -66,13 +69,14 @@ class TutorInvoiceController extends Controller {
 	}
 
 	public function teacherCardInvoicePayment(Request $request) {
-		$this->validate($request,[
-			'amount' => 'required',
-			'payment_token' => 'required',
-			'agreement' => 'required',
-			'invoiceId' => 'required'
-		]);
-		$orderId = rand(1000000000, 100000000000000);
+		$this->validate($request,
+			[
+				'amount'        => 'required',
+				'payment_token' => 'required',
+				'agreement'     => 'required',
+				'invoiceId'     => 'required'
+			]);
+		$orderId = rand(100000, 999999);
 		$requestBody
 				 = '{
 			"apiOperation": "CREATE_CHECKOUT_SESSION",
@@ -86,16 +90,16 @@ class TutorInvoiceController extends Controller {
 		$ch      = curl_init();
 		curl_setopt($ch,
 			CURLOPT_URL,
-			"https://test-bankalfalah.gateway.mastercard.com/api/rest/version/56/merchant/Tootar_IO/session");// Merchant ID instead of bafl10002
+			"https://test-bankalfalah.gateway.mastercard.com/api/rest/version/56/merchant/TESTTootar_IO/session");// Merchant ID instead of bafl10002
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);  //Post Fields
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 		$headers = [
-			'Authorization: Basic ' . base64_encode("merchant.Tootar_IO:021f3dc88dcd5f2af85b2d856281f941"),// merchant."Merchant ID":"API Password"
+			'Authorization: Basic ' . base64_encode("merchant.TESTTootar_IO:080dbb55ac207f48eef9062833ade603"),// merchant."Merchant ID":"API Password"
 			'Content-Type: application/json',
 			'Host: test-bankalfalah.gateway.mastercard.com',
-			'Referer: http://tutor4all-api.shayansolutions.com/checkout.php', //Your referrer address
+			'Referer: http://dev-tutor4all-api.shayansolutions.com/checkout.php', //Your referrer address
 			'cache-control: no-cache',
 			'Accept: application/json'
 		];
@@ -103,7 +107,8 @@ class TutorInvoiceController extends Controller {
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		$server_output = curl_exec($ch);
 		curl_close($ch);
-		$json      = json_decode($server_output, true);
+		$json = json_decode($server_output, true);
+
 		$sessionId = $json['session']['id'];
 
 		if ($sessionId) {
@@ -113,7 +118,7 @@ class TutorInvoiceController extends Controller {
 			$invoice       = $request->invoiceId;
 
 
-			$orderId       = rand(1000000000, 100000000000000);
+			//			$orderId       = $orderId = rand(100000,999999);
 			$transactionId = rand(1, 10);
 			$requestBodyPayment
 						   = '{
@@ -149,17 +154,17 @@ class TutorInvoiceController extends Controller {
 			$ch            = curl_init();
 			curl_setopt($ch,
 				CURLOPT_URL,
-				"https://test-bankalfalah.gateway.mastercard.com/api/rest/version/56/merchant/Tootar_IO/order/" . $orderId . "/transaction/" . $transactionId);// Merchant ID instead of bafl10002
+				"https://test-bankalfalah.gateway.mastercard.com/api/rest/version/56/merchant/TESTTootar_IO/order/" . $orderId . "/transaction/" . $transactionId);// Merchant ID instead of bafl10002
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBodyPayment);  //Post Fields
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 
 			$headers = [
-				'Authorization: Basic ' . base64_encode("merchant.Tootar_IO:021f3dc88dcd5f2af85b2d856281f941"),// merchant."Merchant ID":"API Password"
+				'Authorization: Basic ' . base64_encode("merchant.TESTTootar_IO:080dbb55ac207f48eef9062833ade603"),// merchant."Merchant ID":"API Password"
 				'Content-Type: application/json',
 				'Host: test-bankalfalah.gateway.mastercard.com',
-				'Referer: http://tutor4all-api.shayansolutions.com/checkout.php', //Your referrer address
+				'Referer: http://dev-tutor4all-api.shayansolutions.com/checkout.php', //Your referrer address
 				'cache-control: no-cache',
 				'Accept: application/json'
 			];
@@ -168,15 +173,18 @@ class TutorInvoiceController extends Controller {
 			$server_output = curl_exec($ch);
 			curl_close($ch);
 
-			$json = json_decode($server_output, true);
+			$json         = json_decode($server_output, true);
+			$credit_cards = CreditCard::whereTokenId($payment_token)->first();
 			if ($json['result'] == 'SUCCESS') {
 				$request = new \Illuminate\Http\Request();
 				$request->replace([
-					'invoice_id'           => $invoice,
-					'transaction_platform' => 'card',
-					'transaction_ref_no'   => $sessionId,
-					'transaction_type'     => 'CARD',
-					'transaction_status'   => 'Paid'
+					'invoice_id'             => $invoice,
+					'transaction_platform'   => 'card',
+					'transaction_ref_no'     => $orderId,
+					'transaction_type'       => 'CARD',
+					'transaction_status'     => 'Paid',
+					'transaction_session_id' => $sessionId,
+					'credit_card_id'         => $credit_cards->id
 				]);
 				return $this->tutorPayInvoice($request);
 
