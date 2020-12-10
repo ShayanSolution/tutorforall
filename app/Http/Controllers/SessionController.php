@@ -586,6 +586,7 @@ class SessionController extends Controller
 
         $totalCostAccordingToHours = $sessionCost->execute($durationInHour, $findSession);
 
+
         if($findSession->student->profile->is_deserving == 0) {
             $findSession->ended_at = $now;
             $findSession->rate = $totalCostAccordingToHours;
@@ -595,7 +596,7 @@ class SessionController extends Controller
             $wallet = new Wallet();
             $wallet->session_id = $findSession->id;
             $wallet->amount = $totalCostAccordingToHours;
-            $wallet->type = 'debit';
+            $wallet->type = 'Cost';
             $wallet->from_user_id = $findSession->student_id;
             $wallet->to_user_id = $findSession->tutor_id;
             $wallet->save();

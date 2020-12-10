@@ -17,7 +17,7 @@ class CreateWalletsTable extends Migration
             $table->increments('id');
             $table->integer('session_id')->unsigned();
             $table->double('amount');
-            $table->enum('type',['debit','credit']);
+            $table->enum('type',['debit','credit','extra','cost']);
             $table->integer('from_user_id')->unsigned();
             $table->integer('to_user_id')->unsigned();
             $table->timestamps();
