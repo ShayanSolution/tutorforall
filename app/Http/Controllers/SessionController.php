@@ -16,6 +16,7 @@ use App\Models\Disbursement;
 use App\Models\SessionPayment;
 use App\Models\Setting;
 use App\Services\CostCalculation\SessionCost;
+use App\Support\Alfalah;
 use App\Wallet;
 use Illuminate\Http\Request;
 use Davibennun\LaravelPushNotification\Facades\PushNotification;
@@ -938,6 +939,9 @@ class SessionController extends Controller
 			'agreement' => 'required',
 			'sessionId' => 'required'
 		]);
+		$marchantId = config('alfalah.merchantId');
+		$gatewayUrl = config('alfalah.gatewayUrl');
+		$apiVersion = config('alfalah.apiVersion');
 		$orderId = rand(100000, 999999);
 		$requestBody
 			= '{
@@ -949,30 +953,8 @@ class SessionController extends Controller
 			"id" : "' . $orderId . '",
 				"currency" : "PKR"
 			}}';
-		$ch = curl_init();
-		$marchantId = config('alfalah.merchantId');
-		$apiPassword = config('alfalah.apiPassword');
-
-		curl_setopt($ch,
-			CURLOPT_URL,
-			"https://test-bankalfalah.gateway.mastercard.com/api/rest/version/56/merchant/$marchantId/session");// Merchant ID instead of bafl10002
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);  //Post Fields
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-		$headers = [
-			'Authorization: Basic ' . base64_encode("merchant.$marchantId:$apiPassword"),// merchant."Merchant ID":"API Password"
-			'Content-Type: application/json',
-			'Host: test-bankalfalah.gateway.mastercard.com',
-			'Referer: http://tutor4all-api.shayansolutions.com/checkout.php', //Your referrer address
-			'cache-control: no-cache',
-			'Accept: application/json'
-		];
-
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		$server_output = curl_exec($ch);
-		curl_close($ch);
-		$json = json_decode($server_output, true);
+		$url = "https://$gatewayUrl/api/rest/version/$apiVersion/merchant/$marchantId/session";
+		$json = app(Alfalah::class)->alfalahPayments($url,$requestBody,CURLOPT_POST,1);
 		$sessionId = $json['session']['id'];
 
 		if ($sessionId) {
@@ -1013,29 +995,12 @@ class SessionController extends Controller
 					"currency": "PKR"
 				}
             }';
-			$ch = curl_init();
-			curl_setopt($ch,
-				CURLOPT_URL,
-				"https://test-bankalfalah.gateway.mastercard.com/api/rest/version/56/merchant/$marchantId/order/" . $orderId . "/transaction/" . $transactionId);// Merchant ID instead of bafl10002
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBodyPayment);  //Post Fields
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+			$url = "https://$gatewayUrl/api/rest/version/$apiVersion/merchant/$marchantId/order/" . $orderId . "/transaction/" . $transactionId;
+
+			$json = app(Alfalah::class)->alfalahPayments($url,$requestBodyPayment,CURLOPT_CUSTOMREQUEST,"PUT");
 
 
-			$headers = [
-				'Authorization: Basic ' . base64_encode("merchant.$marchantId:$apiPassword"),// merchant."Merchant ID":"API Password"
-				'Content-Type: application/json',
-				'Host: test-bankalfalah.gateway.mastercard.com',
-				'Referer: http://tutor4all-api.shayansolutions.com/checkout.php', //Your referrer address
-				'cache-control: no-cache',
-				'Accept: application/json'
-			];
-
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-			$server_output = curl_exec($ch);
-			curl_close($ch);
-
-			$json = json_decode($server_output, true);
 			if ($json['result'] == 'SUCCESS') {
 				$request = new \Illuminate\Http\Request();
 				$request->replace([
