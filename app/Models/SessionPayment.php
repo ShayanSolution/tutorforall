@@ -12,6 +12,7 @@ class SessionPayment extends Model
         'transaction_type',
         'transaction_platform',
         'amount',
+		'paid_amount',
         'insert_date_time',
         'transaction_status',
         'mobile_number',
