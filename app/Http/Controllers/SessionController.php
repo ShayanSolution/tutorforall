@@ -8,6 +8,7 @@ use App\Exceptions\SessionBookedStartedOrEnded;
 use App\Exceptions\SessionExpired;
 use App\Jobs\BookNotification;
 use App\Jobs\CancelledSessionNotification;
+use App\Jobs\DemoReviewSessionNotification;
 use App\Jobs\DemoSessionNotification;
 use App\Jobs\ReceivedPaymentNotification;
 use App\Jobs\SendNotificationOfCalculationCost;
@@ -1149,6 +1150,41 @@ class SessionController extends Controller {
                 'messages' => 'Session not found.'
             ]);
         }
+    }
+
+    public function demoReview(Request $request){
+        $this->validate($request,
+            [
+                'session_id' => 'required',
+                'demo_session_review' => 'required',
+            ]);
+        $userId = Auth::user()->id;
+        $session = Session::where('id', $request->session_id)->first();
+        // send push noti to tootar teacher app
+        $demoSessionReview = $request->demo_session_review;
+        if ($demoSessionReview == 1) {
+            //if student click on yes == 1
+            $job = new DemoReviewSessionNotification($request->session_id, $demoSessionReview);
+            dispatch($job);
+        } else {
+            $cancelledFrom = 'student';
+            $tutorId = $session->tutor_id;
+            $session->update([
+                'status'         => 'cancelled',
+                'cancelled_by'   => $userId,
+                'cancelled_from' => $cancelledFrom,
+            ]);
+            $job = new CancelledSessionNotification($tutorId, $cancelledFrom);
+            dispatch($job);
+            return response()->json([
+                'status'   => 'success',
+                'messages' => 'You cancelled session'
+            ]);
+        }
+        return response()->json([
+            'status'   => 'success',
+            'messages' => 'Thank you for demo session review.'
+        ]);
     }
 
 }
