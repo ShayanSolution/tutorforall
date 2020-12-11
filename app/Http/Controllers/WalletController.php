@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SessionPaymentEmail;
 use App\Models\Disbursement;
+use App\Models\Profile;
 use App\Models\SessionPayment;
 use App\Services\CostCalculation\SessionCost;
 use App\Wallet;
@@ -11,6 +12,7 @@ use App\Models\Session;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Jobs\ReceivedPaymentNotification;
+use Illuminate\Support\Facades\Auth;
 
 class WalletController extends Controller {
 
@@ -143,4 +145,33 @@ class WalletController extends Controller {
 			);
 		}
 	}
+
+	public function useWalletFirst(Request $request){
+        $this->validate($request,
+            [
+                'use_wallet_first' => 'required',
+            ]);
+        // update
+        $userId        = Auth::user()->id;
+        $useWalletFirst = $request->use_wallet_first;
+        $useWallet = Profile::where('user_id', $userId)->first();
+        if ($useWallet){
+            $useWallet->update([
+                'use_wallet_first' => $useWalletFirst
+            ]);
+            return response()->json(
+                [
+                    'status'  => 'success',
+                    'message' => 'Save wallet setting'
+                ]
+            );
+        } else {
+            return response()->json(
+                [
+                    'status'  => 'error',
+                    'message' => 'User not found'
+                ]
+            );
+        }
+    }
 }

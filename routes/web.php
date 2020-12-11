@@ -309,6 +309,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     Route::post('/demo-end', 'SessionController@demoEnd');
     //Demo review from student
     Route::post('/demo-review', 'SessionController@demoReview');
+    //Use wallet first
+    Route::post('/use-wallet-first', 'WalletController@useWalletFirst');
 });
 
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');
