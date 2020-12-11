@@ -42,7 +42,9 @@ class Session extends Model
         'country',
         'cancelled_by',
         'cancelled_from',
-        'is_hourly'
+        'is_hourly',
+        'demo_started_at',
+        'demo_ended_at'
     ];
 
     public function student()

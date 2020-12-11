@@ -303,6 +303,10 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     Route::post('/tutor_pay_invoice', 'TutorInvoiceController@tutorPayInvoice');
 
 	Route::post('/teacher-card-invoice-payment', 'TutorInvoiceController@teacherCardInvoicePayment');
+	//Start demo session
+    Route::post('/demo-start', 'SessionController@demoStart');
+    //End demo session
+    Route::post('/demo-end', 'SessionController@demoEnd');
 });
 
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');

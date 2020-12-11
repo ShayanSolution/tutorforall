@@ -8,6 +8,7 @@ use App\Exceptions\SessionBookedStartedOrEnded;
 use App\Exceptions\SessionExpired;
 use App\Jobs\BookNotification;
 use App\Jobs\CancelledSessionNotification;
+use App\Jobs\DemoSessionNotification;
 use App\Jobs\ReceivedPaymentNotification;
 use App\Jobs\SendNotificationOfCalculationCost;
 use App\Jobs\SessionPaidNotificationToTutor;
@@ -1091,5 +1092,63 @@ class SessionController extends Controller {
 			}
 		}
 	}
+
+	public function demoStart(Request $request){
+        $this->validate($request,
+            [
+                'session_id' => 'required',
+            ]);
+        // update demo_started_at
+        $sessionId = $request->session_id;
+        $demoSessionStatus = 'started';
+        $currentTime = Carbon::parse(Carbon::now());
+        $session = Session::where('id', $sessionId)->first();
+        if ($session){
+            $session->update([
+                'demo_started_at' => $currentTime
+            ]);
+            // send push noti to student demo session has been start
+            $job = new DemoSessionNotification($sessionId, $demoSessionStatus);
+            dispatch($job);
+            return response()->json([
+                'status'   => 'success',
+                'messages' => 'Demo session is started'
+            ]);
+        } else {
+            return response()->json([
+                'status'   => 'error',
+                'messages' => 'Session not found.'
+            ]);
+        }
+    }
+
+    public function demoEnd(Request $request){
+        $this->validate($request,
+            [
+                'session_id' => 'required',
+            ]);
+        // update demo_started_at
+        $sessionId = $request->session_id;
+        $demoSessionStatus = 'ended';
+        $currentTime = Carbon::parse(Carbon::now());
+        $session = Session::where('id', $sessionId)->first();
+        if ($session){
+            $session->update([
+                'demo_ended_at' => $currentTime
+            ]);
+            // send push noti to student demo session has been start
+            $job = new DemoSessionNotification($sessionId, $demoSessionStatus);
+            dispatch($job);
+            return response()->json([
+                'status'   => 'success',
+                'messages' => 'Demo session is ended'
+            ]);
+        } else {
+            return response()->json([
+                'status'   => 'error',
+                'messages' => 'Session not found.'
+            ]);
+        }
+    }
 
 }
