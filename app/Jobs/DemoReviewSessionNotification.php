@@ -46,7 +46,7 @@ class DemoReviewSessionNotification extends Job implements ShouldQueue
                 $body   = 'The student is not satisfied by demo session and has decided not to continue with the session.';
             }
                 $customData = array(
-                    'notification_type' => 'session_started',
+                    'notification_type' => 'demo_session_review',
                     'session_id' => (string)$sessionId,
                     'demo_session_review' => $demoReview
                 );
