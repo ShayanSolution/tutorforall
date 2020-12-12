@@ -14,7 +14,7 @@ class AddUseWalletFirstInProfilesTable extends Migration
     public function up()
     {
         Schema::table('profiles', function (Blueprint $table) {
-            $table->tinyInteger('use_wallet_first')->default(0);
+            $table->tinyInteger('use_wallet_first')->default(1);
         });
     }
 

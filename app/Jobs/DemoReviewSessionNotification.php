@@ -40,9 +40,13 @@ class DemoReviewSessionNotification extends Job implements ShouldQueue
         $demoReview =$this->demoSessionReview;
         if(!empty($user->device_token)){
             $title  = Config::get('user-constants.APP_NAME');
-                $body   = 'You can start session.';
+            if ($demoReview == 1) {
+                $body   = 'You can start session by pressing the “Start Session” button.';
+            } else {
+                $body   = 'The student is not satisfied by demo session and has decided not to continue with the session.';
+            }
                 $customData = array(
-                    'notification_type' => 'demo_session_review',
+                    'notification_type' => 'session_started',
                     'session_id' => (string)$sessionId,
                     'demo_session_review' => $demoReview
                 );
