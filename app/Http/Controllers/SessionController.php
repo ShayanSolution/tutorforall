@@ -778,19 +778,19 @@ class SessionController extends Controller {
 				'messages' => 'Session cancelled'
 			]);
 		}
-		if ($session->start_session_enable == 1) {
-			if ($cancelledFrom == 'tutor') {
-				return response()->json([
-					'status'   => 'error',
-					'messages' => 'Unable to cancel session because your student has arrived'
-				]);
-			} else {
-				return response()->json([
-					'status'   => 'error',
-					'messages' => 'Unable to cancel session because your tutor has arrived'
-				]);
-			}
-		}
+//		if ($session->start_session_enable == 1) {
+//			if ($cancelledFrom == 'tutor') {
+//				return response()->json([
+//					'status'   => 'error',
+//					'messages' => 'Unable to cancel session because your student has arrived'
+//				]);
+//			} else {
+//				return response()->json([
+//					'status'   => 'error',
+//					'messages' => 'Unable to cancel session because your tutor has arrived'
+//				]);
+//			}
+//		}
 		if ($session->status == 'started') {
 			return response()->json([
 				'status'   => 'error',
