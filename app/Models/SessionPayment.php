@@ -17,5 +17,6 @@ class SessionPayment extends Model
         'transaction_status',
         'mobile_number',
         'cnic_last_six_digits',
+        'wallet_payment',
     ];
 }

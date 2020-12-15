@@ -328,6 +328,28 @@ class Session extends Model
             ->get();
         return $student_session_detail;
     }
+
+    public function getTutorSessionPaymentDetail($tutorId){
+        $tutor_session_detail = User::select('users.*', 'session_payments.id as sessionPaymentId', 'session_payments.transaction_platform as sessionPaymentTransactionPlatform', 'session_payments.amount as sessionPaymentAmount', 'session_payments.paid_amount as sessionPaidAmount', 'session_payments.wallet_payment as walletPaidAmount', 'session_payments.created_at as sessionPaymentCreatedAt'
+            , 'sessions.created_at as Session_created_date','sessions.longitude','sessions.latitude','sessions.hourly_rate','sessions.tracking_on','sessions.hourly_rate_past_first_hour'
+            ,'sessions.session_location','rate','sessions.duration','sessions.is_hourly'
+            ,'sessions.book_later_at','sessions.status as session_status','subjects.name as s_name', 'programmes.name as p_name','sessions.student_id as session_user_id','sessions.id as session_id'
+            ,'sessions.is_home as session_is_home', 'sessions.is_group as session_is_group', 'sessions.group_members as session_group_members'
+            ,'ratings.rating as session_rating','ratings.review as session_review')
+            ->join('sessions','sessions.tutor_id','=','users.id')
+            ->join('session_payments','session_payments.session_id','=','sessions.id')
+            ->join('programmes','programmes.id','=','sessions.programme_id')
+            ->join('subjects','subjects.id','=','sessions.subject_id')
+            ->leftJoin('ratings','ratings.session_id','=','sessions.id')
+            ->where('users.role_id','=',Config::get('user-constants.TUTOR_ROLE_ID'))
+            ->where('users.id','=',$tutorId)
+            ->where(function($q){
+                $q->Where('sessions.status','=','ended');
+            })
+            ->orderBy('sessions.updated_at', 'DESC')
+            ->get();
+        return $tutor_session_detail;
+    }
     
 
 }

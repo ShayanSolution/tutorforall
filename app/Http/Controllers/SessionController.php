@@ -601,18 +601,15 @@ class SessionController extends Controller {
 		$now  = Carbon::now();
 
 		$durationInHour = ceil($date->diffInSeconds($now) / 60 / 60);
-
 		$totalCostAccordingToHours = $sessionCost->execute($durationInHour, $findSession);
 
-
+        $walletBalance = 0;
 		if ($findSession->student->profile->is_deserving == 0) {
 			$findSession->ended_at = $now;
 			$findSession->rate     = $totalCostAccordingToHours;
 			$findSession->status   = 'ended';
 			$findSession->duration = $originalDuration;
 			$findSession->save();
-
-			$walletBalance = 0;
 
 			if ($findSession->student->profile->use_wallet_first) {
 				$walletRequest = new \Illuminate\Http\Request();
@@ -623,32 +620,23 @@ class SessionController extends Controller {
 				$result        = $student->walletStudent($walletRequest);
 				$walletBalance = $result->getData()->total_amount;
 			}
+            $paymentable = 'payable';
+			$totalCost = $totalCostAccordingToHours - $walletBalance;
+			if ($totalCost <= 0) {
+			    $paymentable = 'paid';
+            }
 
-
-			//          Start Wallet Changes by dev 7
-			//            $wallet = new Wallet();
-			//            $wallet->session_id = $findSession->id;
-			//            $wallet->amount = $totalCostAccordingToHours;
-			//            $wallet->type = 'Cost';
-			//            $wallet->from_user_id = $findSession->student_id;
-			//            $wallet->to_user_id = $findSession->tutor_id;
-			//            $wallet->save();
-
-			//          End Wallet Changes by dev 7
-
-			$job = (new SendNotificationOfCalculationCost($totalCostAccordingToHours,
-				$request->session_id,
-				json_encode($user),
-				'commercial'));
+			$job = (new SendNotificationOfCalculationCost($totalCostAccordingToHours, $totalCost, $walletBalance, $request->session_id, $paymentable, json_encode($user), 'commercial'));
 			dispatch($job);
 			return response()->json(
 				[
 					'status'                      => 'success',
-					'totalCost'                   => $totalCostAccordingToHours - $walletBalance,
+					'totalCost'                   => $totalCost,
 					'wallet'                      => $walletBalance,
 					'totalAmount'                 => $totalCostAccordingToHours,
 					'hourly_rate'                 => $findSession->hourly_rate,
-					'hourly_rate_past_first_hour' => $hourlyRatePastFirstHour
+					'hourly_rate_past_first_hour' => $hourlyRatePastFirstHour,
+                    'payment_able' => $paymentable
 				]
 			);
 		} else {
@@ -657,11 +645,10 @@ class SessionController extends Controller {
 			$findSession->status   = 'ended';
 			$findSession->duration = $originalDuration;
 			$findSession->save();
+            $totalCost = 0;
+            $paymentable = 'paid';
 
-			$job = (new SendNotificationOfCalculationCost($totalCostAccordingToHours,
-				$request->session_id,
-				json_encode($user),
-				'mentor'));
+			$job = (new SendNotificationOfCalculationCost($totalCostAccordingToHours, $totalCost, $walletBalance, $request->session_id, $paymentable, json_encode($user), 'commercial'));
 			dispatch($job);
 			return response()->json(
 				[
@@ -867,6 +854,19 @@ class SessionController extends Controller {
 					'insert_date_time' => 'required',
 				]);
 		}
+        //wallet
+        if ($request->transaction_platform == "wallet") {
+            $this->validate($request,
+                [
+                    'session_id'           => 'required',
+                    'transaction_type'     => 'required',
+                    'amount'               => 'required',
+                    'paid_amount'          => 'required',
+                    'insert_date_time'     => 'required',
+                    'transaction_status'   => 'required',
+                    'wallet_payment'       => 'required',
+                ]);
+        }
 
 		// save
 		$transactionPlatform = $request->transaction_platform;
@@ -906,6 +906,33 @@ class SessionController extends Controller {
 						]
 					);
 				}
+                if ($transactionPlatform == "wallet") {
+                    // Wallet debit entry
+                    $debitWallet = new Wallet();
+                    $debitWallet->session_id = $sessionPayment->session_id;
+                    $debitWallet->amount = $findSession->rate;
+                    $debitWallet->type = 'debit';
+                    $debitWallet->from_user_id = $findSession->student_id;
+                    $debitWallet->to_user_id = $findSession->tutor_id;
+                    $debitWallet->notes = "(sessionid : $sessionPayment->session_id) (paid_amount : $sessionPayment) (session_amount : $findSession->rate) (wallet : $findSession->rate-$sessionPayment->amount)";
+                    $debitWallet->save();
+
+                    Log::info('Confirm Noti to tutor ' . $findSession->tutor_id . ' that Payment DONE ' . $transactionPlatform);
+                    $jobReceivedPaymentStudent = (new ReceivedPaymentNotification($request->session_id,
+                        $findSession->student_id));
+                    dispatch($jobReceivedPaymentStudent);
+                    Log::info('Confirm Noti to student ' . $findSession->student_id . ' that session payment DONE ' . $transactionPlatform);
+                    //Send Email to student
+                    $jobSendEmailToStudent = (new SessionPaymentEmail($request->session_id, $studentId, $tutorId));
+                    dispatch($jobSendEmailToStudent);
+                    return response()->json(
+                        [
+                            'status'               => 'success',
+                            'transaction_platform' => $request->transaction_platform,
+                            'message'              => 'Payment Successfully'
+                        ]
+                    );
+                }
 				if ($transactionPlatform == "cash") {
 					$job = (new SessionPaidNotificationToTutor($request->session_id,
 						$findSession->tutor_id,
@@ -1192,6 +1219,82 @@ class SessionController extends Controller {
             'status'   => 'success',
             'messages' => 'Thank you for demo session review.'
         ]);
+    }
+
+    public function tutorSessionPaymentsDetail() {
+        $userId               = Auth::user()->id;
+        $session              = new Session();
+        $data                 = $session->getTutorSessionPaymentDetail($userId);
+        $commsionSettings = Setting::where('group_name', 'session-commision-percentage-settings')->first();
+        $sessionPaymentDetail = [];
+        if ($data) {
+            $totalEarning = 0;
+            $totalReceivedAmount = 0;
+            foreach ($data as $user) {
+                $user_details = User::where('id', $user->session_user_id)->first();
+                if ($user->book_later_at != null || $user->book_later_at != '') {
+                    $sessionDate = $user->book_later_at;
+                } else {
+                    $sessionDate = $user->Session_created_date;
+                }
+                if ($user_details) {
+                    $sessionType     = 'now';
+                    $checkTrackingOn = $user->book_later_at;
+                    if ($checkTrackingOn) {
+                        $sessionType = 'later';
+                    }
+                    $totalEarning+= $user->sessionPaymentAmount;
+                    $totalReceivedAmount+= $user->sessionPaidAmount;
+                    $sessionPaymentDetail[] = [
+                        'studentName'                         => $user_details->firstName . ' ' . $user_details->lastName,
+                        'studentphone'                       => $user_details->phone,
+                        'status'                            => $user->session_status,
+                        'subject'                           => $user->s_name,
+                        'program'                           => $user->p_name,
+                        'session_Location'                  => is_null($user->session_location) ? '' : $user->session_location,
+                        'session_Duration'                  => $user->duration,
+                        'is_home'                           => $user->session_is_home,
+                        'session_id'                        => $user->session_id,
+                        'session_status'                    => $user->session_status,
+                        'is_group'                          => $user->session_is_group,
+                        'group_members'                     => $user->session_group_members,
+                        'session_rating'                    => is_null($user->session_rating) ? '' : number_format((float)$user->session_rating,
+                            1,
+                            '.',
+                            ''),
+                        'session_review'                    => is_null($user->session_review) ? '' : (string)$user->session_review,
+                        'Profile_image'                     => !empty($user_details->profileImage) ? URL::to('/images') . '/' . $user_details->profileImage : '',
+                        'book_later_at'                     => $user->book_later_at,
+                        'session_type'                      => $sessionType,
+                        'is_hourly'                         => $user->is_hourly,
+                        'sessionPaymentId'                  => $user->sessionPaymentId,
+                        'sessionPaymentTransactionPlatform' => $user->sessionPaymentTransactionPlatform,
+                        'sessionPaymentAmount'              => $user->sessionPaymentAmount,
+                        'sessionPaidAmount'                 => $user->sessionPaidAmount,
+                        'walletPaidAmount'                  => $user->walletPaidAmount,
+                        'sessionPaymentCreatedAt'           => Carbon::parse($user->sessionPaymentCreatedAt)->format('d-m-Y h:iA')
+                    ];
+                }
+            }
+            $commission = ($totalEarning/ 100 ) * $commsionSettings->value;
+            return response()->json(
+                [
+                    'data' => $sessionPaymentDetail,
+                    'total_earning' => $totalEarning,
+                    'total_received_amount' => $totalReceivedAmount,
+                    'pay_able_commission' => $commission,
+                    'total_pay_back' => ($totalReceivedAmount - $totalEarning) + $commission,
+                ]
+            );
+        } else {
+            return response()->json(
+                [
+                    'status'  => 'error',
+                    'message' => 'Unable to get session payment'
+                ],
+                422
+            );
+        }
     }
 
 }
