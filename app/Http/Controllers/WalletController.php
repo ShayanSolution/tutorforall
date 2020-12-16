@@ -50,7 +50,7 @@ class WalletController extends Controller {
             if ($sessionPayment) {
                 $sessionPayment->update([
                     'transaction_status' => 'Paid',
-                    'paid_amount'        => $request->amount,
+                    'paid_amount'        => $amount,
                     'wallet_payment' => $session->rate-$sessionPayment->amount,
                 ]);
                 if($session->rate > $sessionPayment->amount)
