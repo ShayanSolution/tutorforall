@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Helpers\Push;
+use App\Models\SessionPayment;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -39,11 +40,14 @@ class ReceivedPaymentNotification extends Job implements ShouldQueue
         $session_id = $this->session_id;
         $student_id = $this->student_id;
 
+        $sessionPayment = SessionPayment::where('session_id', $session_id)->first();
+
         $title  =   Config::get('user-constants.APP_NAME');
         $body = 'Your amount has been received and if you have paid extra, your amount will be added to your wallet.';
         $customData = array(
             'notification_type' => 'session_paid',
-            'session_id' => $session_id
+            'session_id' => $session_id,
+            'paid_amount' => $sessionPayment->paid_amount
         );
         $user = User::find($student_id);
 
