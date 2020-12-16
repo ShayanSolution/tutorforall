@@ -37,10 +37,10 @@ class WalletController extends Controller {
         if ($willWallet < 1000){
             //update session Payment if paid amount is greater than session payment amount
             $sessionPayment = SessionPayment::where('session_id', $sessionId)->first();
-            if ($amount > $session->rate || $sessionPayment->amount < $amount) {
+            if ($amount > $sessionPayment->amount) {
                 $wallet               = new Wallet();
                 $wallet->session_id   = $session->id;
-                $wallet->amount       = $amount - $session->rate;
+                $wallet->amount       = $amount - $sessionPayment->amount;
                 $wallet->type         = 'credit';
                 $wallet->from_user_id = $session->student_id;
                 $wallet->to_user_id   = $session->tutor_id;
