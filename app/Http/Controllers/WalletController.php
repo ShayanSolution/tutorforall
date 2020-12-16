@@ -35,22 +35,12 @@ class WalletController extends Controller {
         $sessionRate = $session->rate;
         $willWallet = ($sessionRate - $amount) + $studentTotalWalletAmount;
         if ($willWallet < 1000){
-            if ($amount > $session->rate) {
+            //update session Payment if paid amount is greater than session payment amount
+            $sessionPayment = SessionPayment::where('session_id', $sessionId)->first();
+            if ($amount > $session->rate || $sessionPayment->amount < $amount) {
                 $wallet               = new Wallet();
                 $wallet->session_id   = $session->id;
                 $wallet->amount       = $amount - $session->rate;
-                $wallet->type         = 'credit';
-                $wallet->from_user_id = $session->student_id;
-                $wallet->to_user_id   = $session->tutor_id;
-                $wallet->notes        = "(session_id : $session->id)(paid_amount : $amount) (session_amount : $session->rate) (wallet : $wallet->amount)";
-                $wallet->save();
-            }
-            //update session Payment if paid amount is greater than session payment amount
-            $sessionPayment = SessionPayment::where('session_id', $sessionId)->first();
-            if ($sessionPayment->amount < $amount) {
-                $wallet               = new Wallet();
-                $wallet->session_id   = $session->id;
-                $wallet->amount       = $amount - $sessionPayment->amount;
                 $wallet->type         = 'credit';
                 $wallet->from_user_id = $session->student_id;
                 $wallet->to_user_id   = $session->tutor_id;
