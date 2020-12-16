@@ -119,6 +119,7 @@ class SessionController extends Controller {
 							''),
 						'session_review'              => is_null($user->session_review) ? '' : (string)$user->session_review,
                         'session_amount'              => $user->rate,
+                        'amount'                      => $sessionPayment->amount,
 						'paid_amount'                 => $sessionPayment->paid_amount,
 						'wallet_payment'              => $sessionPayment->wallet_payment,
                         'transaction_platform'        => $sessionPayment->transaction_platform,
