@@ -1271,6 +1271,7 @@ class SessionController extends Controller {
                         'sessionPaymentAmount'              => $user->sessionPaymentAmount,
                         'sessionPaidAmount'                 => $user->sessionPaidAmount,
                         'walletPaidAmount'                  => $user->walletPaidAmount,
+                        'commission'                        => ($user->sessionPaymentAmount/ 100 ) * $commsionSettings->value,
                         'sessionPaymentCreatedAt'           => Carbon::parse($user->sessionPaymentCreatedAt)->format('d-m-Y h:iA')
                     ];
                 }
