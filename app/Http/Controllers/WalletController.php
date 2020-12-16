@@ -47,7 +47,7 @@ class WalletController extends Controller {
 				// Wallet debit entry
 				$debitWallet = new Wallet();
 				$debitWallet->session_id = $sessionPayment->session_id;
-				$debitWallet->amount = $session->rate-$sessionPayment->amount;
+				$debitWallet->amount = $session->rate-$sessionPayment->amount == 0 ? $sessionPayment->amount : $session->rate-$sessionPayment->amount;
 				$debitWallet->type = 'debit';
 				$debitWallet->from_user_id = $session->student_id;
 				$debitWallet->to_user_id = $session->tutor_id;

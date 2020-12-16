@@ -864,7 +864,6 @@ class SessionController extends Controller {
                     'paid_amount'          => 'required',
                     'insert_date_time'     => 'required',
                     'transaction_status'   => 'required',
-                    'wallet_payment'       => 'required',
                 ]);
         }
 
@@ -910,11 +909,11 @@ class SessionController extends Controller {
                     // Wallet debit entry
                     $debitWallet = new Wallet();
                     $debitWallet->session_id = $sessionPayment->session_id;
-                    $debitWallet->amount = $findSession->rate;
+                    $debitWallet->amount = $findSession->rate-$sessionPayment->amount == 0 ? $sessionPayment->amount : $findSession->rate-$sessionPayment->amount;
                     $debitWallet->type = 'debit';
                     $debitWallet->from_user_id = $findSession->student_id;
                     $debitWallet->to_user_id = $findSession->tutor_id;
-                    $debitWallet->notes = "(sessionid : $sessionPayment->session_id) (paid_amount : $sessionPayment) (session_amount : $findSession->rate) (wallet : $findSession->rate-$sessionPayment->amount)";
+                    $debitWallet->notes = "(sessionid : $sessionPayment->session_id) (paid_amount : $sessionPayment->amount) (session_amount : $findSession->rate) (wallet : $findSession->rate-$sessionPayment->amount)";
                     $debitWallet->save();
 
                     Log::info('Confirm Noti to tutor ' . $findSession->tutor_id . ' that Payment DONE ' . $transactionPlatform);
