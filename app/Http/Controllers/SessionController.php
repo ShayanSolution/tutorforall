@@ -69,10 +69,7 @@ class SessionController extends Controller {
 			$tutor_sessions = [];
 			foreach ($user_session as $user) {
 				$user_details = User::where('id', $user->session_user_id)->first();
-				$wallet       = Wallet::where(['session_id' => $user->session_id, 'type' => 'debit'])->first();
-				if ($wallet) {
-					$paidAmount = $wallet->amount;
-				}
+				$sessionPayment = SessionPayment::where('session_id', $user->session_id)->first();
 				if ($user->book_later_at != null || $user->book_later_at != '') {
 					$sessionDate = $user->book_later_at;
 				} else {
@@ -121,7 +118,11 @@ class SessionController extends Controller {
 							'.',
 							''),
 						'session_review'              => is_null($user->session_review) ? '' : (string)$user->session_review,
-						'paid_amount'                 => isset($paidAmount) ? $paidAmount : 0,
+                        'session_amount'              => $user->rate,
+						'paid_amount'                 => $sessionPayment->paid_amount,
+						'wallet_payment'              => $sessionPayment->wallet_payment,
+                        'transaction_platform'        => $sessionPayment->transaction_platform,
+                        'transaction_status'          => $sessionPayment->transaction_status,
 						'Age'                         => Carbon::parse($user->dob)->age,
 						'Profile_image'               => !empty($user_details->profileImage) ? URL::to('/images') . '/' . $user_details->profileImage : '',
 						'hourly_rate'                 => $user->hourly_rate,
