@@ -22,60 +22,79 @@ class WalletController extends Controller {
 				'session_id' => 'required',
 				'amount'     => 'required',
 			]);
-		$session = Session::find($request->session_id);
-            $amount = $request->amount;
-		if ($amount > $session->rate) {
-			$wallet               = new Wallet();
-			$wallet->session_id   = $session->id;
-			$wallet->amount       = $amount - $session->rate;
-			$wallet->type         = 'credit';
-			$wallet->from_user_id = $session->student_id;
-			$wallet->to_user_id   = $session->tutor_id;
-			$wallet->notes        = "(session_id : $session->id)(paid_amount : $amount) (session_amount : $session->rate) (wallet : $wallet->amount)";
-			$wallet->save();
-		}
-		//update session Payment
-		$sessionPayment = SessionPayment::where('session_id', $request->session_id)->first();
-		if ($sessionPayment) {
-			$sessionPayment->update([
-				'transaction_status' => 'Paid',
-				'paid_amount'        => $request->amount,
-                'wallet_payment' => $session->rate-$sessionPayment->amount,
-			]);
-			if($session->rate > $sessionPayment->amount)
-			{
-				// Wallet debit entry
-				$debitWallet = new Wallet();
-				$debitWallet->session_id = $sessionPayment->session_id;
-				$debitWallet->amount = $session->rate-$sessionPayment->amount == 0 ? $sessionPayment->amount : $session->rate-$sessionPayment->amount;
-				$debitWallet->type = 'debit';
-				$debitWallet->from_user_id = $session->student_id;
-				$debitWallet->to_user_id = $session->tutor_id;
-				$debitWallet->notes = "(sessionid : $sessionPayment->session_id) (paid_amount : $amount) (session_amount : $session->rate) (wallet : $session->rate-$sessionPayment->amount)";
-				$debitWallet->save();
-			}
-			// Create disbursement
-			$payType      = 'earn';
-			$disbursement = Disbursement::create([
-				'tutor_id'         => $session->tutor_id,
-				'type'             => $payType,
-				'amount'           => $sessionPayment->amount,
-				'paymentable_type' => $sessionPayment->getMorphClass(),
-				'paymentable_id'   => $sessionPayment->id
-			]);
-		}
-		dispatch((new ReceivedPaymentNotification($request->session_id, $session->student_id)));
-		//Send Email to student
-		$jobSendEmailToStudent = (new SessionPaymentEmail($request->session_id,
-			$session->student_id,
-			$session->tutor_id));
-		dispatch($jobSendEmailToStudent);
+        $sessionId = $request->session_id;
+        $amount = $request->amount;
+		$session = Session::find($sessionId);
+        //check stdudent wallet and received amount will not exceed PKR 1000
+        $request = new \Illuminate\Http\Request();
+        $request->replace([
+            'student_id' => $session->student_id
+        ]);
+        $studentWalletAmount = $this->walletStudent($request);
+        $studentTotalWalletAmount = $studentWalletAmount->getData()->total_amount;
+        $sessionRate = $session->rate;
+        $willWallet = ($sessionRate - $amount) + $studentTotalWalletAmount;
+        if ($willWallet < 1000){
+            if ($amount > $session->rate) {
+                $wallet               = new Wallet();
+                $wallet->session_id   = $session->id;
+                $wallet->amount       = $amount - $session->rate;
+                $wallet->type         = 'credit';
+                $wallet->from_user_id = $session->student_id;
+                $wallet->to_user_id   = $session->tutor_id;
+                $wallet->notes        = "(session_id : $session->id)(paid_amount : $amount) (session_amount : $session->rate) (wallet : $wallet->amount)";
+                $wallet->save();
+            }
+            //update session Payment
+            $sessionPayment = SessionPayment::where('session_id', $sessionId)->first();
+            if ($sessionPayment) {
+                $sessionPayment->update([
+                    'transaction_status' => 'Paid',
+                    'paid_amount'        => $request->amount,
+                    'wallet_payment' => $session->rate-$sessionPayment->amount,
+                ]);
+                if($session->rate > $sessionPayment->amount)
+                {
+                    // Wallet debit entry
+                    $debitWallet = new Wallet();
+                    $debitWallet->session_id = $sessionPayment->session_id;
+                    $debitWallet->amount = $session->rate-$sessionPayment->amount == 0 ? $sessionPayment->amount : $session->rate-$sessionPayment->amount;
+                    $debitWallet->type = 'debit';
+                    $debitWallet->from_user_id = $session->student_id;
+                    $debitWallet->to_user_id = $session->tutor_id;
+                    $debitWallet->notes = "(sessionid : $sessionPayment->session_id) (paid_amount : $amount) (session_amount : $session->rate) (wallet : $session->rate-$sessionPayment->amount)";
+                    $debitWallet->save();
+                }
+                // Create disbursement
+                $payType      = 'earn';
+                $disbursement = Disbursement::create([
+                    'tutor_id'         => $session->tutor_id,
+                    'type'             => $payType,
+                    'amount'           => $sessionPayment->amount,
+                    'paymentable_type' => $sessionPayment->getMorphClass(),
+                    'paymentable_id'   => $sessionPayment->id
+                ]);
+            }
+            dispatch((new ReceivedPaymentNotification($sessionId, $session->student_id)));
+            //Send Email to student
+            $jobSendEmailToStudent = (new SessionPaymentEmail($sessionId,
+                $session->student_id,
+                $session->tutor_id));
+            dispatch($jobSendEmailToStudent);
 
-		return response()->json(
-			[
-				'status' => 'success',
-			]
-		);
+            return response()->json(
+                [
+                    'status' => 'success',
+                ]
+            );
+        } else {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Received amount will exceed wallet amount greater PKR 1000.'
+                ]
+            );
+        }
 	}
 
 	public function walletStudent(Request $request) {
