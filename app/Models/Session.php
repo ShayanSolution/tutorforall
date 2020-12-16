@@ -221,10 +221,7 @@ class Session extends Model
         foreach ($tutor_session_detail as $session){
 //            $trackingON = 0;
             $student_detail = User::where('id',$session->student_id)->first();
-            $wallet = Wallet::where(['session_id'=>$session->session_id, 'type'=>'debit'])->first();
-            if($wallet){
-                $receivedAmount = $wallet->amount;
-            }
+            $sessionPayment = SessionPayment::where('session_id', $session->session_id)->first();
             if($session->book_later_at != null || $session->book_later_at != ''){
                 $sessionDate = $session->book_later_at;
                 $sessionType = 'later';
@@ -244,7 +241,12 @@ class Session extends Model
             $session_detail[$index]['session_duration'] = $session->duration;
             $session_detail[$index]['session_rating'] = is_null($session->session_rating)?'':number_format((float)$session->session_rating, 1, '.', '');
             $session_detail[$index]['session_review'] = is_null($session->session_review)?'':(string)$session->session_review;
-            $session_detail[$index]['received_amount'] = isset($receivedAmount) ? $receivedAmount : 0;
+            $session_detail[$index]['session_amount'] = $session->rate;
+            $session_detail[$index]['amount'] = $sessionPayment->amount;
+            $session_detail[$index]['received_amount'] = $sessionPayment->paid_amount;
+            $session_detail[$index]['received_amount_platform'] = $sessionPayment->transaction_platform;
+            $session_detail[$index]['wallet_payment'] = $sessionPayment->wallet_payment;
+            $session_detail[$index]['transaction_status'] = $sessionPayment->transaction_status;
             $session_detail[$index]['s_name'] = $session->s_name;
             $session_detail[$index]['p_name'] = $session->p_name;
             $session_detail[$index]['student_id'] = $session->student_id;
