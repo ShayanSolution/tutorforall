@@ -310,7 +310,7 @@ class Session extends Model
     }
 
     public function getStudentSessionPaymentDetail($student_id){
-        $student_session_detail = User::select('users.*', 'session_payments.id as sessionPaymentId', 'session_payments.transaction_platform as sessionPaymentTransactionPlatform', 'session_payments.amount as sessionPaymentAmount', 'session_payments.created_at as sessionPaymentCreatedAt'
+        $student_session_detail = User::select('users.*', 'session_payments.id as sessionPaymentId', 'session_payments.transaction_platform as sessionPaymentTransactionPlatform', 'session_payments.amount as sessionPaymentAmount', 'session_payments.paid_amount as sessionPaidAmount', 'session_payments.wallet_payment as walletPaidAmount', 'session_payments.created_at as sessionPaymentCreatedAt'
             , 'sessions.created_at as Session_created_date','sessions.longitude','sessions.latitude','sessions.hourly_rate','sessions.tracking_on','sessions.hourly_rate_past_first_hour'
             ,'sessions.session_location','rate','sessions.duration','sessions.is_hourly'
             ,'sessions.book_later_at','sessions.status as session_status','subjects.name as s_name', 'programmes.name as p_name','sessions.tutor_id as session_user_id','sessions.id as session_id'
