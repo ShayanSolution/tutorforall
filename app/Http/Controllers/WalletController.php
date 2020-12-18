@@ -91,7 +91,7 @@ class WalletController extends Controller {
             return response()->json(
                 [
                     'status' => 'error',
-                    'message' => 'Received amount will exceed wallet amount greater PKR 1000.'
+                    'message' => 'Received amount will exceed wallet limit PKR 1000.'
                 ]
             );
         }
