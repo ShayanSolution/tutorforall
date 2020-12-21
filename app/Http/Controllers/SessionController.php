@@ -675,7 +675,7 @@ class SessionController extends Controller {
 
 		if ($roleId == 2) {
 			//i am tutor
-			$session = Session::where('tutor_id', $userId)->whereIn('status', ['booked', 'started'])->with('tutor',
+			$session = Session::where('tutor_id', $userId)->whereIn('status', ['booked', 'started', 'ended'])->with('tutor',
 				'student')->orderBy('id', 'desc')->first();
 			if ($session) {
 				$rating = Rating::where('session_id', $session->id)->first();
