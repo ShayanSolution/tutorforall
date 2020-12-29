@@ -313,6 +313,10 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     Route::post('/demo-review', 'SessionController@demoReview');
     //Use wallet first
     Route::post('/use-wallet-first', 'WalletController@useWalletFirst');
+    //accept term and condition
+    Route::post('/accept-term-and-condition', 'UserController@acceptTermAndCondition');
+    //get term and condition
+    Route::get('/get-term-and-condition', 'UserController@getTermAndCondition');
 });
 
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');

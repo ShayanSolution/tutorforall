@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CMS;
 use App\Models\CreditCard;
 use App\Models\Invoice;
 use App\Models\Profile;
@@ -1037,5 +1038,53 @@ class UserController extends Controller
 		}
 	}
 
+	public function acceptTermAndCondition(Request $request)
+    {
+        $user = Auth::user();
+        if ($user) {
+            $user->update([
+                'term_and_condition' => 1
+            ]);
+            return response()->json(
+                [
+                    'status' => 'success',
+                    'message' => 'Terms and Conditions accept successfully!'
+                ],
+                200
+            );
+        } else {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Not Authorized'
+                ],
+                422
+            );
+        }
+    }
+
+    public function getTermAndCondition(Request $request) {
+        $user = Auth::user();
+        if ($user) {
+            $userRoleId = $user->role_id;
+            $content = CMS::where('user_role_id', $userRoleId)->first();
+            return response()->json(
+                [
+                    'status'  => 'success',
+                    'message' => 'Terms and Conditions are',
+                    'data' => $content
+                ],
+                200
+            );
+        } else {
+            return response()->json(
+                [
+                    'status'  => 'error',
+                    'message' => 'Not Authorized'
+                ],
+                422
+            );
+        }
+    }
 
 }
