@@ -317,6 +317,10 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     Route::post('/accept-term-and-condition', 'UserController@acceptTermAndCondition');
     //get term and condition
     Route::get('/get-term-and-condition', 'UserController@getTermAndCondition');
+    //read banner
+    Route::post('/read-banner', 'BannerController@readBanner');
+    //get term and condition
+    Route::get('/get-banner', 'BannerController@getBanner');
 });
 
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');
