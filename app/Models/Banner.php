@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Banner extends Model
 {
     protected $fillable = [
-        'user_id',
         'text',
         'hyperlink',
         'path',
         'storage_path',
-        'is_read'
+        'send_to_csv',
+        'created_by'
     ];
 }

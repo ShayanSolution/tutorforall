@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Banner;
+use App\Models\BannerStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,12 +12,17 @@ class BannerController extends Controller
     public function getBanner(Request $request){
         $userId = Auth::user()->id;
         if ($userId) {
-            $banner = Banner::where('user_id', $userId)->where('is_read', 0)->first();
+            $banner = BannerStatus::with('banner')->where('receiver_id', $userId)->where('is_read', 0)->orderBy('id', 'desc')->first();
+            $data = [];
+            $data['id'] = $banner->id;
+            $data['text'] = $banner->text;
+            $data['hyperlink'] = $banner['banner']->hyperlink;
+            $data['path'] = $banner['banner']->path;
             if ($banner){
                 return response()->json([
                     'status'  => 'success',
                     'message' => 'Banner are',
-                    'data' => $banner
+                    'data' => $data
                 ]);
             } else {
                 return response()->json([
@@ -36,7 +42,8 @@ class BannerController extends Controller
         $this->validate($request,[
             'id' => 'required',
         ]);
-        $banner = Banner::where('id', $request->id)->update([
+        $userId = Auth::user()->id;
+        $banner = BannerStatus::where('banner_id', $request->id)->where('receiver_id', $userId)->update([
             'is_read' => 1
         ]);
         return response()->json([
