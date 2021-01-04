@@ -14,7 +14,7 @@ class BannerController extends Controller
         if ($userId) {
             $banner = BannerStatus::with('banner')->where('receiver_id', $userId)->where('is_read', 0)->orderBy('id', 'desc')->first();
             $data = [];
-            $data['id'] = $banner->id;
+            $data['id'] = $banner['banner']->id;
             $data['text'] = $banner['banner']->text;
             $data['hyperlink'] = $banner['banner']->hyperlink;
             $data['path'] = $banner['banner']->path;
