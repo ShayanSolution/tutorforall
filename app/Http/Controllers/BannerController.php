@@ -13,12 +13,12 @@ class BannerController extends Controller
         $userId = Auth::user()->id;
         if ($userId) {
             $banner = BannerStatus::with('banner')->where('receiver_id', $userId)->where('is_read', 0)->orderBy('id', 'desc')->first();
-            $data = [];
-            $data['id'] = $banner['banner']->id;
-            $data['text'] = $banner['banner']->text;
-            $data['hyperlink'] = $banner['banner']->hyperlink;
-            $data['path'] = $banner['banner']->path;
             if ($banner){
+                $data = [];
+                $data['id'] = $banner['banner']->id;
+                $data['text'] = $banner['banner']->text;
+                $data['hyperlink'] = $banner['banner']->hyperlink;
+                $data['path'] = $banner['banner']->path;
                 return response()->json([
                     'status'  => 'success',
                     'message' => 'Banner are',
