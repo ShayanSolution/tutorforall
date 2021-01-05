@@ -843,8 +843,8 @@ class SessionController extends Controller {
 					'amount'               => 'required',
 					'insert_date_time'     => 'required',
 					'transaction_status'   => 'required',
-					'mobile_number'        => 'required',
-					'cnic_last_six_digits' => 'required',
+//					'mobile_number'        => 'required',
+//					'cnic_last_six_digits' => 'required',
 				]);
 		}
 		//Cash
