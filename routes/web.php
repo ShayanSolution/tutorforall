@@ -322,7 +322,7 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     //get term and condition
     Route::get('/get-banner', 'BannerController@getBanner');
 });
-$router->post('/session-payment-jazz-cash', 'SessionController@sessionPayment');
+Route::post('/session-payment-jazz-cash', 'SessionController@sessionPayment');
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');
 Route::post('reset-password', 'AuthenticationController@resetPassword');
 
