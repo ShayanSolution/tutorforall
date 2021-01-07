@@ -44,11 +44,11 @@ class AccessTokenController extends Controller
         $user = User::where('phone', $request->username)->where('role_id', $request->role_id)->first();
 
         if(!$user){
-            return response()->json(['error'=>'error', 'message'=>'Invalid Phone Number']);
+            return response()->json(['error'=>'error', 'message'=>'Account does not exist']);
         }
 
         if($user->is_active == 0){
-            return response()->json(['error'=>'error', 'message'=>'Unauthorized'], 401);
+            return response()->json(['error'=>'error', 'message'=>'Account is Inactive'], 401);
         }
         // last login update column and entry in lasat logins table
         $user_id =  $user->id;
