@@ -148,7 +148,8 @@ $router->post('verify-phone-code', 'AuthenticationController@postPhoneVerificati
 $router->post('register', 'AuthenticationController@postRegister');
 
 $router->get('get-class-name', 'ProgrammeSubjectController@getProgramme');
-$router->get('get-subjectby-id', 'ProgrammeSubjectController@getSubjectById');$router->post('save-programme', 'ProgrammeSubjectController@postSaveProgramme');
+$router->get('get-subjectby-id', 'ProgrammeSubjectController@getSubjectById');
+$router->post('save-programme', 'ProgrammeSubjectController@postSaveProgramme');
 $router->post('save-programme-subject', 'ProgrammeSubjectController@postSaveProgrammeSubject');
 $router->post('/register-tutor', 'AuthenticationController@postRegisterTutor');
 $router->get('/request-categories', 'PackageController@getPackageCategories');
@@ -321,6 +322,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     Route::post('/read-banner', 'BannerController@readBanner');
     //get term and condition
     Route::get('/get-banner', 'BannerController@getBanner');
+    //Cancel session during find tutor by student
+    Route::post('/cancel-finding-session', 'SessionController@cancelFindingSession');
 });
 Route::post('/session-payment-jazz-cash', 'SessionController@sessionPayment');
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');
