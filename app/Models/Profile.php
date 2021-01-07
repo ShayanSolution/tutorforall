@@ -53,6 +53,8 @@ class Profile extends Model
     }
     
     public static function registerUserProfile($tutor_id, $isMentor = 0){
+        $sliderDefaultMinValue = Setting::where('group_name', 'tutor-setting-slider')->pluck('value', 'slug');
+        $setSliderDefaultMinValue = $sliderDefaultMinValue['tutor-setting-slider-min-value'] + 100;
         $profile = Self::updateOrCreate(
             [
                 'user_id'=>$tutor_id,
@@ -68,8 +70,8 @@ class Profile extends Model
                 'subject_id' => 0,
                 'call_student' => 1,
                 'one_on_one' => 1,
-                'min_slider_value' => 0,
-                'max_slider_value' => 1000,
+                'min_slider_value' => $setSliderDefaultMinValue,
+                'max_slider_value' => 0,
         ])->id;
 
         
