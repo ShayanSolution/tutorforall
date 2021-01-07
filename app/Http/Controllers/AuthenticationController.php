@@ -605,6 +605,7 @@ class AuthenticationController extends Controller
         if ($phone_verified){
             User::where('id', $userId)->update([
                 'final_phone_verification' => 1,
+                'is_online' => 1
             ]);
             return JsonResponse::generateResponse(
                 [
