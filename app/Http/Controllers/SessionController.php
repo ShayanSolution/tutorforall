@@ -372,6 +372,10 @@ class SessionController extends Controller {
 				throw new SessionExpired();
 			}
 
+            if ($session->status == 'cancelled') {
+                throw new SessionExpired();
+            }
+
 			$sessionBookedOrStartedOrEnded = Session::where('session_sent_group', $request->session_sent_group)
 													->whereIn('status',
 														[
