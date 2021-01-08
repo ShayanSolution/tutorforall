@@ -182,10 +182,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 //dd($result->toArray());
         foreach($result as $key => $record){
             // check distance
-            $distanceByGoogleApi = ReverseGeocode::distanceByGoogleApi($record->latitude, $record->longitude, $sessionLat, $sessionLong);
-//            $distanceInKM = ReverseGeocode::calculateDistanceInKM($record->latitude, $record->longitude, $sessionLat, $sessionLong);
-            $distanceInKM = round($distanceByGoogleApi * 0.001);
-            if ($distanceByGoogleApi > 12) {
+            //Google API not working currently
+//            $distanceByGoogleApi = ReverseGeocode::distanceByGoogleApi($record->latitude, $record->longitude, $sessionLat, $sessionLong);
+//            $distanceInKM = round($distanceByGoogleApi * 0.001);
+            //distance calculate point to point like in find tutor
+            $distanceInKM = ReverseGeocode::calculateDistanceInKM($record->latitude, $record->longitude, $sessionLat, $sessionLong);
+            if (round($distanceInKM) > 12) {
                 unset($result[$key]);
             }
             if (round($record->rating->avg('rating')) < $category_id){
