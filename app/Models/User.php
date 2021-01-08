@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\ReverseGeocode;
 use Carbon\Carbon;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
@@ -84,12 +85,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $is_home        = $request['is_home'];
         $call_student   = $request['call_student'];
         $is_group = isset($request['is_group']) ? $request['is_group'] : 0;
+        $selected_rate = isset($request['selected_rate']) ? $request['selected_rate'] : 0;
         $experience = $request['experience'];
         $gender_id = $request['gender_id'];
         $session_type = $request['session_type'];
         $is_hourly = $request['is_hourly'];
-//        $latitude = $request['latitude'];
-//        $longitude = $request['longitude'];
+        $sessionLat = $request['latitude'];
+        $sessionLong = $request['longitude'];
         $bookLaterRestriction = Setting::where('group_name', 'book-later-restrict-hr')->pluck('value', 'slug');
 
         if(!$classId || !$subjectId){
@@ -131,10 +133,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             $queryBuilder = $queryBuilder->where('users.gender_id', '=', $gender_id);
         }
 
-        if ($hourlyRate != 0) {
-            $queryBuilder = $queryBuilder->whereHas('profile', function($q) use ($hourlyRate)
+//        if ($hourlyRate != 0) {
+//            $queryBuilder = $queryBuilder->whereHas('profile', function($q) use ($hourlyRate)
+//            {
+//                return $q->where('min_slider_value', '<=', $hourlyRate)->where('max_slider_value', '>=', $hourlyRate);
+//            });
+//        }
+        if ($selected_rate) {
+            $queryBuilder = $queryBuilder->whereHas('profile', function($q) use ($selected_rate)
             {
-                return $q->where('min_slider_value', '<=', $hourlyRate)->where('max_slider_value', '>=', $hourlyRate);
+                return $q->where('min_slider_value', '<=', $selected_rate);
             });
         }
         // check tutor settings
@@ -173,6 +181,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         Log::info($queryBuilder->toSql());
 //dd($result->toArray());
         foreach($result as $key => $record){
+            // check distance
+            $distanceByGoogleApi = ReverseGeocode::distanceByGoogleApi($record->latitude, $record->longitude, $sessionLat, $sessionLong);
+//            $distanceInKM = ReverseGeocode::calculateDistanceInKM($record->latitude, $record->longitude, $sessionLat, $sessionLong);
+            $distanceInKM = round($distanceByGoogleApi * 0.001);
+            if ($distanceByGoogleApi > 12) {
+                unset($result[$key]);
+            }
             if (round($record->rating->avg('rating')) < $category_id){
                 unset($result[$key]);
 //                $result[] = $record->rating;

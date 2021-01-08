@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Jcf\Geocode\Geocode;
 class ReverseGeocode{
     protected static $ass = [
@@ -71,5 +72,67 @@ class ReverseGeocode{
             return $addressArray;
 
         }
+    }
+
+    public static function calculateDistanceInKM($tutorLat, $tutorLong, $sessionLat, $sessionLong) {
+        if (($tutorLat == $sessionLat) && ($tutorLong == $sessionLong)) {
+            return 0;
+        }
+        else {
+            $theta = $tutorLong - $sessionLong;
+            $dist = sin(deg2rad($tutorLat)) * sin(deg2rad($sessionLat)) +  cos(deg2rad($tutorLat)) * cos(deg2rad($sessionLat)) * cos(deg2rad($theta));
+            $dist = acos($dist);
+            $dist = rad2deg($dist);
+            $miles = $dist * 60 * 1.1515;
+
+            return ($miles * 1.609344);
+        }
+    }
+
+    public static function distanceByGoogleApi($tutorLat, $tutorLong, $sessionLat, $sessionLong){
+        $unit = 'metric';
+        $origin = [
+            'latitude'  =>  (string)$tutorLat,
+            'longitude' =>  (string)$tutorLong
+        ];
+        $destination = [
+            'latitude'  =>  (string)$sessionLat,
+            'longitude' =>  (string)$sessionLong
+        ];
+        $url = 'https://maps.googleapis.com/maps/api/directions/json?';
+
+        $url .= 'units='.$unit.'&';
+        $url .= 'destination='.$destination['latitude'].','.$destination['longitude'].'&';
+        $url .= 'origin='.$origin['latitude'].','.$origin['longitude'].'&';
+        $url .= 'key='.env('GOOGLE_API_KEY');
+
+        $ch = curl_init();
+
+        $headers = array(
+            'Accept: application/json',
+            'Content-Type: application/json',
+        );
+
+        Log::info("Requested Direction URL:".$url);
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+        $result = curl_exec($ch);
+
+        $legOfGoogleRoutes = json_decode($result)->routes[0]->legs[0];
+
+        Log::info("Complete Object:",(array)$result);
+        Log::info("calculated distance:".$legOfGoogleRoutes->distance->value);
+        Log::info("calculated time:".$legOfGoogleRoutes->duration->text);
+
+        $duration = $legOfGoogleRoutes->distance->value;
+
+        return $duration;
+
     }
 }
