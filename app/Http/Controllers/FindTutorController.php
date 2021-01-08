@@ -194,7 +194,7 @@ class FindTutorController extends Controller
                 AND ((profiles.is_hourly = '$isHourly' AND profiles.is_monthly = '$isMonthly') OR (profiles.is_hourly = '1' AND profiles.is_monthly = '1'))
                 $genderMatchingQuery
                 AND $bookTypeColumnName = 1
-                AND (profiles.min_slider_value <= '$hourlyRate' AND profiles.max_slider_value >= '$hourlyRate')
+                AND (profiles.min_slider_value <= '$hourlyRate')
                 AND (users.is_online = 1)
             HAVING 
             `ratings` >= 0
