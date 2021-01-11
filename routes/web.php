@@ -326,6 +326,7 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     Route::post('/cancel-finding-session', 'SessionController@cancelFindingSession');
 });
 Route::post('/session-payment-jazz-cash', 'SessionController@sessionPayment');
+Route::post('/tutor-pay-invoice-jazz-cash', 'TutorInvoiceController@tutorPayInvoice');
 Route::get('get-password-reset-code', 'AuthenticationController@getPasswordResetCode');
 Route::post('reset-password', 'AuthenticationController@resetPassword');
 
