@@ -40,15 +40,25 @@ class TutorInvoiceController extends Controller {
 				'transaction_status'   => 'required',
 			]);
 		$invoiceId                  = $request->invoice_id;
+		if ($request->transaction_platform == 'jazzcash'){
 		$payInvoice                 = TutorInvoice::where('id', $invoiceId)->update([
 			'status'                 => 'paid',
 			'transaction_ref_no'     => $request->transaction_ref_no,
 			'transaction_type'       => $request->transaction_type,
 			'transaction_platform'   => $request->transaction_platform,
 			'transaction_status'     => $request->transaction_status,
-			'transaction_session_id' => isset($request->transaction_session_id) ? $request->transaction_session_id : NULL,
-			'credit_card_id'         => isset($request->credit_card_id) ?  $request->credit_card_id : NULL
 		]);
+        } else {
+            $payInvoice                 = TutorInvoice::where('id', $invoiceId)->update([
+                'status'                 => 'paid',
+                'transaction_ref_no'     => $request->transaction_ref_no,
+                'transaction_type'       => $request->transaction_type,
+                'transaction_platform'   => $request->transaction_platform,
+                'transaction_status'     => $request->transaction_status,
+                'transaction_session_id' => isset($request->transaction_session_id) ? $request->transaction_session_id : NULL,
+                'credit_card_id'         => isset($request->credit_card_id) ?  $request->credit_card_id : NULL
+            ]);
+        }
 		$invoice = TutorInvoice::find($invoiceId);
 		$invoice->tutor->is_blocked = 0;
 		$invoice->tutor->save();
