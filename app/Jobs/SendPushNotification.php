@@ -179,7 +179,7 @@ class SendPushNotification extends Job implements ShouldQueue
                     'Group_Members' => (int)$sessionData['group_members'],
                     'IS_Home' => (int)$this->data['is_home'],
                     'Hourly_Rate' => (string)round($this->data['hourly_rate'], 0),
-                    'hourly_rate_past_first_hour' => (string)round($this->data['hourly_rate_past_first_hour']),
+                    'hourly_rate_past_first_hour' => (string)round(($this->data['hourly_rate_past_first_hour']/60),2),
                     'Longitude' =>  (string)$sessionData['longitude'],
                     'Latitude' => (string)$sessionData['latitude'],
                     'Session_Location' => $sessionData['session_location'],
