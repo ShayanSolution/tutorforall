@@ -60,6 +60,7 @@ class PackageController extends Controller
         $callTutor = $request['is_home'];
         $callStudent = $request['call_student'];
         $peakFactor = "off";
+        $selected_rate = isset($request['selected_rate']) ? $request['selected_rate'] : 0;
         //Get online tutors
         $onlineTutorsCount = User::findOnlineTutors($request, $hourlyRate=0);
 
@@ -67,8 +68,10 @@ class PackageController extends Controller
         $classSubject = Subject::where('id', $subjectId)->where('programme_id', $classId)->first();
         $classSubjectPrice = $classSubject->price;
 
-        if ($classSubjectPrice) {
-            $hourlyRate = $classSubjectPrice;
+//        if ($classSubjectPrice) {
+        if ($selected_rate !== "0") {
+//            $hourlyRate = $classSubjectPrice;
+            $hourlyRate = $selected_rate;
             // Cost estimation when category selected
             if ($categoryId != 0) {
                 $categoryCostRate = $categoryCostAction->execute($categoryId, $hourlyRate);
@@ -95,9 +98,9 @@ class PackageController extends Controller
             //Get online tutors after checking tutor slider range
             $onlineTutorsCount = User::findOnlineTutors($request, $hourlyRate);
             // next hour discount on subject price
-
             $hourlyRatePastFirstHour = hourly_rate_past_first_hour($goToTutorFirstHourFlatDiscountApplied ? $hourlyRate + $discount : $hourlyRate);
-
+            $hourlyRatePastFirstHourPerMinuteCal = $hourlyRatePastFirstHour/60;
+            $hourlyRatePastFirstHourPerMinute = round($hourlyRatePastFirstHourPerMinuteCal, 2);
             if ($hourlyRate) {
                 return response()->json(
                     [
@@ -106,7 +109,7 @@ class PackageController extends Controller
                         'hourly_rate' => round($hourlyRate),
                         'online_tutors' => $onlineTutorsCount,
                         'peak_factor' => $peakFactor,
-                        'hourly_rate_past_first_hour' => $hourlyRatePastFirstHour
+                        'hourly_rate_past_first_hour' => $hourlyRatePastFirstHourPerMinute
                     ]
                 );
             }
