@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\CouldNotMarkSessionAsBooked;
 use App\Exceptions\SessionBookedStartedOrEnded;
 use App\Exceptions\SessionExpired;
+use App\Helpers\DateTimeHelper;
 use App\Jobs\BookNotification;
 use App\Jobs\CancelledSessionNotification;
 use App\Jobs\DemoReviewSessionNotification;
@@ -601,13 +602,14 @@ class SessionController extends Controller {
 		$user                    = User::find($student_id);
 
 		$originalDuration = $request->duration;
-
-
 		$date = Carbon::parse($findSession->started_at);
 		$now  = Carbon::now();
+		$seconds =$date->diffInSeconds($now);
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds / 60) % 60);
+//		$durationInHour = ceil($date->diffInSeconds($now) / 60 / 60);
 
-		$durationInHour = ceil($date->diffInSeconds($now) / 60 / 60);
-		$totalCostAccordingToHours = $sessionCost->execute($durationInHour, $findSession);
+		$totalCostAccordingToHours = $sessionCost->execute($hours, $minutes, $findSession);
 
         $walletBalance = 0;
 		if ($findSession->student->profile->is_deserving == 0) {
