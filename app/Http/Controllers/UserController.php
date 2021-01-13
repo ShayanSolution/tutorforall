@@ -920,7 +920,7 @@ class UserController extends Controller
                 return response()->json(
                     [
                         'status' => 'success',
-                        'message' => 'You will get notifications when you offline',
+                        'message' => 'You will get notifications when you are offline',
                     ], 200
                 );
             }else{
@@ -928,7 +928,7 @@ class UserController extends Controller
 				return response()->json(
 					[
 						'status'  => 'success',
-						'message' => 'You will not get notifications when you offline'
+						'message' => 'You will not get notifications when you are offline'
 					],
 					200
 				);

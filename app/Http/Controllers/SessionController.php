@@ -133,6 +133,7 @@ class SessionController extends Controller {
 						'session_type'                => $sessionType,
 						'is_hourly'                   => $user->is_hourly,
 						'tracking_on'                 => $user->tracking_on,
+                        'demo_started_at'             => $user->demo_started_at,
 					];
 				}
 

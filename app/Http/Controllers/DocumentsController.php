@@ -6,6 +6,7 @@ use App\Models\Document;
 use App\Models\Programme;
 use App\Models\ProgramSubject;
 use App\Models\Subject;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,6 +46,10 @@ class DocumentsController extends Controller
         } else {
             $tutorId = Auth::user()->id;
         }
+        //updated_at update in users table
+        User::where('id', $tutorId)->update([
+            'updated_at' => Carbon::now(),
+        ]);
         // CNIC Front & Back
         if ($request->document_type == "cnic_front" || $request->document_type == "cnic_back"){
 
@@ -67,7 +72,6 @@ class DocumentsController extends Controller
                 'verified_at' => null,
                 'rejection_reason' => null
             ]);
-
             return response()->json([
                 'status'    =>  'success',
                 'message'   =>  'Document uploaded successfully!'
@@ -275,7 +279,10 @@ class DocumentsController extends Controller
                 'profileImage' => $response['accessPath'],
             ]);
         }
-
+        //updated_at update in users table
+        User::where('id', $tutorId)->update([
+            'updated_at' => Carbon::now(),
+        ]);
         //Update in Program_subject table for program and subjects if status is rejected than update
             $programSubjects = ProgramSubject::where('document_id', $documentId)->where('status', 0)->get();
             if (!empty($programSubjects)){

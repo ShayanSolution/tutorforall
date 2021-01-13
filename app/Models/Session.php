@@ -198,7 +198,7 @@ class Session extends Model
     }
 
     public function getTutorSessionDetail($tutor_id){
-        $tutor_session_detail = User::select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name', 'sessions.id as session_id', 'sessions.student_id','sessions.tracking_on','sessions.start_session_enable','sessions.is_hourly'
+        $tutor_session_detail = User::select('users.*','sessions.created_at as Session_created_date','programmes.name as p_name', 'sessions.id as session_id', 'sessions.student_id','sessions.tracking_on','sessions.start_session_enable','sessions.is_hourly','sessions.demo_started_at'
                                     ,'sessions.book_later_at','sessions.session_location','rate','sessions.hourly_rate','sessions.hourly_rate_past_first_hour','sessions.duration' ,'sessions.status as session_status', 'sessions.is_group as session_is_group'
                                     , 'sessions.is_home as session_is_home', 'sessions.latitude as session_latitude', 'sessions.longitude as session_longitude', 'sessions.group_members as session_group_members'
                                     ,'subjects.name as s_name','sessions.student_id as session_user_id'
@@ -278,6 +278,7 @@ class Session extends Model
             $session_detail[$index]['tracking_on'] = $session->tracking_on;
             $session_detail[$index]['start_session_enable'] = $session->start_session_enable;
             $session_detail[$index]['is_hourly'] = $session->is_hourly;
+            $session_detail[$index]['demo_started_at'] = $session->demo_started_at;
 
             $index++;
         }
@@ -286,7 +287,7 @@ class Session extends Model
     }
     
     public function getStudentSessionDetail($student_id){
-        $student_session_detail = User::select('users.*', 'sessions.created_at as Session_created_date','sessions.longitude','sessions.latitude','sessions.hourly_rate','sessions.tracking_on','sessions.hourly_rate_past_first_hour','sessions.session_location','rate','sessions.duration','sessions.is_hourly'
+        $student_session_detail = User::select('users.*', 'sessions.created_at as Session_created_date','sessions.longitude','sessions.latitude','sessions.hourly_rate','sessions.tracking_on','sessions.hourly_rate_past_first_hour','sessions.session_location','rate','sessions.duration','sessions.is_hourly', 'sessions.demo_started_at'
                                         ,'sessions.book_later_at','sessions.status as session_status','subjects.name as s_name', 'programmes.name as p_name','sessions.tutor_id as session_user_id','sessions.id as session_id'
                                         ,'sessions.is_home as session_is_home', 'sessions.is_group as session_is_group', 'sessions.group_members as session_group_members'
                                         ,'ratings.rating as session_rating','ratings.review as session_review')
