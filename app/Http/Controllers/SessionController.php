@@ -1309,7 +1309,7 @@ class SessionController extends Controller {
 
     public function cancelFindingSession(Request $request){
         $userId = Auth::user()->id;
-        Session::whereDate('created_at', Carbon::today())->where('status', 'pending')->update([
+        Session::whereDate('created_at', Carbon::today())->where('student_id', $userId)->where('status', 'pending')->update([
             'status' => 'cancelled',
             'cancelled_by' => $userId,
             'cancelled_from' => 'student-finding-tutor'
