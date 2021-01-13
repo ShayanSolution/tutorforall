@@ -246,7 +246,7 @@ class FindTutorController extends Controller
             $distanceInKmMin = $distanceInKmMin+2;
             $distanceInKmMax = $distanceInKmMax+2;
         }
-        sleep(300);
+        sleep(240);
         Session::where('session_sent_group', $sessionSentGroup)
                 ->where('status', 'pending')
                 ->update([
