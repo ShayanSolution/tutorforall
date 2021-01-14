@@ -65,10 +65,6 @@ class AuthenticationController extends Controller
                     'message' => 'You have already '.$appNameForCode.' account. Please login'
                 ],500);
         }
-        // If account soft delete than set deleted_at null
-        if ($phoneExist && $phoneExist->deleted_at){
-            $phoneExist->restore();
-        }
 
         return $this->generateRandomCodeAndSendThroughTwilio($phone, $phoneCode = null,$roleId);
     }
