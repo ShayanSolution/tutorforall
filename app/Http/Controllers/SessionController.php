@@ -633,6 +633,7 @@ class SessionController extends Controller {
 			$totalCost = $totalCostAccordingToHours - $walletBalance;
 			if ($totalCost <= 0) {
 			    $paymentable = 'paid';
+                $walletBalance = $walletBalance - $totalCostAccordingToHours;
             }
 
 			$job = (new SendNotificationOfCalculationCost($totalCostAccordingToHours, $totalCost, $walletBalance, $request->session_id, $paymentable, json_encode($user), 'commercial'));
