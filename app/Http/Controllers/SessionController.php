@@ -895,6 +895,30 @@ class SessionController extends Controller {
 						'paymentable_type' => $sessionPayment->getMorphClass(),
 						'paymentable_id'   => $sessionPayment->id
 					]);
+					// deduct from wallet
+                    $walletRequest = new \Illuminate\Http\Request();
+                    $walletRequest->replace([
+                        'student_id' => $studentId,
+                    ]);
+                    $student = new WalletController();
+                    $checkWalletAmount = $student->walletStudent($walletRequest);
+                    $walletBalance = $checkWalletAmount->getData()->total_amount;
+                    if ($walletBalance > 0) {
+                        // Wallet debit entry
+                        $debitWallet = new Wallet();
+                        $debitWallet->session_id = $sessionPayment->session_id;
+                        $debitWallet->amount = $walletBalance;
+                        $debitWallet->type = 'debit';
+                        $debitWallet->from_user_id = $studentId;
+                        $debitWallet->to_user_id = $tutorId;
+                        $debitWallet->notes = "(sessionid : $sessionPayment->session_id) (paid_amount : $sessionPayment->amount) (session_amount : $sessionPayment->amount+$walletBalance) (wallet : $walletBalance)";
+                        $debitWallet->save();
+
+                        // update session_payment amount wallet
+                        SessionPayment::where('id', $sessionPayment->id)->update([
+                            'wallet_payment' => $walletBalance
+                        ]);
+                    }
 					$job          = (new SessionPaidNotificationToTutor($request->session_id,
 						$findSession->tutor_id,
 						$transactionPlatform));
