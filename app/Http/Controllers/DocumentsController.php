@@ -160,6 +160,7 @@ class DocumentsController extends Controller
                 $data = [];
                 $data['id'] = $programSubject->document->id;//important to use document id here
                 $data['title'] = $programSubject->program->name.'('.$programSubject->subject->name.')';
+                $data['note'] = $programSubject->program->note;
                 $data['tutor_id'] = $tutorId;
                 $data['path'] = $programSubject->document->path;
                 $data['status'] = $programSubject->status;
