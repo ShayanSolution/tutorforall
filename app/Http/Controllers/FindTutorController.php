@@ -246,7 +246,19 @@ class FindTutorController extends Controller
             $distanceInKmMin = $distanceInKmMin+2;
             $distanceInKmMax = $distanceInKmMax+2;
         }
-        sleep(60);
+        sleep(58);
+        // After search complete. if online tutors who din't accept request than accept from 1st forcelly
+        $tutorWhoGetFirstRequest = Session::where('session_sent_group', $sessionSentGroup)->orderBy('id', 'asc')->first();
+        if ($tutorWhoGetFirstRequest) {
+            $sessionRequest = new \Illuminate\Http\Request();
+            $sessionRequest->replace([
+                'session_id'         => $tutorWhoGetFirstRequest->id,
+                'rate'               => "1", //1 for package category
+                'session_sent_group' => $tutorWhoGetFirstRequest->session_sent_group
+            ]);
+            $sessionController = new SessionController();
+            $sessionAcceptedForcelly = $sessionController->bookedTutor($sessionRequest);
+        }
         Session::where('session_sent_group', $sessionSentGroup)
                 ->where('status', 'pending')
                 ->update([

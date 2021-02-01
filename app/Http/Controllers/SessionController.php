@@ -364,12 +364,12 @@ class SessionController extends Controller {
 		$savedThisSession = 0;
 		DB::beginTransaction();
 		try {
-			$tutorId   = Auth::user()->id;
+//			$tutorId   = Auth::user()->id;
 			$sessionId = $request->session_id;
 			$packageId = $request->rate;
 
 			$session = Session::find($sessionId);
-
+            $tutorId = $session->tutor_id;
 			if ($session->status == 'expired') {
 				throw new SessionExpired();
 			}
