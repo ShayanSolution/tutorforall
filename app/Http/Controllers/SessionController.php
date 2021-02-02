@@ -806,13 +806,12 @@ class SessionController extends Controller {
 			]);
 			// blocked tutor if session is cancelled for 2 hrs if demo not started
             if($session->demo_started_at == null) {
-                $tutorDeviceToken = User::where('id', $tutorId)->pluck('device_token');
                 $tutor = User::where('id', $tutorId)->update([
                     'is_online' => 0
                 ]);
                 // send pushed notification that tuor offline for next 2 hrs.
                 $message = "You are offline for the next 2 hours due to session cancelled";
-                $job = new SendOfflineNotification($tutorDeviceToken, $message);
+                $job = new SendOfflineNotification($tutorId, $message);
                 dispatch($job);
             }
 			if ($cancelledFrom == 'tutor') {

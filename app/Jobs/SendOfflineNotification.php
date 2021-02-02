@@ -9,7 +9,7 @@ use Log;
 
 class SendOfflineNotification extends Job {
 
-	protected $user;
+	protected $userId;
 	protected $message;
 
 	/**
@@ -17,8 +17,8 @@ class SendOfflineNotification extends Job {
 	 *
 	 * @return void
 	 */
-	public function __construct($user, $message) {
-		$this->user = $user;
+	public function __construct($userId, $message) {
+		$this->userId = $userId;
 		$this->message = $message;
 	}
 
@@ -28,14 +28,17 @@ class SendOfflineNotification extends Job {
 	 * @return void
 	 */
 	public function handle() {
-		if (!empty($this->user)) {
+        $userId = $this->userId;
+        //get tutor device token to send notification
+        $user = User::where('id','=', $userId)->first();
+		if (!empty($user->device_token)) {
 			Log::info('Sending notification for offline ===== Reason ===>'.$this->message);
 			$title      = Config::get('user-constants.APP_NAME');
 			$body       = $this->message;
 			$customData = array(
-				'notification_type' => 'admin_notification',
+				'notification_type' => 'offline_notification',
 			);
-			Push::handle($title, $body, $customData, $this->user);
+			Push::handle($title, $body, $customData, $user);
 		}
 	}
 }

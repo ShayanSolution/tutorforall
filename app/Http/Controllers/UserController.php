@@ -851,11 +851,12 @@ class UserController extends Controller
                     $now  = Carbon::now();
                     $date = Carbon::make($getLastSession->created_at);
                     $hours = $now->diffInHours($date);
+                    $min = $now->diffInMinutes($date);
                     if ($hours<=2) {
                         return response()->json(
                             [
                                 'status'  => 'error',
-                                'message' => 'You are blocked due to cancel session',
+                                'message' => 'You are blocked due to cancel session for next '.$min.' minutes',
                             ],
                             200
                         );
