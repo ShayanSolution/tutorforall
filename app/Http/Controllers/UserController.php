@@ -846,13 +846,17 @@ class UserController extends Controller
 			$user = User::find($user_id);
             // Check if tutor session cancelled 2 hrs limit
             if ($request->is_online == 1) {
-                $getLastSession = Session::where('tutor_id', $user_id)->where('cancelled_from', 'tutor')->orWhere('cancelled_from', 'student')->whereNotNull('cancelled_by')->orderBy('id', 'desc')->first();
+                $getLastSession = Session::where('tutor_id', $user_id)->where(function ($query) {
+                    $query->where('cancelled_from', 'tutor')
+                        ->orWhere('cancelled_from', 'student');
+                })->whereNotNull('cancelled_by')->orderBy('id', 'desc')->first();
                 if ($getLastSession) {
                     $now  = Carbon::now();
                     $date = Carbon::make($getLastSession->created_at);
                     $hours = $now->diffInHours($date);
                     $min = $now->diffInMinutes($date);
                     $leftMin = 120-$min;
+                    dd($user_id,$getLastSession->toArray(), $hours, $min, $now, $date);
                     if ($hours<=2) {
                         return response()->json(
                             [
