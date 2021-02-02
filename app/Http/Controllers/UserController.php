@@ -856,7 +856,6 @@ class UserController extends Controller
                     $hours = $now->diffInHours($date);
                     $min = $now->diffInMinutes($date);
                     $leftMin = 120-$min;
-                    dd($user_id,$getLastSession->toArray(), $hours, $min, $now, $date);
                     if ($hours<=2) {
                         return response()->json(
                             [
