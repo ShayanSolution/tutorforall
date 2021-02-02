@@ -248,7 +248,7 @@ class FindTutorController extends Controller
         }
         sleep(70);
         // After search complete. if online tutors who din't accept request than accept from 1st forcelly
-        $tutorWhoGetFirstRequest = Session::where('session_sent_group', $sessionSentGroup)->orWhere('status', 'pending')->orderBy('id', 'asc')->first();
+        $tutorWhoGetFirstRequest = Session::where('session_sent_group', $sessionSentGroup)->where('status', 'pending')->orderBy('id', 'asc')->first();
         if ($tutorWhoGetFirstRequest) {
             $sessionRequest = new \Illuminate\Http\Request();
             $sessionRequest->replace([
