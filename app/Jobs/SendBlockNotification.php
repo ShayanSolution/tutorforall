@@ -10,14 +10,16 @@ use Log;
 class SendBlockNotification extends Job {
 
 	protected $user;
+	protected $message;
 
 	/**
 	 * Create a new job instance.
 	 *
 	 * @return void
 	 */
-	public function __construct(User $user) {
+	public function __construct(User $user, $message) {
 		$this->user = $user;
+		$this->message = $message;
 	}
 
 	/**
@@ -27,9 +29,9 @@ class SendBlockNotification extends Job {
 	 */
 	public function handle() {
 		if (!empty($this->user->device_token)) {
-			Log::info('Sending notification to user for blocking = ' . $this->user->id);
+			Log::info('Sending notification to user for blocking = ' . $this->user->id.'===== Reason ===>'.$this->message);
 			$title      = Config::get('user-constants.APP_NAME');
-			$body       = "Your are blocked due to unpaid invoice. Please pay as soon as possible and start earning. Good day";
+			$body       = $this->message;
 			$customData = array(
 				'notification_type' => 'invoice_notification',
 				'user_id'           => (string)$this->user->id,

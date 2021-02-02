@@ -12,6 +12,7 @@ use App\Jobs\CancelledSessionNotification;
 use App\Jobs\DemoReviewSessionNotification;
 use App\Jobs\DemoSessionNotification;
 use App\Jobs\ReceivedPaymentNotification;
+use App\Jobs\SendBlockNotification;
 use App\Jobs\SendNotificationOfCalculationCost;
 use App\Jobs\SessionPaidNotificationToTutor;
 use App\Jobs\SessionPaymentEmail;
@@ -802,6 +803,17 @@ class SessionController extends Controller {
 				'cancelled_by'   => $userId,
 				'cancelled_from' => $cancelledFrom,
 			]);
+			// blocked tutor if session is cancelled for 2 hrs if demo not started
+            if($session->demo_started_at == null) {
+                $tutor = User::where('id', $tutorId)->get();
+                $tutor->update([
+                    'is_online' => 0
+                ]);
+                // send pushed notification that tuor offline for next 2 hrs.
+                $message = "You are offline for the next 2 hours due to session cancelled";
+                $job = new SendBlockNotification($tutor, $message);
+                dispatch($job);
+            }
 			if ($cancelledFrom == 'tutor') {
 				//send cancelled notification to student
 				Log::info('Send student to cancelled session by tutor');

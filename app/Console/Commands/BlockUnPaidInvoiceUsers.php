@@ -43,11 +43,12 @@ class BlockUnPaidInvoiceUsers extends Command {
 		Log::info("Block user cron job called");
 		$invoices = TutorInvoice::blockable()->get();
 		$invoices->each(function ($invoice) {
+            $message = "Your are blocked due to unpaid invoice. Please pay as soon as possible and start earning. Good day";
 			Log::info("user blocking => " . $invoice->tutor_id);
 			$invoice->tutor->is_blocked = 1;
 			$invoice->tutor->is_online  = 0;
 			$invoice->tutor->save();
-			$job = new SendBlockNotification($invoice->tutor);
+			$job = new SendBlockNotification($invoice->tutor, $message);
 			dispatch($job);
 		});
 	}
