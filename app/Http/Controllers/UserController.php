@@ -849,7 +849,7 @@ class UserController extends Controller
                 $getLastSession = Session::where('tutor_id', $user_id)->where(function ($query) {
                     $query->where('cancelled_from', 'tutor')
                         ->orWhere('cancelled_from', 'student');
-                })->whereNotNull('cancelled_by')->orderBy('id', 'desc')->first();
+                })->whereNull('demo_started_at')->orderBy('id', 'desc')->first();
                 if ($getLastSession) {
                     $now  = Carbon::now();
                     $date = Carbon::make($getLastSession->created_at);
