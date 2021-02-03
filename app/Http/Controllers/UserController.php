@@ -857,7 +857,7 @@ class UserController extends Controller
                     $min = $now->diffInMinutes($date);
                     $leftMin = 120-$min;
                     Log::info("Check login To block against 2hr policy => MIN=>". $min.", Hrs=>". $hours.", SID=> ". $getLastSession->id);
-                    if ($hours<=2) {
+                    if ($min<=120) {
                         return response()->json(
                             [
                                 'status'  => 'error',
