@@ -805,6 +805,7 @@ class SessionController extends Controller {
 				'cancelled_from' => $cancelledFrom,
 			]);
 			// blocked tutor if session is cancelled for 2 hrs if demo not started
+            Log::info('Check demo started at null or not'.$session->demo_started_at);
             if(empty($session->demo_started_at)) {
                 User::where('id', $tutorId)->update([
                     'is_online' => 0
