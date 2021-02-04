@@ -55,7 +55,7 @@ class AccessTokenController extends Controller
         $role_id =  $user->role_id;
         User::where('id', $user_id)->update([
             'last_login'=> Carbon::now(),
-            'is|_online' => 1
+            'is_online' => 1
         ]);
         LastLogin::create([
             'user_id' =>  $user_id,
