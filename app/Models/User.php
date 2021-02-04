@@ -201,6 +201,20 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             if($lastSession && $lastSession->rating && $lastSession->rating->rating <= 2){
                 unset($result[$key]);
             }
+            // Check if tutor session cancelled 2 hrs limit
+            $getLastSession = Session::where('tutor_id', $record->id)->where(function ($query) {
+                $query->where('cancelled_from', 'tutor')
+                    ->orWhere('cancelled_from', 'student');
+            })->whereNull('demo_started_at')->orderBy('id', 'desc')->first();
+            if ($getLastSession) {
+                $now  = Carbon::now();
+                $date = Carbon::make($getLastSession->created_at);
+                $hours = $now->diffInHours($date);
+                $min = $now->diffInMinutes($date);
+                if ($min<=120) {
+                    unset($result[$key]);
+                }
+            }
             // Check tutor last session status
             $lastTutorSession = $record->sessions()->where('tutor_id', $record->id)->orderBy('id', 'desc')->first();
             // if tutor last session is booked or started and booked later pre and post 4 hours check than exclude this tutor

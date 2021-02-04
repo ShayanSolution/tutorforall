@@ -201,46 +201,58 @@ class FindTutorController extends Controller
             AND `experience` >= 0
             AND (`book_now_session_status` is null OR `book_now_session_status` not in ('booked','started'))
             AND (book_later_session_status in ('reject','expired','ended') OR (`hours_in_session_start` is NULL  OR `hours_in_session_start` > '$bookLaterRestrictionHours'))
-            AND `distance` < $distanceInKmMax AND `distance` >= $distanceInKmMin AND (`rating_received` IS NULL OR `rating_received` > 2)";
+            #AND `distance` < $distanceInKmMax AND `distance` >= $distanceInKmMin AND (`rating_received` IS NULL OR `rating_received` > 2)";
 
             Log::info($query);
 
             $tutors = \DB::select($query);
 //            dd($tutors);
             foreach($tutors as $tutor){
-                Log::info("send request to tutor ID is: ".$tutor->id);
-                $distanceInKms = number_format((float)$tutor->distance, 2, '.', '');
-                $tutorId = $tutor->id;
-                $params = [
-                    'student_id' => (int)$studentId,
-                    'tutor_id' => json_encode([$tutorId]),
-                    'subject_id' => (int)$studentSubjectId,
-                    'class_id' => (int)$studentClassId,
-                    'latitude' => floatval($studentLat),
-                    'longitude' => floatval($studentLong),
-                    'session_sent_group'=>$sessionSentGroup,
-                    'is_group'  => (int)$studentIsGroup,
-                    'group_members' => (int)$studentGroupCount,
-                    'is_home'=>$isHome,
-                    'hourly_rate'=>$hourlyRate,
-                    'original_hourly_rate'=>$originalHourlyRate,
-                    'hourly_rate_past_first_hour'=>$originalHourlyRatePastFirstHour,
+                // Check if tutor session cancelled 2 hrs limit
+                $getLastSession = Session::where('tutor_id', $tutor->id)->where(function ($query) {
+                    $query->where('cancelled_from', 'tutor')
+                        ->orWhere('cancelled_from', 'student');
+                })->whereNull('demo_started_at')->orderBy('id', 'desc')->first();
+                if ($getLastSession) {
+                    $now  = Carbon::now();
+                    $date = Carbon::make($getLastSession->created_at);
+                    $min = $now->diffInMinutes($date);
+                    if ($min>=120) {
+                        Log::info("send request to tutor ID is: ".$tutor->id);
+                        $distanceInKms = number_format((float)$tutor->distance, 2, '.', '');
+                        $tutorId = $tutor->id;
+                        $params = [
+                            'student_id' => (int)$studentId,
+                            'tutor_id' => json_encode([$tutorId]),
+                            'subject_id' => (int)$studentSubjectId,
+                            'class_id' => (int)$studentClassId,
+                            'latitude' => floatval($studentLat),
+                            'longitude' => floatval($studentLong),
+                            'session_sent_group'=>$sessionSentGroup,
+                            'is_group'  => (int)$studentIsGroup,
+                            'group_members' => (int)$studentGroupCount,
+                            'is_home'=>$isHome,
+                            'hourly_rate'=>$hourlyRate,
+                            'original_hourly_rate'=>$originalHourlyRate,
+                            'hourly_rate_past_first_hour'=>$originalHourlyRatePastFirstHour,
 
-                    //-----New fields-----/
-                    'call_student'=>$callStudent,
-                    'one_on_one'=>$oneOnOne,
-                    'group_count'=>$studentGroupCount,
-                    'book_type'=>$bookType,
-                    'session_time'=>$sessionTime,
-                    'distance'=>$distanceInKms.' km',
-                    'is_hourly' => $isHourly
-                ];
-                // dd($params);
-                $request->request->add($params);
+                            //-----New fields-----/
+                            'call_student'=>$callStudent,
+                            'one_on_one'=>$oneOnOne,
+                            'group_count'=>$studentGroupCount,
+                            'book_type'=>$bookType,
+                            'session_time'=>$sessionTime,
+                            'distance'=>$distanceInKms.' km',
+                            'is_hourly' => $isHourly
+                        ];
+                        // dd($params);
+                        $request->request->add($params);
 
-                $proxy = Request::create('/tutor-notification', 'POST', $request->request->all());
+                        $proxy = Request::create('/tutor-notification', 'POST', $request->request->all());
 
-                app()->dispatch($proxy);
+                        app()->dispatch($proxy);
+                    }
+                }
             }
             sleep(10);
             $distanceInKmMin = $distanceInKmMin+2;
