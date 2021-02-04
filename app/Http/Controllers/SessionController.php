@@ -804,17 +804,6 @@ class SessionController extends Controller {
 				'cancelled_by'   => $userId,
 				'cancelled_from' => $cancelledFrom,
 			]);
-			// blocked tutor if session is cancelled for 2 hrs if demo not started
-            Log::info('Check demo started at null or not'.$session->demo_started_at);
-            if(empty($session->demo_started_at)) {
-                User::where('id', $tutorId)->update([
-                    'is_online' => 0
-                ]);
-                // send pushed notification that tuor offline for next 2 hrs.
-                $message = "You are offline for the next 2 hours due to session cancelled";
-                $job = new SendOfflineNotification($tutorId, $message);
-                dispatch($job);
-            }
 			if ($cancelledFrom == 'tutor') {
 				//send cancelled notification to student
 				Log::info('Send student to cancelled session by tutor');
