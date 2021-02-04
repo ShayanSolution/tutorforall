@@ -844,31 +844,6 @@ class UserController extends Controller
 		if (Auth::check()) {
 			$user_id = Auth::user()->id;
 			$user = User::find($user_id);
-            // Check if tutor session cancelled 2 hrs limit
-            if ($request->is_online == 1) {
-                $getLastSession = Session::where('tutor_id', $user_id)->where(function ($query) {
-                    $query->where('cancelled_from', 'tutor')
-                        ->orWhere('cancelled_from', 'student');
-                })->whereNull('demo_started_at')->orderBy('id', 'desc')->first();
-                if ($getLastSession) {
-                    $now  = Carbon::now();
-                    $date = Carbon::make($getLastSession->created_at);
-                    $hours = $now->diffInHours($date);
-                    $min = $now->diffInMinutes($date);
-                    $leftMin = 120-$min;
-                    Log::info("Check login To block against 2hr policy => MIN=>". $min.", Hrs=>". $hours.", SID=> ". $getLastSession->id);
-                    if ($min<=120) {
-                        return response()->json(
-                            [
-                                'status'  => 'error',
-                                'message' => 'You are blocked due to cancel session for next '.$leftMin.' minutes',
-                            ],
-                            200
-                        );
-                    }
-                }
-            }
-
 			if($user->is_blocked != 1)
 			{
 				User::where('id', $user_id)->update([
