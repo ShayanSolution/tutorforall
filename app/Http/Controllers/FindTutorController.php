@@ -201,7 +201,7 @@ class FindTutorController extends Controller
             AND `experience` >= 0
             AND (`book_now_session_status` is null OR `book_now_session_status` not in ('booked','started'))
             AND (book_later_session_status in ('reject','expired','ended') OR (`hours_in_session_start` is NULL  OR `hours_in_session_start` > '$bookLaterRestrictionHours'))
-            #AND `distance` < $distanceInKmMax AND `distance` >= $distanceInKmMin AND (`rating_received` IS NULL OR `rating_received` > 2)";
+            AND `distance` < $distanceInKmMax AND `distance` >= $distanceInKmMin AND (`rating_received` IS NULL OR `rating_received` > 2)";
 
             Log::info($query);
 
