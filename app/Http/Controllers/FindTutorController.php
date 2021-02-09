@@ -208,6 +208,7 @@ class FindTutorController extends Controller
             $tutors = \DB::select($query);
 //            dd($tutors);
             foreach($tutors as $tutor){
+                Log::info('Send Request To tutor => '. $tutor->id);
                 // Check if tutor session cancelled 2 hrs limit
                 $getLastSession = Session::where('tutor_id', $tutor->id)->where(function ($query) {
                     $query->where('cancelled_from', 'tutor')
@@ -252,6 +253,40 @@ class FindTutorController extends Controller
 
                         app()->dispatch($proxy);
                     }
+                } else {
+                    Log::info("send request to tutor ID is: ".$tutor->id);
+                    $distanceInKms = number_format((float)$tutor->distance, 2, '.', '');
+                    $tutorId = $tutor->id;
+                    $params = [
+                        'student_id' => (int)$studentId,
+                        'tutor_id' => json_encode([$tutorId]),
+                        'subject_id' => (int)$studentSubjectId,
+                        'class_id' => (int)$studentClassId,
+                        'latitude' => floatval($studentLat),
+                        'longitude' => floatval($studentLong),
+                        'session_sent_group'=>$sessionSentGroup,
+                        'is_group'  => (int)$studentIsGroup,
+                        'group_members' => (int)$studentGroupCount,
+                        'is_home'=>$isHome,
+                        'hourly_rate'=>$hourlyRate,
+                        'original_hourly_rate'=>$originalHourlyRate,
+                        'hourly_rate_past_first_hour'=>$originalHourlyRatePastFirstHour,
+
+                        //-----New fields-----/
+                        'call_student'=>$callStudent,
+                        'one_on_one'=>$oneOnOne,
+                        'group_count'=>$studentGroupCount,
+                        'book_type'=>$bookType,
+                        'session_time'=>$sessionTime,
+                        'distance'=>$distanceInKms.' km',
+                        'is_hourly' => $isHourly
+                    ];
+                    // dd($params);
+                    $request->request->add($params);
+
+                    $proxy = Request::create('/tutor-notification', 'POST', $request->request->all());
+
+                    app()->dispatch($proxy);
                 }
             }
             sleep(10);
