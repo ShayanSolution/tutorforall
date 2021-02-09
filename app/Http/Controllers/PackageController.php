@@ -109,7 +109,7 @@ class PackageController extends Controller
                         'hourly_rate' => round($hourlyRate),
                         'online_tutors' => $onlineTutorsCount,
                         'peak_factor' => $peakFactor,
-                        'hourly_rate_past_first_hour' => $hourlyRatePastFirstHourPerMinute
+                        'hourly_rate_past_first_hour' => round($hourlyRatePastFirstHourPerMinute)
                     ]
                 );
             }
