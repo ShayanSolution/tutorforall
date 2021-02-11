@@ -75,6 +75,10 @@ class ReverseGeocode{
     }
 
     public static function calculateDistanceInKM($tutorLat, $tutorLong, $sessionLat, $sessionLong) {
+        $tutorLat = doubleval($tutorLat);
+        $tutorLong = doubleval($tutorLong);
+        $sessionLat = doubleval($sessionLat);
+        $sessionLong = doubleval($sessionLong);
         if (($tutorLat == $sessionLat) && ($tutorLong == $sessionLong)) {
             return 0;
         }
