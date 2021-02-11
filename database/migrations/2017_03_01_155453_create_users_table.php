@@ -17,8 +17,17 @@ class CreateUsersTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('uid', 36)->unique();
+            $table->string('device_token');
             $table->string('firstName', '100')->nullable();
             $table->string('lastName', '100')->nullable();
+            $table->string('fathername');
+            $table->string('cnic_no');
+            $table->string('experience');
+            $table->string('qualification');
+            $table->string('latitude');
+            $table->string('longitude');
+            $table->string('confirmed');
+            $table->string('confirmation_code');
             $table->string('middleName', '50')->nullable();
             $table->string('username', '50')->nullable();
             $table->string('email')->unique();
