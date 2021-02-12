@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendSessionConnectedNotification;
 use App\Models\Profile;
 use App\Models\Session;
 use App\Models\Setting;
@@ -305,6 +306,9 @@ class FindTutorController extends Controller
             ]);
             $sessionController = new SessionController();
             $sessionAcceptedForcelly = $sessionController->bookedTutor($sessionRequest);
+            $message = "You are connected with a student";
+            $job = new SendSessionConnectedNotification($tutorWhoGetFirstRequest->tutor_id, $message);
+            dispatch($job);
         }
         Session::where('session_sent_group', $sessionSentGroup)
                 ->where('status', 'pending')
