@@ -19,6 +19,12 @@ $router->get('/', function () {
     return app()->version();
 });
 
+$router->get('/chat', function () {
+    event(new \App\Events\ChatMessageWasReceived("hello world","user"));
+    return app()->version();
+});
+
+
 $router->get('/twilio-test', function(){
     $toNumber = '+923093512171'; //923004412255
     $code = '2255';

@@ -62,6 +62,8 @@ $app->configure('twilio');
 
 // load alfalah configurations
 $app->configure('alfalah');
+
+$app->configure('broadcasting');
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -110,6 +112,7 @@ $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(\LaravelFCM\FCMServiceProvider::class);
 $app->register(Jcf\Geocode\GeocodeServiceProvider::class);
 $app->register('Sentry\Laravel\ServiceProvider');
+$app->register(\Illuminate\Broadcasting\BroadcastServiceProvider::class);
 
 LumenPassport::routes($app);
 
@@ -129,5 +132,7 @@ $app->router->group([
 ], function ($router) {
     require __DIR__.'/../routes/web.php';
 });
+
+require __DIR__.'/../routes/channels.php';
 
 return $app;
