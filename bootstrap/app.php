@@ -5,8 +5,8 @@ use Dusterio\LumenPassport\LumenPassport;
 require_once __DIR__.'/../vendor/autoload.php';
 
 try {
-//    (new Dotenv\Dotenv(__DIR__.'/../'))->load();
-    (Dotenv\Dotenv::create(__DIR__ . '/../'))->overload();
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'/../');
+    $dotenv->load();
 } catch (Dotenv\Exception\InvalidPathException $e) {
     //
 }
@@ -74,7 +74,7 @@ $app->configure('alfalah');
 */
 
  $app->middleware([
-     \Barryvdh\Cors\HandleCors::class,
+     Fruitcake\Cors\HandleCors::class,
  ]);
 
  $app->routeMiddleware([
@@ -104,7 +104,7 @@ $app->register(App\Providers\EventServiceProvider::class);
 $app->register(App\Providers\RepositoriesServiceProvider::class);
 $app->register(Laravel\Passport\PassportServiceProvider::class);
 $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
-$app->register(Barryvdh\Cors\ServiceProvider::class);
+$app->register(Fruitcake\Cors\CorsServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(\LaravelFCM\FCMServiceProvider::class);
