@@ -4,8 +4,89 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4db4d19b8df73f5a31534d25efa9fc2a",
+    "content-hash": "7546b4281bb650c6320da8933a1d6c93",
     "packages": [
+        {
+            "name": "apility/laravel-fcm",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zach-lum-fm/Laravel-FCM.git",
+                "reference": "eacb4694d41060e589b666acaa610da8ec32efd9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zach-lum-fm/Laravel-FCM/zipball/eacb4694d41060e589b666acaa610da8ec32efd9",
+                "reference": "eacb4694d41060e589b666acaa610da8ec32efd9",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.0|^7.0",
+                "illuminate/support": "^5.0|^6.0|^7.0|^8.0",
+                "monolog/monolog": "^1.0|^2.0",
+                "php": ">=5.5.9"
+            },
+            "replace": {
+                "brozot/laravel-fcm": "*"
+            },
+            "require-dev": {
+                "laravel/laravel": "5.2.*",
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "4.7.*",
+                "satooshi/php-coveralls": "dev-master"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LaravelFCM\\FCMServiceProvider"
+                    ],
+                    "aliases": {
+                        "FCM": "LaravelFCM\\Facades\\FCM",
+                        "FCMGroup": "LaravelFCM\\Facades\\FCMGroup"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LaravelFCM\\": "src/",
+                    "LaravelFCM\\Mocks\\": "tests/mocks"
+                }
+            },
+            "autoload-dev": {
+                "classmap": [
+                    "tests/"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Brosy",
+                    "email": "nicolas.brosy@gmail.com"
+                },
+                {
+                    "name": "Thomas Alrek",
+                    "email": "thomas@apility.no"
+                }
+            ],
+            "description": "Laravel / Lumen package for Firebase Cloud Messaging ",
+            "keywords": [
+                "fcm",
+                "firebase",
+                "firebase cloud messaging",
+                "laravel",
+                "lumen",
+                "notification",
+                "push"
+            ],
+            "support": {
+                "source": "https://github.com/zach-lum-fm/Laravel-FCM/tree/master"
+            },
+            "time": "2020-10-22T15:11:54+00:00"
+        },
         {
             "name": "asm89/stack-cors",
             "version": "v2.0.2",
@@ -199,76 +280,6 @@
                 }
             ],
             "time": "2021-01-20T22:51:39+00:00"
-        },
-        {
-            "name": "brozot/laravel-fcm",
-            "version": "1.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/brozot/Laravel-FCM.git",
-                "reference": "1b5c64c5ea829f46c7e5f274971c587a8c3f0668"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/brozot/Laravel-FCM/zipball/1b5c64c5ea829f46c7e5f274971c587a8c3f0668",
-                "reference": "1b5c64c5ea829f46c7e5f274971c587a8c3f0668",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle": "~6.0",
-                "illuminate/support": "5.*|^6",
-                "monolog/monolog": "^1.12|^2.0",
-                "php": ">=5.5.9"
-            },
-            "require-dev": {
-                "laravel/laravel": "5.2.*",
-                "mockery/mockery": "0.9.*",
-                "phpunit/phpunit": "4.7.*",
-                "satooshi/php-coveralls": "dev-master"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "LaravelFCM\\FCMServiceProvider"
-                    ],
-                    "aliases": {
-                        "FCM": "LaravelFCM\\Facades\\FCM",
-                        "FCMGroup": "LaravelFCM\\Facades\\FCMGroup"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "LaravelFCM\\": "src/",
-                    "LaravelFCM\\Mocks\\": "tests/mocks"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Brosy",
-                    "email": "nicolas.brosy@gmail.com"
-                }
-            ],
-            "description": "Laravel / Lumen package for Firebase Cloud Messaging ",
-            "keywords": [
-                "FCM",
-                "Firebase Cloud Messaging",
-                "firebase",
-                "laravel",
-                "lumen",
-                "notification",
-                "push"
-            ],
-            "support": {
-                "issues": "https://github.com/brozot/Laravel-FCM/issues",
-                "source": "https://github.com/brozot/Laravel-FCM/tree/master"
-            },
-            "time": "2019-11-26T16:14:39+00:00"
         },
         {
             "name": "cboden/ratchet",
@@ -11716,7 +11727,9 @@
         }
     ],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "apility/laravel-fcm": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
