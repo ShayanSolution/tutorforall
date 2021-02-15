@@ -20,7 +20,7 @@ $router->get('/', function () {
 });
 
 $router->get('/chat', function () {
-    event(new \App\Events\ChatMessageWasReceived("hello world","user"));
+    event(new \App\Events\MessageSent("hello world","user"));
     return app()->version();
 });
 
