@@ -243,11 +243,11 @@ class Session extends Model
             $session_detail[$index]['session_review'] = is_null($session->session_review)?'':(string)$session->session_review;
             $session_detail[$index]['session_amount'] = $session->rate;
             if ($session->session_status == 'ended') {
-                $session_detail[$index]['amount'] = is_null($sessionPayment->amount)?'':$sessionPayment->amount;
-                $session_detail[$index]['received_amount'] = is_null($sessionPayment->paid_amount)?'':$sessionPayment->paid_amount;
-                $session_detail[$index]['received_amount_platform'] = is_null($sessionPayment->transaction_platform)?'':$sessionPayment->transaction_platform;
-                $session_detail[$index]['wallet_payment'] = is_null($sessionPayment->wallet_payment)?'':$sessionPayment->wallet_payment;
-                $session_detail[$index]['transaction_status'] = is_null($sessionPayment->transaction_status)?'':$sessionPayment->transaction_status;
+                $session_detail[$index]['amount'] = isset($sessionPayment->amount)?$sessionPayment->amount:'';
+                $session_detail[$index]['received_amount'] = isset($sessionPayment->paid_amount)?$sessionPayment->paid_amount:'';
+                $session_detail[$index]['received_amount_platform'] = isset($sessionPayment->transaction_platform)?$sessionPayment->transaction_platform:'';
+                $session_detail[$index]['wallet_payment'] = isset($sessionPayment->wallet_payment)?$sessionPayment->wallet_payment:'';
+                $session_detail[$index]['transaction_status'] = isset($sessionPayment->transaction_status)?$sessionPayment->transaction_status:'';
             }
             $session_detail[$index]['s_name'] = $session->s_name;
             $session_detail[$index]['p_name'] = $session->p_name;
