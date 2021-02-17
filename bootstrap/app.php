@@ -58,6 +58,7 @@ $app->configure('services');
 $app->configure('user-constants');
 // load database configurations
 $app->configure('database');
+$app->configure('app');
 $app->configure('twilio');
 
 // load alfalah configurations
