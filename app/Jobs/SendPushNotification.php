@@ -81,7 +81,7 @@ class SendPushNotification extends Job implements ShouldQueue
                 $sessionData['hourly_rate_past_first_hour'] = $this->data['hourly_rate_past_first_hour'];
                 $sessionData['is_home'] = $this->data['is_home'];
                 $sessionData['is_hourly'] = $this->data['is_hourly'];
-                $sessionDateTime = Carbon::now(\config('services.time_zone_from_env'))->toDateTimeString();
+                $sessionDateTime = Carbon::now()->toDateTimeString();
                 $dateTime = explode(" ",$sessionDateTime);
                 $sessionType = 'now';
                 if(isset($this->data['group_members'])){
@@ -89,8 +89,8 @@ class SendPushNotification extends Job implements ShouldQueue
                 }else{
                     $sessionData['group_members'] = 0;
                 }
-//                $sessionData['started_at'] = TimeZoneHelper::timeConversion(Carbon::now(), 0);
-                $sessionData['started_at'] = Carbon::now(\config('services.time_zone_from_env'));
+                $sessionData['started_at'] = TimeZoneHelper::timeConversion(Carbon::now(), 0);
+
 
                 if(isset($this->data['book_later_time']) && isset($this->data['book_later_date'])){
                     $sessionData['book_later_at'] = $this->data['book_later_date'].' '.date("H:i:s", strtotime($this->data['book_later_time']));

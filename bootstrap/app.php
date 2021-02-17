@@ -58,7 +58,6 @@ $app->configure('services');
 $app->configure('user-constants');
 // load database configurations
 $app->configure('database');
-$app->configure('app');
 $app->configure('twilio');
 
 // load alfalah configurations
@@ -73,6 +72,8 @@ $app->configure('alfalah');
 | route or middleware that'll be assigned to some specific routes.
 |
 */
+// set time zone for whole app
+date_default_timezone_set(\config('services.time_zone_from_env'));
 
  $app->middleware([
      Fruitcake\Cors\HandleCors::class,
