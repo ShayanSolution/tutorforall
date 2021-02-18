@@ -48,7 +48,10 @@ class AccessTokenController extends Controller
         }
 
         if($user->is_active == 0){
-            return response()->json(['error'=>'error', 'message'=>'Account is Inactive'], 401);
+            return response()->json([
+                'error'=>'blocked',
+                'message'=>'You have been blocked/restricted to join by TOOTAR. Please contact TOOTAR Administration on following WhatsApp '.config('services.help_line')
+            ], 401);
         }
         // last login update column and entry in lasat logins table
         $user_id =  $user->id;
