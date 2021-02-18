@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use DB;
 use Twilio\Rest\Client;
+use Illuminate\Support\Str;
 
 class AuthenticationController extends Controller
 {
@@ -273,6 +274,7 @@ class AuthenticationController extends Controller
             $validation_array['firstName']  = 'required';
             $validation_array['lastName']   = 'required';
             $validation_array['is_mentor']   = 'required';
+            $validation_array['cnic_no']   = 'required|min:13';
         }
 
         $this->validate($request, $validation_array);
@@ -306,7 +308,7 @@ class AuthenticationController extends Controller
         if ($request->has('gender_id')) {
             $genderId = $request->gender_id;
         }
-        $confirmation_code = str_random(30);
+        $confirmation_code = Str::random(30);
         try {
 
             $userDataArray = [
@@ -327,6 +329,7 @@ class AuthenticationController extends Controller
                 $userDataArray['firstName'] = $request->firstName;
                 $userDataArray['lastName']  = $request->lastName;
                 $isMentor                   = $request->is_mentor;
+                $userDataArray['cnic_no']   = $request->cnic_no;
             }
 
 
