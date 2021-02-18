@@ -33,7 +33,6 @@ class Push{
 
             $notificationBuilder = new \LaravelFCM\Message\PayloadNotificationBuilder($title);
             $notificationBuilder->setBody($body)
-                ->setChannelId('FirebaseNotifications')
                 ->setSound('default');
 
             $dataBuilder = new \LaravelFCM\Message\PayloadDataBuilder();

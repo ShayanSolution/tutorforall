@@ -5,7 +5,8 @@ use Dusterio\LumenPassport\LumenPassport;
 require_once __DIR__.'/../vendor/autoload.php';
 
 try {
-    (new Dotenv\Dotenv(__DIR__.'/../'))->load();
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'/../');
+    $dotenv->load();
 } catch (Dotenv\Exception\InvalidPathException $e) {
     //
 }
@@ -24,10 +25,8 @@ try {
 $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
-
- $app->withFacades('Davibennun\LaravelPushNotification\Facades\PushNotification');
-
- $app->withEloquent();
+$app->withFacades();
+$app->withEloquent();
 
 class_alias(\LaravelFCM\Facades\FCM::class, 'FCM');
 
@@ -41,8 +40,6 @@ class_alias(\LaravelFCM\Facades\FCM::class, 'FCM');
 | your own bindings here if you like or you can make another file.
 |
 */
-$app->configure('swagger-lume');
-
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     App\Exceptions\Handler::class
@@ -61,8 +58,6 @@ $app->configure('services');
 $app->configure('user-constants');
 // load database configurations
 $app->configure('database');
-// load push notification configurations
-$app->configure('push-notification');
 $app->configure('twilio');
 
 // load alfalah configurations
@@ -77,9 +72,11 @@ $app->configure('alfalah');
 | route or middleware that'll be assigned to some specific routes.
 |
 */
+// set time zone for whole app
+date_default_timezone_set(\config('services.time_zone_from_env'));
 
  $app->middleware([
-     \Barryvdh\Cors\HandleCors::class,
+     Fruitcake\Cors\HandleCors::class,
  ]);
 
  $app->routeMiddleware([
@@ -109,11 +106,9 @@ $app->register(App\Providers\EventServiceProvider::class);
 $app->register(App\Providers\RepositoriesServiceProvider::class);
 $app->register(Laravel\Passport\PassportServiceProvider::class);
 $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
-$app->register(Barryvdh\Cors\ServiceProvider::class);
+$app->register(Fruitcake\Cors\CorsServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
-$app->register(\SwaggerLume\ServiceProvider::class);
-$app->register('Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider');
 $app->register(\LaravelFCM\FCMServiceProvider::class);
 $app->register(Jcf\Geocode\GeocodeServiceProvider::class);
 $app->register('Sentry\Laravel\ServiceProvider');

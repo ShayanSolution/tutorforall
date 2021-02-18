@@ -7,5 +7,4 @@ Homestead.yaml
 /storage/*.key
 /nbproject
 /public/images/
-composer.lock
 /storage/pem/
