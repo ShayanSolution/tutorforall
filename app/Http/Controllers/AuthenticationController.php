@@ -300,6 +300,19 @@ class AuthenticationController extends Controller
                 'message' => 'You have already '.$appNameForCode.' account. Please login'
             ],500);
         }
+        //Check Id card number Block against tutor
+        If($role_id == 2){
+            $cnicNoExist = $user->findByExactIdCard($request->cnic_no, $role_id);
+            foreach ($cnicNoExist as $cnicBlocked) {
+                $isActive = $cnicBlocked->is_active;
+                if ($isActive == 0) {
+                    return response()->json([
+                        'error'=>'blocked',
+                        'message'=>'You have been blocked/restricted to join by TOOTAR. Please contact TOOTAR Administration on following WhatsApp '.config('services.help_line')
+                    ], 401);
+                }
+            }
+        }
         // If account soft delete than set deleted_at null
         if ($phoneExist && $phoneExist->deleted_at){
             $phoneExist->restore();

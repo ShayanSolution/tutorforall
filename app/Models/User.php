@@ -541,6 +541,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return self::where('phone',$phone)->where('role_id', $roleId)->withTrashed()->first();
     }
 
+    public static function findByExactIdCard($cnic_no, $roleId)
+    {
+        return self::where('cnic_no',$cnic_no)->where('role_id', $roleId)->withTrashed()->get();
+    }
+
 
     public function isActive($phone, $roleId)
     {
