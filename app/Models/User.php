@@ -183,6 +183,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         Log::info($queryBuilder->toSql());
 //dd($result->toArray());
         foreach($result as $key => $record){
+            if ($record->device_token == null) {
+                unset($result[$key]);
+            }
+            if ($record->is_active == 0) {
+                unset($result[$key]);
+            }
+            if ($record->is_approved == 0) {
+                unset($result[$key]);
+            }
             // check distance
             //Google API not working currently
 //            $distanceByGoogleApi = ReverseGeocode::distanceByGoogleApi($record->latitude, $record->longitude, $sessionLat, $sessionLong);
