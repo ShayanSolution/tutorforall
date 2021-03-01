@@ -790,12 +790,12 @@ class SessionController extends Controller {
 //				]);
 //			}
 //		}
-		if ($session->status == 'started') {
-			return response()->json([
-				'status'   => 'error',
-				'messages' => 'Unable to cancel session because your session has started'
-			]);
-		}
+//		if ($session->status == 'started') {
+//			return response()->json([
+//				'status'   => 'error',
+//				'messages' => 'Unable to cancel session because your session has started'
+//			]);
+//		}
 		$studentId = $session->student_id;
 		$tutorId   = $session->tutor_id;
 		if ($session) {
