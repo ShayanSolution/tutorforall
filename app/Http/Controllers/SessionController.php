@@ -597,14 +597,13 @@ class SessionController extends Controller {
 		$this->validate($request,
 			[
 				'session_id' => 'required',
-				'duration'   => 'required'
 			]);
 		$findSession             = Session::find($request->session_id);
 		$hourlyRatePastFirstHour = (int)$findSession->hourly_rate_past_first_hour;
 		$student_id              = $findSession->student_id;
 		$user                    = User::find($student_id);
 
-		$originalDuration = $request->duration;
+//		$originalDuration = $request->duration; calculation on started_at
 		$date = Carbon::parse($findSession->started_at);
 		$now  = Carbon::now();
 		$seconds =$date->diffInSeconds($now);
@@ -614,12 +613,16 @@ class SessionController extends Controller {
 
 		$totalCostAccordingToHours = $sessionCost->execute($hours, $minutes, $findSession);
 
+        $hours = $hours < 10 ? "0".$hours : $hours;
+        $minutes = $minutes < 10 ? "0".$minutes : $minutes;
+        $seconds = $seconds < 10 ? "0".$seconds : $seconds;
+
         $walletBalance = 0;
 		if ($findSession->student->profile->is_deserving == 0) {
 			$findSession->ended_at = $now;
 			$findSession->rate     = $totalCostAccordingToHours;
 			$findSession->status   = 'ended';
-			$findSession->duration = $originalDuration;
+			$findSession->duration = $hours.":".$minutes.":".$seconds;
 			$findSession->save();
 
 			if ($findSession->student->profile->use_wallet_first) {
@@ -655,7 +658,7 @@ class SessionController extends Controller {
 			$findSession->ended_at = $now;
 			$findSession->rate     = 0;
 			$findSession->status   = 'ended';
-			$findSession->duration = $originalDuration;
+			$findSession->duration = $hours.":".$minutes.":".$seconds;
 			$findSession->save();
             $totalCost = 0;
             $paymentable = 'paid';
@@ -799,25 +802,44 @@ class SessionController extends Controller {
 		$studentId = $session->student_id;
 		$tutorId   = $session->tutor_id;
 		if ($session) {
-			$session->update([
-				'status'         => 'cancelled',
-				'cancelled_by'   => $userId,
-				'cancelled_from' => $cancelledFrom,
-			]);
 			if ($cancelledFrom == 'tutor') {
 				//send cancelled notification to student
 				Log::info('Send student to cancelled session by tutor');
-				$job = new CancelledSessionNotification($studentId, $cancelledFrom);
+                $message = 'Session cancelled by tutor';
+                $job = new CancelledSessionNotification($studentId, $cancelledFrom, $message);
 				dispatch($job);
 				Log::info('Cancelled session dispatch job DONE');
 			} else {
 				//send cancelled notification to tutor
 				Log::info('Send tutor to cancelled session by student');
-				$job = new CancelledSessionNotification($tutorId, $cancelledFrom);
-				dispatch($job);
-				Log::info('Cancelled session dispatch job DONE');
+                //if demo session canceled
+                if ($session->status = 'booked' && $session->demo_started_at == null) {
+                    Log::info('Send tutor to cancelled session by student before demo');
+                    $message = 'The student has cancelled the session and does not want to study from you.';
+                    $job = new CancelledSessionNotification($studentId, $cancelledFrom, $message);
+                    dispatch($job);
+                }
+                //if seession canceled after session start
+                if ($session->status == 'started') {
+                    Log::info('Cancelled session by student after demo and call end session API');
+                // call session-calculation-cost (End session)
+                    $endSessionApiRequest = new \Illuminate\Http\Request();
+                    $endSessionApiRequest->replace([
+                        'session_id' => $request->session_id,
+                    ]);
+                    $this->sessionCalculationCost($endSessionApiRequest, new SessionCost());
+                    $message = 'The student has stopped the paid session. The bill will be displayed according to the time studied as per policy.';
+                    $job = new CancelledSessionNotification($studentId, $cancelledFrom, $message);
+                    dispatch($job);
+                    Log::info('Cancelled session API call DONE');
+                }
 			}
-
+            $session->update([
+                'status'         => 'cancelled',
+                'cancelled_by'   => $userId,
+                'cancelled_from' => $cancelledFrom,
+            ]);
+            Log::info('Cancelled session status update successfully');
 			return response()->json([
 				'status'   => 'success',
 				'messages' => 'Session cancelled successfully'

@@ -18,12 +18,13 @@ class CancelledSessionNotification extends Job implements ShouldQueue
      *
      * @return void
      */
-    protected $userId, $cancelledFrom;
+    protected $userId, $cancelledFrom, $message;
 
-    public function __construct($userId, $cancelledFrom)
+    public function __construct($userId, $cancelledFrom, $message)
     {
         $this->userId = $userId;
         $this->cancelledFrom = $cancelledFrom;
+        $this->message = $message;
     }
 
     /**
@@ -35,17 +36,14 @@ class CancelledSessionNotification extends Job implements ShouldQueue
     {
         $userId = $this->userId;
         $cancelledFrom = $this->cancelledFrom;
+        $bodyMessage = $this->message;
 
         //get student device token to send notification
         $user = User::where('id','=', $userId)->first();
         if(!empty($user->device_token)){
             Log::info('Cancelled Session Send TO => UserId'.$userId);
             $title  = Config::get('user-constants.APP_NAME');
-            if ($cancelledFrom == 'student'){
-                $body   = 'The student has cancelled the session and does not want to study from you.';
-            } else {
-                $body   = 'Session cancelled by '.$cancelledFrom;
-            }
+            $body = $bodyMessage;
             $customData = array(
                 'notification_type' => 'session_cancelled',
             );
