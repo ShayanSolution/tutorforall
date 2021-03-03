@@ -609,20 +609,15 @@ class SessionController extends Controller {
 		$seconds =$date->diffInSeconds($now);
         $hours = floor($seconds / 3600);
         $minutes = floor(($seconds / 60) % 60);
-//		$durationInHour = ceil($date->diffInSeconds($now) / 60 / 60);
-
+        $originalDuration = $date->diff($now)->format('%H:%I:%S');
 		$totalCostAccordingToHours = $sessionCost->execute($hours, $minutes, $findSession);
-
-        $hours = $hours < 10 ? "0".$hours : $hours;
-        $minutes = $minutes < 10 ? "0".$minutes : $minutes;
-        $seconds = $seconds < 10 ? "0".$seconds : $seconds;
 
         $walletBalance = 0;
 		if ($findSession->student->profile->is_deserving == 0) {
 			$findSession->ended_at = $now;
 			$findSession->rate     = $totalCostAccordingToHours;
 			$findSession->status   = 'ended';
-			$findSession->duration = $hours.":".$minutes.":".$seconds;
+			$findSession->duration = $originalDuration;
 			$findSession->save();
 
 			if ($findSession->student->profile->use_wallet_first) {
@@ -658,7 +653,7 @@ class SessionController extends Controller {
 			$findSession->ended_at = $now;
 			$findSession->rate     = 0;
 			$findSession->status   = 'ended';
-			$findSession->duration = $hours.":".$minutes.":".$seconds;
+			$findSession->duration = $originalDuration;
 			$findSession->save();
             $totalCost = 0;
             $paymentable = 'paid';
