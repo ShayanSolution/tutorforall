@@ -808,14 +808,14 @@ class SessionController extends Controller {
 				//send cancelled notification to tutor
 				Log::info('Send tutor to cancelled session by student');
                 //if demo session canceled
-                if ($session->status = 'booked' && $session->demo_started_at == null) {
+                if ($session->demo_started_at == null || $session->demo_ended_at == null) {
                     Log::info('Send tutor to cancelled session by student before demo');
                     $message = 'The student has cancelled the session and does not want to study from you.';
                     $job = new CancelledSessionNotification($studentId, $cancelledFrom, $message);
                     dispatch($job);
                 }
                 //if seession canceled after session start
-                if ($session->status == 'started') {
+                else if ($session->status == 'started') {
                     Log::info('Cancelled session by student after demo and call end session API');
                 // call session-calculation-cost (End session)
                     $endSessionApiRequest = new \Illuminate\Http\Request();
