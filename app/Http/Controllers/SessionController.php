@@ -519,7 +519,7 @@ class SessionController extends Controller {
 				);
 			}
 		} else
-			return response()->json(['status' => 'success', 'message' => 'Session expired!']);
+			return response()->json(['status' => 'success', 'message' => 'Session offer expired!']);
 
 	}
 
@@ -1345,7 +1345,7 @@ class SessionController extends Controller {
         return response()->json(
         [
             'status' => 'success',
-            'message' => 'Search cancelled'
+            'message' => 'Request canceled'
 
         ]);
     }
