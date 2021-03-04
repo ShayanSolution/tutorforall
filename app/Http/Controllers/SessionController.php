@@ -813,7 +813,7 @@ class SessionController extends Controller {
                     $sessionStatus = 'cancelled';
                     Log::info('Send tutor to cancelled session by student before demo :SessionStatus'.$sessionStatus);
                     $message = 'The student has cancelled the session and does not want to study from you.';
-                    $job = new CancelledSessionNotification($studentId, $cancelledFrom, $message);
+                    $job = new CancelledSessionNotification($tutorId, $cancelledFrom, $message);
                     dispatch($job);
                 }
                 //if seession canceled after session start
@@ -827,7 +827,7 @@ class SessionController extends Controller {
                     ]);
                     $this->sessionCalculationCost($endSessionApiRequest, new SessionCost());
                     $message = 'The student has stopped the paid session. The bill will be displayed according to the time studied as per policy.';
-                    $job = new CancelledSessionNotification($studentId, $cancelledFrom, $message);
+                    $job = new CancelledSessionNotification($tutorId, $cancelledFrom, $message);
                     dispatch($job);
                     Log::info('Cancelled session API call DONE');
                 }
