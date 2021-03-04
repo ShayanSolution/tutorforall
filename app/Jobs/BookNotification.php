@@ -78,7 +78,7 @@ class BookNotification extends Job implements ShouldQueue
             'group_members' => $user->s_group_members,
             'is_home' => $user->s_is_home,
             'hourly_rate' => $user->hourly_rate,
-            'hourly_rate_past_first_hour' => $user->hourly_rate/60 ,
+            'hourly_rate_past_first_hour' => round($user->hourly_rate/60),
             'tutor_is_home' => $user->t_is_home,
             'tutor_lat' => (string)$user->latitude,
             'tutor_long' => (string)$user->longitude,
