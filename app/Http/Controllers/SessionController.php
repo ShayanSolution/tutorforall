@@ -802,7 +802,8 @@ class SessionController extends Controller {
                 $sessionStatus = 'cancelled';
 				Log::info('Send student to cancelled session by tutor :SessionStatus'.$sessionStatus);
                 $message = 'Session cancelled by tutor';
-                $job = new CancelledSessionNotification($studentId, $cancelledFrom, $message);
+                $status = 'unpaid';
+                $job = new CancelledSessionNotification($studentId, $cancelledFrom, $message, $status);
 				dispatch($job);
 				Log::info('Cancelled session dispatch job DONE');
 			} else {
@@ -813,21 +814,17 @@ class SessionController extends Controller {
                     $sessionStatus = 'cancelled';
                     Log::info('Send tutor to cancelled session by student before demo :SessionStatus'.$sessionStatus);
                     $message = 'The student has cancelled the session and does not want to study from you.';
-                    $job = new CancelledSessionNotification($tutorId, $cancelledFrom, $message);
+                    $status = 'unpaid';
+                    $job = new CancelledSessionNotification($tutorId, $cancelledFrom, $message, $status);
                     dispatch($job);
                 }
                 //if seession canceled after session start
                 else if ($session->status == 'started') {
                     $sessionStatus = 'ended';
                     Log::info('Cancelled session by student after demo and call end session API :SessionStatus'.$sessionStatus);
-                // call session-calculation-cost (End session)
-                    $endSessionApiRequest = new \Illuminate\Http\Request();
-                    $endSessionApiRequest->replace([
-                        'session_id' => $request->session_id,
-                    ]);
-                    $this->sessionCalculationCost($endSessionApiRequest, new SessionCost());
                     $message = 'The student has stopped the paid session. The bill will be displayed according to the time studied as per policy.';
-                    $job = new CancelledSessionNotification($tutorId, $cancelledFrom, $message);
+                    $status = 'paid';
+                    $job = new CancelledSessionNotification($tutorId, $cancelledFrom, $message, $status);
                     dispatch($job);
                     Log::info('Cancelled session API call DONE');
                 }

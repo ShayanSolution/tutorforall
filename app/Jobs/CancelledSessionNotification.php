@@ -18,13 +18,14 @@ class CancelledSessionNotification extends Job implements ShouldQueue
      *
      * @return void
      */
-    protected $userId, $cancelledFrom, $message;
+    protected $userId, $cancelledFrom, $message, $status;
 
-    public function __construct($userId, $cancelledFrom, $message)
+    public function __construct($userId, $cancelledFrom, $message, $status)
     {
         $this->userId = $userId;
         $this->cancelledFrom = $cancelledFrom;
         $this->message = $message;
+        $this->status = $status;
     }
 
     /**
@@ -37,6 +38,7 @@ class CancelledSessionNotification extends Job implements ShouldQueue
         $userId = $this->userId;
         $cancelledFrom = $this->cancelledFrom;
         $bodyMessage = $this->message;
+        $sessionPaymentStatus = $this->status;
 
         //get student device token to send notification
         $user = User::where('id','=', $userId)->first();
@@ -46,6 +48,7 @@ class CancelledSessionNotification extends Job implements ShouldQueue
             $body = $bodyMessage;
             $customData = array(
                 'notification_type' => 'session_cancelled',
+                'status' => $sessionPaymentStatus
             );
             Push::handle($title, $body, $customData, $user);
             Log::info('Cancelled Session pushed handler');
