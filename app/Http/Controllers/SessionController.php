@@ -597,19 +597,20 @@ class SessionController extends Controller {
 		$this->validate($request,
 			[
 				'session_id' => 'required',
+                'duration'   => 'required'
 			]);
 		$findSession             = Session::find($request->session_id);
 		$hourlyRatePastFirstHour = (int)$findSession->hourly_rate_past_first_hour;
 		$student_id              = $findSession->student_id;
 		$user                    = User::find($student_id);
 
-//		$originalDuration = $request->duration; calculation on started_at
+		$originalDuration = $request->duration;
 		$date = Carbon::parse($findSession->started_at);
 		$now  = Carbon::now();
 		$seconds =$date->diffInSeconds($now);
         $hours = floor($seconds / 3600);
         $minutes = floor(($seconds / 60) % 60);
-        $originalDuration = $date->diff($now)->format('%H:%I:%S');
+//        $originalDuration = $date->diff($now)->format('%H:%I:%S');
 		$totalCostAccordingToHours = $sessionCost->execute($hours, $minutes, $findSession);
 
         $walletBalance = 0;
