@@ -31,7 +31,9 @@ class AddColumnsInWalletsTable extends Migration
     public function down()
     {
         Schema::table('wallets', function (Blueprint $table) {
-            //
+            $table->dropColumn('added_by');
+            $table->dropColumn('admin_user_name');
+            $table->dropColumn('reason_from_admin');
         });
     }
 }
