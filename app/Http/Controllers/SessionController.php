@@ -627,7 +627,7 @@ class SessionController extends Controller {
 					'student_id' => $findSession->student->profile->user_id,
 				]);
 				$student       = new WalletController();
-				$result        = $student->walletStudent($walletRequest);
+				$result        = $student->wallet($walletRequest);
 				$walletBalance = $result->getData()->total_amount;
 			}
             $paymentable = 'payable';
@@ -921,7 +921,7 @@ class SessionController extends Controller {
                         'student_id' => $studentId,
                     ]);
                     $student = new WalletController();
-                    $checkWalletAmount = $student->walletStudent($walletRequest);
+                    $checkWalletAmount = $student->wallet($walletRequest);
                     $walletBalance = $checkWalletAmount->getData()->total_amount;
                     if ($walletBalance > 0) {
                         // Wallet debit entry
