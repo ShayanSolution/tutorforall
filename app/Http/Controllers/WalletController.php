@@ -30,7 +30,7 @@ class WalletController extends Controller {
         $request->replace([
             'student_id' => $session->student_id
         ]);
-        $studentWalletAmount = $this->walletStudent($request);
+        $studentWalletAmount = $this->wallet($request);
         $studentTotalWalletAmount = $studentWalletAmount->getData()->total_amount;
         $sessionRate = $session->rate;
         $willWallet = ($amount - $sessionRate) + $studentTotalWalletAmount;
@@ -186,4 +186,26 @@ class WalletController extends Controller {
             );
         }
     }
+
+    public function tutorWalletDetail () {
+        $userId = Auth::user()->id;
+        $tutorWalletDetail = Wallet::where('to_user_id', $userId)->whereNotNull('added_by')->get();
+        if ($tutorWalletDetail) {
+            return response()->json(
+                [
+                    'status'  => 'success',
+                    'message' => 'Tutor wallet detail',
+                    'data' => $tutorWalletDetail
+                ]
+            );
+        } else {
+            return response()->json(
+                [
+                    'status'  => 'error',
+                    'message' => 'Tutor wallet detail not found'
+                ]
+            );
+        }
+    }
+
 }

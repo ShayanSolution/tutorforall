@@ -197,6 +197,8 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
     Route::get('/get_tutor_invoices', 'TutorInvoiceController@getTutorInvoice');
     //Tutor pay invoice
     Route::post('/tutor_pay_invoice', 'TutorInvoiceController@tutorPayInvoice');
+    //Tutor Wallet debit/credit detail
+    Route::post('/tutor_wallet_detail', 'WalletController@tutorWalletDetail');
 
 	Route::post('/teacher-card-invoice-payment', 'TutorInvoiceController@teacherCardInvoicePayment');
 	//Start demo session
