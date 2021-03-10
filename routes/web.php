@@ -120,7 +120,7 @@ $router->group(['middleware' => ['auth:api', 'throttle:60']], function () use ($
 
     $router->post('/get-latest-session', 'SessionController@getLatestSession');
     $router->post('/receive_payment', 'WalletController@receivePayment');
-    $router->post('/wallet_student', 'WalletController@walletStudent');
+    $router->post('/wallet', 'WalletController@wallet');
     Route::post('/session-rejected','SessionController@sessionRejected');
     $router->get('get-students', [
         'uses'       => 'UserController@getStudents',

@@ -97,41 +97,66 @@ class WalletController extends Controller {
         }
 	}
 
-	public function walletStudent(Request $request) {
-		$this->validate($request,
-			[
-				'student_id' => 'required',
-			]);
-		$student_id = $request->student_id;
-		$debit      = Wallet::where('type', 'debit')
-							->where(function ($query) use ($student_id) {
-								$query->where('from_user_id', '=', $student_id)
-									  ->orWhere('to_user_id', '=', $student_id);
-							})->sum('amount');
+	public function wallet(Request $request) {
+		if ($request->student_id){
+            $studentId = $request->student_id;
+            list($debit, $credit) = $this->studentWallet($studentId);
 
-		$credit = Wallet::where('type', 'credit')
-						->where(function ($query) use ($student_id) {
-							$query->where('from_user_id', '=', $student_id)
-								  ->orWhere('to_user_id', '=', $student_id);
-						})->sum('amount');
+        } else {
+            $tutorId = $request->tutor_id;
+            list($debit, $credit) = $this->tutorWallet($tutorId);
+        }
 
-		if ($credit >= 0 && $debit >= 0) {
-			$totalAmount = $credit - $debit;
-			return response()->json(
-				[
-					'status'       => 'success',
-					'total_amount' => (string)$totalAmount
-				]
-			);
-		} else {
-			return response()->json(
-				[
-					'status'  => 'error',
-					'message' => 'Wallet does not exist.'
-				]
-			);
-		}
+        if ($credit >= 0 && $debit >= 0) {
+            $totalAmount = $credit - $debit;
+            return response()->json(
+                [
+                    'status'       => 'success',
+                    'total_amount' => (string)$totalAmount
+                ]
+            );
+        } else {
+            return response()->json(
+                [
+                    'status'  => 'error',
+                    'message' => 'Wallet does not exist.'
+                ]
+            );
+        }
+
 	}
+
+	public function studentWallet($studentId) {
+        $debit      = Wallet::where('type', 'debit')
+            ->where(function ($query) use ($studentId) {
+                $query->where('from_user_id', '=', $studentId)
+                    ->orWhere('to_user_id', '=', $studentId);
+            })->sum('amount');
+
+        $credit = Wallet::where('type', 'credit')
+            ->where(function ($query) use ($studentId) {
+                $query->where('from_user_id', '=', $studentId)
+                    ->orWhere('to_user_id', '=', $studentId);
+            })->sum('amount');
+
+        return [$debit, $credit];
+    }
+
+    public function tutorWallet($tutorId) {
+        $debit      = Wallet::where('type', 'debit')
+            ->where(function ($query) use ($tutorId) {
+                $query->Where('to_user_id', '=', $tutorId)
+                ->whereNotNull('added_by');
+            })->sum('amount');
+
+        $credit = Wallet::where('type', 'credit')
+            ->where(function ($query) use ($tutorId) {
+                $query->Where('to_user_id', '=', $tutorId)
+                    ->whereNotNull('added_by');
+            })->sum('amount');
+
+        return [$debit, $credit];
+    }
 
 	public function useWalletFirst(Request $request){
         $this->validate($request,
