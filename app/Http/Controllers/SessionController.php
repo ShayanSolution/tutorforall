@@ -1065,9 +1065,12 @@ class SessionController extends Controller {
 					];
 				}
 			}
+			// get admin debit credit against student wallet
+            $debitCreditByAdmin = Wallet::where('from_user_id', $userId)->whereNotNull('added_by')->get();
 			return response()->json(
 				[
-					'data' => $sessionPaymentDetail
+					'data' => $sessionPaymentDetail,
+                    'debit_credit_by_admin' => $debitCreditByAdmin
 				]
 			);
 		} else {
