@@ -50,7 +50,9 @@ class SendNotificationOfCalculationCost extends Job implements ShouldQueue
         $totalCost = $this->totalCost;
         $walletBalance = $this->walletBalance;
         $paymentable = $this->paymentable;
-
+        if ($paymentable == 'paid') {
+            $totalCost = $totalCostAccordingToHours;
+        }
         $title  =   Config::get('user-constants.APP_NAME');
         $body   =   'Your total cost is Rs ' . $totalCost;
         $customData = array(
