@@ -43,7 +43,7 @@ class SessionPaidNotificationToTutor extends Job implements ShouldQueue
         $transaction_platform = $this->transaction_platform;
 
         $title  =   Config::get('user-constants.APP_NAME');
-        $body = 'Student pay for session using '.$transaction_platform;
+        $body = 'Student paid for session using '.$transaction_platform;
         $customData = array(
             'notification_type' => 'session_paid',
             'session_id' => $session_id,
