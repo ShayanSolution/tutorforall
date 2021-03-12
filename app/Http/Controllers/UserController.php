@@ -13,6 +13,7 @@ use App\Models\Programme;
 use App\Models\Subject;
 use App\Models\Rating;
 //helpers
+use Illuminate\Support\Str;
 use TimeZoneHelper;
 
 use App\Repositories\Contracts\UserRepository;
@@ -458,7 +459,8 @@ class UserController extends Controller
             //upload file and update user profile image
             if(isset($data['profileImage'])){
                 $file = $request->file('profileImage');
-                $file_name = str_random('12').'.'.$file->getClientOriginalExtension();
+                $strRandom = Str::random(12);
+                $file_name = $strRandom.'.'.$file->getClientOriginalExtension();
                 $destinationPath = base_path().'/public/images';
                 $file->move($destinationPath,$file_name);
                 User::updateProfileImage($student_id,$file_name,$role_id);
@@ -503,7 +505,8 @@ class UserController extends Controller
             //upload file
             if(isset($data['profileImage'])){
                 $file = $request->file('profileImage');
-                $file_name = str_random('12').'.'.$file->getClientOriginalExtension();
+                $strRandom = Str::random(12);
+                $file_name = $strRandom.'.'.$file->getClientOriginalExtension();
                 $destinationPath = base_path().'/public/images';
                 $file->move($destinationPath,$file_name);
                 User::updateProfileImage($tutor_id,$file_name,$role_id);

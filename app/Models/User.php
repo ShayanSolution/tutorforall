@@ -8,6 +8,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Str;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -430,7 +431,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             $password = $request['password'];
 
         $phone = $request['phone'];
-        $uid = str_random(32);
+        $uid = Str::random(32);
         $user = Self::create([
             'email' => $email,
             'firstName' => $firstName,
