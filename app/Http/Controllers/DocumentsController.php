@@ -250,19 +250,9 @@ class DocumentsController extends Controller
 
         $document = Document::find($documentId);
 
-        if(!$document)
-            return response()->json([
-                'status'    =>  'error',
-                'message'   =>  'Document does not exists!'
-            ], 404);
-
-        $deletedOriginalDocImage = unlink($document->storage_path);
-
-        if(!$deletedOriginalDocImage)
-            return response()->json([
-                'status'    =>  'error',
-                'message'   =>  'Oops! Something went wrong'
-            ], 409);
+        if($document){
+            $deletedOriginalDocImage = unlink($document->storage_path);
+        }
 
         $response = $this->uploadDocumentImage($request);
 
