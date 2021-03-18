@@ -43,9 +43,12 @@ class BannerController extends Controller
             'id' => 'required',
         ]);
         $userId = Auth::user()->id;
-        $banner = BannerStatus::where('banner_id', $request->id)->where('receiver_id', $userId)->update([
-            'is_read' => 1
-        ]);
+        $getBanner = Banner::where('id', $request->id)->get();
+        if ($getBanner->always_show_banner == 0) {
+            BannerStatus::where('banner_id', $request->id)->where('receiver_id', $userId)->update([
+                'is_read' => 1
+            ]);
+        }
         return response()->json([
             'status'  => 'success',
             'message' => 'Banner read Successfully',
