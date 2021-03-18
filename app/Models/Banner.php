@@ -12,6 +12,7 @@ class Banner extends Model
         'path',
         'storage_path',
         'send_to_csv',
-        'created_by'
+        'created_by',
+        'always_show_banner'
     ];
 }
