@@ -65,8 +65,9 @@ class NotificationController extends Controller
         }
     }
 
-    public function reachedNotification(Request $request){
-        $this->validate($request,[
+    public function reachedNotification(Request $request)
+    {
+        $this->validate($request, [
             'device_token' => 'required',
             'to' => 'required',
             'session_id' => 'required'
@@ -78,25 +79,32 @@ class NotificationController extends Controller
                 'start_session_enable' => 1
             ]);
         }
-        $device_token = $request->device_token;
-        $to = $request->to;
-        $user = User::where('device_token', $device_token)->first();
-        if ($user){
-            $customData = array(
-                'notification_type' => 'reached_notification',
-            );
-            $title = Config::get('');
-            $body = 'Your '. $to .' has arrived.';
-            Push::handle($title, $body, $customData, $user);
-            return [
-                'status' => 'success',
-                'messages' => 'Notification sent successfully',
-            ];
+        if ($session->status != "cancelled") {
+            $device_token = $request->device_token;
+            $to = $request->to;
+            $user = User::where('device_token', $device_token)->first();
+            if ($user) {
+                $customData = array(
+                    'notification_type' => 'reached_notification',
+                );
+                $title = Config::get('');
+                $body = 'Your ' . $to . ' has arrived.';
+                Push::handle($title, $body, $customData, $user);
+                return [
+                    'status' => 'success',
+                    'messages' => 'Notification sent successfully',
+                ];
+            } else {
+                return [
+                    'status' => 'error',
+                    'messages' => 'Device token not exist.',
+                ];
+            }
         } else {
             return [
                 'status' => 'error',
-                'messages' => 'Device token not exist.',
-                ];
+                'messages' => 'Session already cancelled',
+            ];
         }
     }
 }
