@@ -806,6 +806,14 @@ class UserController extends Controller
         }
 
         if($user){
+            $userRoleId = $user->role_id;
+            $content = CMS::where('type', 'home_page_note')->where('user_role_id', $userRoleId)->first();
+            if ($content) {
+                $user['home_page_note'] = $content->content;
+            } else {
+                $user['home_page_note'] = '';
+            }
+
             return response()->json(
                 [
                     'status' => 'success',
