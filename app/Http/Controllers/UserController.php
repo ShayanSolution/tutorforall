@@ -810,7 +810,7 @@ class UserController extends Controller
             $userRoleId = $user->role_id;
             $content = CMSContent::getHomePageNote($userRoleId);
             if ($content) {
-                $user['home_page_note'] = "$content";
+                $user['home_page_note'] = $content;
             } else {
                 $user['home_page_note'] = '';
             }
