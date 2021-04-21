@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Helpers\CMSContent;
 use App\Helpers\Push;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -63,6 +64,7 @@ class BookNotification extends Job implements ShouldQueue
             $dateTime = explode(" ",$sessionDateTime);
         }
 
+        $content = CMSContent::getWhatsAppSMS($user->id);
 
         $customData = array(
             'notification_type' => 'session_booked',
@@ -95,7 +97,8 @@ class BookNotification extends Job implements ShouldQueue
             'time' => date("g:i a", strtotime($dateTime[1])),
             'session_type' => $sessionType,
             'tracking_on' => $session->tracking_on,
-            'is_hourly' => $session->is_hourly
+            'is_hourly' => $session->is_hourly,
+            'whatsapp_sms' => $content
         );
 
         Push::handle($title, $body, $customData, $student);

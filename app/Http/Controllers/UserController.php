@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CMSContent;
 use App\Models\CMS;
 use App\Models\CreditCard;
 use App\Models\Invoice;
@@ -807,9 +808,9 @@ class UserController extends Controller
 
         if($user){
             $userRoleId = $user->role_id;
-            $content = CMS::where('type', 'home_page_note')->where('user_role_id', $userRoleId)->first();
+            $content = CMSContent::getHomePageNote($userRoleId);
             if ($content) {
-                $user['home_page_note'] = $content->content;
+                $user['home_page_note'] = "$content";
             } else {
                 $user['home_page_note'] = '';
             }

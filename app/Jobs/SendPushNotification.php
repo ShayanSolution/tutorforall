@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Jobs;
+use App\Helpers\CMSContent;
 use App\Helpers\Push;
 use App\Helpers\ReverseGeocode;
 use App\Services\DistanceAndTimeOnRoute;
@@ -160,8 +161,7 @@ class SendPushNotification extends Job implements ShouldQueue
                 $body = $this->student->firstName.' '.$this->student->lastName.' wants a session with you'.$isLocal;
 
                 $distanceAndTime = $this->distanceAndTimeOnRoute->execute($this->student, $user, $sessionData, $this->data['is_home']);
-
-
+                $content = CMSContent::getWhatsAppSMS($studentId);
                 $customData = array(
                     'notification_type' => 'session_request',
                     'session_id' => (string)$sessionRequest->id,
@@ -191,7 +191,8 @@ class SendPushNotification extends Job implements ShouldQueue
                     'session_sent_group' => $sessionData['session_sent_group'],
                     'distance' => $distanceAndTime['distance'],
                     'session_type' => $sessionType,
-                    'is_hourly' => $sessionData['is_hourly']
+                    'is_hourly' => $sessionData['is_hourly'],
+                    'whatsapp_sms' => $content
                 );
 
                 $this->slackLog($user, env('TOOTAR_LOGGER_WEBHOOK_SLACK'));
