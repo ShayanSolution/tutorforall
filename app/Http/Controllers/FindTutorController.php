@@ -61,7 +61,7 @@ class FindTutorController extends Controller
             `distance` < $distanceInKmMax AND `distance` >= $distanceInKmMin ";
             Log::info($query);
             $tutors = \DB::select($query);
-            dd($tutors);
+//            dd($tutors);
             foreach($tutors as $tutor) {
                 Log::info('Send Request To tutor => ' . $tutor->id);
                 Log::info("send request to tutor ID is: " . $tutor->id);
