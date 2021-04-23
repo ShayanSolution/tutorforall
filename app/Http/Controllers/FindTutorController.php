@@ -16,6 +16,7 @@ class FindTutorController extends Controller
     public function findTutor(Request $request){
 
         $this->validate($request,[
+            'study_from' => 'required',
             'student_id' => 'required',
             'class_id' => 'required',
             'subject_id' => 'required',
@@ -24,6 +25,7 @@ class FindTutorController extends Controller
         ]);
 
         $currentUserId = Auth::user()->id;
+        $studyFrom = $request->study_from;
         $studentId = $request->student_id;
         $studentClassId = $request->class_id;
         $studentSubjectId = $request->subject_id;
@@ -37,6 +39,7 @@ class FindTutorController extends Controller
             // Query to find Tutors in range(KM)
             //6371 = Kilometers
             //3959 = Miles
+        $genderMatchingQuery = $studyFrom == 0 ? "" : " AND users.gender_id = $studyFrom  AND profiles.teach_to IN (".Auth::user()->gender_id.",0) ";
         for( $i=0; $i<=3; $i++){
         $query = "SELECT DISTINCT users.id,users.firstName, users.role_id, 
             users.latitude, users.longitude, 
@@ -52,11 +55,13 @@ class FindTutorController extends Controller
             LEFT JOIN sessions ON sessions.tutor_id = users.id AND sessions.student_id = $currentUserId 
             WHERE `role_id` = '$roleId'
                 AND (program_subject.program_id = '$studentClassId' AND program_subject.subject_id = '$studentSubjectId' AND program_subject.status = 1)
+                $genderMatchingQuery
                 AND (users.is_online = 1)
             HAVING 
             `distance` < $distanceInKmMax AND `distance` >= $distanceInKmMin ";
             Log::info($query);
             $tutors = \DB::select($query);
+            dd($tutors);
             foreach($tutors as $tutor) {
                 Log::info('Send Request To tutor => ' . $tutor->id);
                 Log::info("send request to tutor ID is: " . $tutor->id);
