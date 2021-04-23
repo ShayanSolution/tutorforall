@@ -17,11 +17,11 @@ class CMSContent
 {
     public static function getWhatsAppSMS($user_role_id){
         $content = CMS::where('type', 'whatsapp_sms')->where('user_role_id', $user_role_id)->first();
-        return $content->content;
+        return strip_tags($content->content);
     }
 
     public static function getHomePageNote($user_role_id){
         $content = CMS::where('type', 'home_page_note')->where('user_role_id', $user_role_id)->first();
-        return $content->content;
+        return strip_tags($content->content);
     }
 }
