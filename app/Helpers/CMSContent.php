@@ -22,6 +22,6 @@ class CMSContent
 
     public static function getHomePageNote($user_role_id){
         $content = CMS::where('type', 'home_page_note')->where('user_role_id', $user_role_id)->first();
-        return strip_tags($content->content);
+        return $content->content;
     }
 }
