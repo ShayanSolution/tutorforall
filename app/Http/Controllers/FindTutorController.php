@@ -44,9 +44,8 @@ class FindTutorController extends Controller
         $query = "SELECT DISTINCT users.id,users.firstName, users.role_id, 
             users.latitude, users.longitude, 
             users.device_token, profiles.is_mentor, 
-            profiles.teach_to, profiles.is_home, 
-            profiles.call_student, profiles.is_group, 
-            profiles.one_on_one, program_subject.program_id AS t_program_id,
+            profiles.teach_to, profiles.is_home,
+            program_subject.program_id AS t_program_id,
             program_subject.subject_id AS t_subject_id,
             ROUND(6371 * acos(cos(radians(" . $studentLat . ")) * cos(radians(users.latitude)) * cos(radians(users.longitude) - radians(" . $studentLong . ")) + sin(radians(" . $studentLat . ")) * sin(radians(users.latitude)))) as distance
             FROM `users`
