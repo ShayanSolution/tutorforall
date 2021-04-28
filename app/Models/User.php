@@ -84,18 +84,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         //add logic here
         $classId = $request['class_id'];
         $subjectId = $request['subject_id'];
-        $category_id = $request['category_id'];
-        $is_home        = $request['is_home'];
-        $call_student   = $request['call_student'];
-        $is_group = isset($request['is_group']) ? $request['is_group'] : 0;
-        $selected_rate = isset($request['selected_rate']) ? $request['selected_rate'] : 0;
-        $experience = $request['experience'];
         $gender_id = $request['gender_id'];
-        $session_type = $request['session_type'];
-        $is_hourly = $request['is_hourly'];
         $sessionLat = $request['latitude'];
         $sessionLong = $request['longitude'];
-        $bookLaterRestriction = Setting::where('group_name', 'book-later-restrict-hr')->pluck('value', 'slug');
 
         if(!$classId || !$subjectId){
             return false;
@@ -105,78 +96,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             return $query->where('program_id',$classId)->where('subject_id',$subjectId)->where('status', 1);
         });
 
-        if($is_home == 1 || $call_student == 1) {
-            $queryBuilder = $queryBuilder->whereHas('profile', function($q) use ($is_home, $call_student)
-            {
-                return $q->where('is_home',  $is_home)->orWhere('call_student',  $call_student);
-            });
-        }
-
-        if($category_id){
-            //add logic for category id
-            $queryBuilder = $queryBuilder->whereHas('rating', function($q) use ($category_id) {
-                $q->havingRaw('AVG(ratings.rating) >= ?', [$category_id]);
-            });
-        }
-        if($is_group){
-            $queryBuilder = $queryBuilder->whereHas('isGroupTutors');
-        }
-
-        if ($experience) {
-//            $queryBuilder = $queryBuilder->selectRaw(" @sum_of_students_whom_learned_in_group := (SELECT SUM(DISTINCT group_members) FROM sessions where sessions.tutor_id = users.id AND sessions.`status` = 'ended' AND sessions.is_group = 1), @sum_of_students_whom_learned_individually := (SELECT COUNT(DISTINCT group_members) FROM sessions where sessions.tutor_id = users.id AND sessions.`status` = 'ended' AND sessions.is_group = 0), ROUND(@sum_of_students_whom_learned_in_group + @sum_of_students_whom_learned_individually) as experience ");
-//
-//            $queryBuilder->havingRaw('experience >= ?',[$experience]);
-            // @todo Need to change logic according to group counts. Currently on session count if group count more than one currently it's equals to one
-            $queryBuilder = $queryBuilder->whereHas('sessions', function ($q) use ($experience){
-                $q->havingRaw('COUNT(sessions.tutor_id) >= ?', [$experience])->where('status', 'ended');
-            });
-        }
-
         if ($gender_id != 0) {
             $queryBuilder = $queryBuilder->where('users.gender_id', '=', $gender_id);
         }
-
-//        if ($hourlyRate != 0) {
-//            $queryBuilder = $queryBuilder->whereHas('profile', function($q) use ($hourlyRate)
-//            {
-//                return $q->where('min_slider_value', '<=', $hourlyRate)->where('max_slider_value', '>=', $hourlyRate);
-//            });
-//        }
-        if ($selected_rate) {
-            $queryBuilder = $queryBuilder->whereHas('profile', function($q) use ($selected_rate)
-            {
-                return $q->where('min_slider_value', '<=', $selected_rate);
-            });
-        }
-        // check tutor settings
-        if ($session_type == 'now'){
-            $queryBuilder = $queryBuilder->whereHas('profile', function($q)
-            {
-                return $q->where('is_book_now',  1);
-            });
-        } else {
-            $queryBuilder = $queryBuilder->whereHas('profile', function($q)
-            {
-                return $q->where('is_book_later',  1);
-            });
-        }
-
-        // check tutor settings fo hourly or monthly
-        if ($is_hourly == 1){
-            $queryBuilder = $queryBuilder->whereHas('profile', function($q)
-            {
-                return $q->where('is_hourly',  1);
-            });
-        } else {
-            $queryBuilder = $queryBuilder->whereHas('profile', function($q)
-            {
-                return $q->where('is_monthly',  1);
-            });
-        }
-
-        // check tutor distance
-//        $queryBuilder = $queryBuilder->selectRaw(" @distance_check := ((6371 * ACOS (COS (RADIANS( $latitude )) * COS(RADIANS(`users`.`latitude`)) * COS(RADIANS(`users`.`longitude`) - RADIANS($longitude)) + SIN (RADIANS($latitude)) * SIN(RADIANS(`users`.`latitude`)))) as distance");
-//        $queryBuilder->havingRaw('distance' <= 12);
 
         $queryBuilder = $queryBuilder->where('is_online', 1);
 
@@ -193,66 +115,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             if ($record->is_approved == 0) {
                 unset($result[$key]);
             }
-            // check distance
-            //Google API not working currently
-//            $distanceByGoogleApi = ReverseGeocode::distanceByGoogleApi($record->latitude, $record->longitude, $sessionLat, $sessionLong);
-//            $distanceInKM = round($distanceByGoogleApi * 0.001);
             //distance calculate point to point like in find tutor
             $distanceInKM = ReverseGeocode::calculateDistanceInKM($record->latitude, $record->longitude, $sessionLat, $sessionLong);
             if (round($distanceInKM) > 12) {
                 unset($result[$key]);
-            }
-            if (round($record->rating->avg('rating')) < $category_id){
-                unset($result[$key]);
-//                $result[] = $record->rating;
-            }
-            // check student given last session rating to this tutor
-            $lastSession = $record->sessions()->where('student_id', Auth::user()->id)->where('status', 'ended')->orderBy('id', 'desc')->first();
-            // if student given  rating < 2 than exclude this tutor
-            if($lastSession && $lastSession->rating && $lastSession->rating->rating <= 2){
-                unset($result[$key]);
-            }
-            // Check if tutor session cancelled 2 hrs limit
-            $getLastSession = Session::where('tutor_id', $record->id)->where(function ($query) {
-                $query->where('cancelled_from', 'tutor')
-                    ->orWhere('cancelled_from', 'student');
-            })->whereNull('demo_ended_at')->orderBy('id', 'desc')->first();
-            if ($getLastSession) {
-                $now  = Carbon::now();
-                $date = Carbon::make($getLastSession->created_at);
-                $hours = $now->diffInHours($date);
-                $min = $now->diffInMinutes($date);
-                if ($min<=120) {
-                    unset($result[$key]);
-                }
-            }
-            // Check tutor last session status
-            $lastTutorSession = $record->sessions()->where('tutor_id', $record->id)->orderBy('id', 'desc')->first();
-            // if tutor last session is booked or started and booked later pre and post 4 hours check than exclude this tutor
-            if ($lastTutorSession) {
-                // Needs to apply expired && rejected clause because these cases also didn't get request :(
-                if ($session_type == 'now') {
-                    if (($lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started') && $lastTutorSession->book_later_at == null) {
-                        unset($result[$key]);
-                    }
-                    if (($lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started') && $lastTutorSession->book_later_at != null) {
-                        $bookLaterTime = Carbon::parse($lastTutorSession->book_later_at);
-                        $currentTime = Carbon::parse(Carbon::now());
-                        $hours = $currentTime->diffInHours($bookLaterTime);
-                        if ($hours <= intval($bookLaterRestriction['book_later_find_tutor_restriction_hours'])) {
-                            unset($result[$key]);
-                        }
-                    }
-                } else if ($session_type == 'later') {
-                    if (($lastTutorSession->status == 'booked' || $lastTutorSession->status == 'started') && $lastTutorSession->book_later_at != null) {
-                        $bookLaterTime = Carbon::parse($lastTutorSession->book_later_at);
-                        $currentTime = Carbon::parse(Carbon::now());
-                        $hours = $currentTime->diffInHours($bookLaterTime);
-                        if ($hours <= intval($bookLaterRestriction['book_later_find_tutor_restriction_hours'])) {
-                            unset($result[$key]);
-                        }
-                    }
-                }
             }
         }
         $onlineTutorCount = count($result);
