@@ -162,8 +162,10 @@ class SendPushNotification extends Job implements ShouldQueue
 
                 $distanceAndTime = $this->distanceAndTimeOnRoute->execute($this->student, $user, $sessionData, $this->data['is_home']);
                 $getContent = CMSContent::getWhatsAppSMS($this->student->role_id);
-                $studentName = $this->student->firstName." ".$this->student->lastName;
-                $content = str_replace('{name}', $studentName, $getContent);
+                $session = Session::find($sessionRequest->id);
+                $getTutor = $session->tutor;
+                $tutorName = $getTutor->firstName." ".$getTutor->lastName;
+                $content = str_replace('{name}', $tutorName, $getContent);
                 $customData = array(
                     'notification_type' => 'session_request',
                     'session_id' => (string)$sessionRequest->id,
