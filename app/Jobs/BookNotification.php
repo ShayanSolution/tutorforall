@@ -64,7 +64,9 @@ class BookNotification extends Job implements ShouldQueue
             $dateTime = explode(" ",$sessionDateTime);
         }
 
-        $content = CMSContent::getWhatsAppSMS($user->role_id);
+        $getContent = CMSContent::getWhatsAppSMS($user->role_id);
+        $tutorName = $user->firstName." ".$user->lastName;
+        $content = str_replace('{name}', $tutorName, $getContent);
 
         $customData = array(
             'notification_type' => 'session_booked',
