@@ -92,7 +92,7 @@ class BookNotification extends Job implements ShouldQueue
             'session_long' => (string)$session->longitude,
             'session_location' => $session->session_location,
             'session_rating' => number_format((float)$rating->avg('rating'), 1, '.', ''),
-            'Profile_Image' => !empty($user->profileImage) ? env('ASSET_BASE_URL').'/images/'.$user->profileImage : '',
+            'Profile_Image' => !empty($user->profileImage) ? env('ASSET_BASE_URL').$user->profileImage : '',
             'book_later_at' => $bookLaterAt,
             'dateTime' => $sessionDateTime,
             'date' => $dateTime[0],
