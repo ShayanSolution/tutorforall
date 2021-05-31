@@ -99,7 +99,7 @@ class FindTutorController extends Controller
             $distanceInKmMax = $distanceInKmMax+2;
 
         }
-        sleep(50);
+        sleep(30);
         // After search complete. if online tutors who din't accept request than accept from 1st forcelly
         $tutorWhoGetFirstRequest = Session::where('session_sent_group', $sessionSentGroup)->where('status', 'pending')->orderBy('id', 'asc')->first();
         if ($tutorWhoGetFirstRequest) {
