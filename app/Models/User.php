@@ -120,6 +120,17 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             if (round($distanceInKM) > 12) {
                 unset($result[$key]);
             }
+            // Check if tutor session cancelled 2 hrs limit
+            $getLastSession = Session::where('tutor_id', $record->id)->orderBy('id', 'desc')->first();
+            if ($getLastSession) {
+                $now  = Carbon::now();
+                $date = Carbon::make($getLastSession->created_at);
+                $hours = $now->diffInHours($date);
+                $min = $now->diffInMinutes($date);
+                if ($min<=120) {
+                    unset($result[$key]);
+                }
+            }
         }
         $onlineTutorCount = count($result);
         return $onlineTutorCount;
