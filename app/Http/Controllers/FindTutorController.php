@@ -62,7 +62,7 @@ class FindTutorController extends Controller
             $tutors = \DB::select($query);
 //            dd($tutors);
             foreach($tutors as $tutor) {
-                $getLastSession = Session::where('tutor_id', $tutor->id)->orderBy('id', 'desc')->first();
+                $getLastSession = Session::where('tutor_id', $tutor->id)->where('status', 'booked')->orderBy('id', 'desc')->first();
                 if ($getLastSession) {
                     // Check if tutor session cancelled 2 hrs limit
                     $now  = Carbon::now();
