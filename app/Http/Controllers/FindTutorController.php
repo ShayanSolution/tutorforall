@@ -62,44 +62,86 @@ class FindTutorController extends Controller
             $tutors = \DB::select($query);
 //            dd($tutors);
             foreach($tutors as $tutor) {
-                Log::info('Send Request To tutor => ' . $tutor->id);
-                Log::info("send request to tutor ID is: " . $tutor->id);
-                $distanceInKms = number_format((float)$tutor->distance, 2, '.', '');
-                $tutorId = $tutor->id;
-                $params = [
-                    'student_id' => (int)$studentId,
-                    'tutor_id' => json_encode([$tutorId]),
-                    'subject_id' => (int)$studentSubjectId,
-                    'class_id' => (int)$studentClassId,
-                    'latitude' => floatval($studentLat),
-                    'longitude' => floatval($studentLong),
-                    'session_sent_group' => $sessionSentGroup,
-                    'is_group' => (int)0,
-                    'group_members' => (int)0,
-                    'is_home' => 0,
-                    'hourly_rate' => 0,
-                    'original_hourly_rate' => 0,
-                    'hourly_rate_past_first_hour' => 0,
-                    'call_student' => 0,
-                    'one_on_one' => 0,
-                    'group_count' => 0,
-                    'book_type' => 'basic-version',
-                    'session_time' => $currentTime,
-                    'distance' => $distanceInKms . ' km',
-                    'is_hourly' => 0
-                ];
-                // dd($params);
-                $request->request->add($params);
+                $getLastSession = Session::where('tutor_id', $tutor->id)->orderBy('id', 'desc')->first();
+                if ($getLastSession) {
+                    // Check if tutor session cancelled 2 hrs limit
+                    $now  = Carbon::now();
+                    $date = Carbon::make($getLastSession->created_at);
+                    $hours = $now->diffInHours($date);
+                    $min = $now->diffInMinutes($date);
+                    if ($min>120) {
+                        Log::info('Send Request To tutor => ' . $tutor->id);
+                        Log::info("send request to tutor ID is: " . $tutor->id);
+                        $distanceInKms = number_format((float)$tutor->distance, 2, '.', '');
+                        $tutorId = $tutor->id;
+                        $params = [
+                            'student_id' => (int)$studentId,
+                            'tutor_id' => json_encode([$tutorId]),
+                            'subject_id' => (int)$studentSubjectId,
+                            'class_id' => (int)$studentClassId,
+                            'latitude' => floatval($studentLat),
+                            'longitude' => floatval($studentLong),
+                            'session_sent_group' => $sessionSentGroup,
+                            'is_group' => (int)0,
+                            'group_members' => (int)0,
+                            'is_home' => 0,
+                            'hourly_rate' => 0,
+                            'original_hourly_rate' => 0,
+                            'hourly_rate_past_first_hour' => 0,
+                            'call_student' => 0,
+                            'one_on_one' => 0,
+                            'group_count' => 0,
+                            'book_type' => 'basic-version',
+                            'session_time' => $currentTime,
+                            'distance' => $distanceInKms . ' km',
+                            'is_hourly' => 0
+                        ];
+                        // dd($params);
+                        $request->request->add($params);
 
-                $proxy = Request::create('/tutor-notification', 'POST', $request->request->all());
-                app()->dispatch($proxy);
+                        $proxy = Request::create('/tutor-notification', 'POST', $request->request->all());
+                        app()->dispatch($proxy);
+                    }
+                } else {
+                    Log::info('Send Request To tutor => ' . $tutor->id);
+                    Log::info("send request to tutor ID is: " . $tutor->id);
+                    $distanceInKms = number_format((float)$tutor->distance, 2, '.', '');
+                    $tutorId = $tutor->id;
+                    $params = [
+                        'student_id' => (int)$studentId,
+                        'tutor_id' => json_encode([$tutorId]),
+                        'subject_id' => (int)$studentSubjectId,
+                        'class_id' => (int)$studentClassId,
+                        'latitude' => floatval($studentLat),
+                        'longitude' => floatval($studentLong),
+                        'session_sent_group' => $sessionSentGroup,
+                        'is_group' => (int)0,
+                        'group_members' => (int)0,
+                        'is_home' => 0,
+                        'hourly_rate' => 0,
+                        'original_hourly_rate' => 0,
+                        'hourly_rate_past_first_hour' => 0,
+                        'call_student' => 0,
+                        'one_on_one' => 0,
+                        'group_count' => 0,
+                        'book_type' => 'basic-version',
+                        'session_time' => $currentTime,
+                        'distance' => $distanceInKms . ' km',
+                        'is_hourly' => 0
+                    ];
+                    // dd($params);
+                    $request->request->add($params);
+
+                    $proxy = Request::create('/tutor-notification', 'POST', $request->request->all());
+                    app()->dispatch($proxy);
+                }
             }
             sleep(10);
             $distanceInKmMin = $distanceInKmMin+2;
             $distanceInKmMax = $distanceInKmMax+2;
 
         }
-        sleep(30);
+        sleep(25);
         // After search complete. if online tutors who din't accept request than accept from 1st forcelly
         $tutorWhoGetFirstRequest = Session::where('session_sent_group', $sessionSentGroup)->where('status', 'pending')->orderBy('id', 'asc')->first();
         if ($tutorWhoGetFirstRequest) {
