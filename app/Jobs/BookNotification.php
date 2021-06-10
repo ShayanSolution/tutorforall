@@ -67,6 +67,7 @@ class BookNotification extends Job implements ShouldQueue
         $getContent = CMSContent::getWhatsAppSMS($user->role_id);
         $studentName = $student->firstName." ".$student->lastName;
         $content = str_replace('{name}', $studentName, $getContent);
+        $getSessionInstructions = CMSContent::getSessionInstructions($student->role_id);
 
         $customData = array(
             'notification_type' => 'session_booked',
@@ -100,7 +101,8 @@ class BookNotification extends Job implements ShouldQueue
             'session_type' => $sessionType,
             'tracking_on' => $session->tracking_on,
             'is_hourly' => $session->is_hourly,
-            'whatsapp_sms' => $content
+            'whatsapp_sms' => $content,
+            'session_instructions' => $getSessionInstructions
         );
 
         Push::handle($title, $body, $customData, $student);

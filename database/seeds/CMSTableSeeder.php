@@ -61,5 +61,21 @@ class CMSTableSeeder extends Seeder
             'created_at' => \Carbon\Carbon::now(),
             'updated_at' => \Carbon\Carbon::now(),
         ]);
+
+        DB::table('c_m_s')->insert([
+            'content' => 'Tootar Teacher Session Instructions',
+            'user_role_id' => 2,
+            'type' => 'session_instructions',
+            'created_at' => \Carbon\Carbon::now(),
+            'updated_at' => \Carbon\Carbon::now(),
+        ]);
+
+        DB::table('c_m_s')->insert([
+            'content' => 'Tootar Session Instructions',
+            'user_role_id' => 3,
+            'type' => 'session_instructions',
+            'created_at' => \Carbon\Carbon::now(),
+            'updated_at' => \Carbon\Carbon::now(),
+        ]);
     }
 }

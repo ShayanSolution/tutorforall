@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\CouldNotMarkSessionAsBooked;
 use App\Exceptions\SessionBookedStartedOrEnded;
 use App\Exceptions\SessionExpired;
+use App\Helpers\CMSContent;
 use App\Helpers\DateTimeHelper;
 use App\Jobs\BookNotification;
 use App\Jobs\CancelledSessionNotification;
@@ -728,6 +729,10 @@ class SessionController extends Controller {
 
 		$data['program_name'] = $session->programme->name;
 		$data['subject_name'] = $session->subject->name;
+
+		//Session instructions
+        $getSessionInstructions = CMSContent::getSessionInstructions($roleId);
+        $data['session_instructions'] = $getSessionInstructions;
 
 		if ($session->book_later_at == null) {
 			$data['session_type'] = 'now';

@@ -166,6 +166,8 @@ class SendPushNotification extends Job implements ShouldQueue
                 $getTutor = $session->tutor;
                 $tutorName = $getTutor->firstName." ".$getTutor->lastName;
                 $content = str_replace('{name}', $tutorName, $getContent);
+                $getSessionInstructions = CMSContent::getSessionInstructions($getTutor->role_id);
+
                 $customData = array(
                     'notification_type' => 'session_request',
                     'session_id' => (string)$sessionRequest->id,
@@ -196,7 +198,8 @@ class SendPushNotification extends Job implements ShouldQueue
                     'distance' => $distanceAndTime['distance'],
                     'session_type' => $sessionType,
                     'is_hourly' => $sessionData['is_hourly'],
-                    'whatsapp_sms' => $content
+                    'whatsapp_sms' => $content,
+                    'session_instructions' => $getSessionInstructions
                 );
 
                 $this->slackLog($user, env('TOOTAR_LOGGER_WEBHOOK_SLACK'));

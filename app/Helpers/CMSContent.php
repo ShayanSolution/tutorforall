@@ -24,4 +24,9 @@ class CMSContent
         $content = CMS::where('type', 'home_page_note')->where('user_role_id', $user_role_id)->first();
         return $content->content;
     }
+
+    public static function getSessionInstructions($user_role_id){
+        $content = CMS::where('type', 'session_instructions')->where('user_role_id', $user_role_id)->first();
+        return strip_tags($content->content);
+    }
 }
