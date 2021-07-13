@@ -166,7 +166,7 @@ class SendPushNotification extends Job implements ShouldQueue
                 $getTutor = $session->tutor;
                 $tutorName = $getTutor->firstName." ".$getTutor->lastName;
                 $content = str_replace('{name}', $tutorName, $getContent);
-                $getSessionInstructions = CMSContent::getSessionInstructions($getTutor->role_id);
+                $getSessionInstructions = "Connected with STUDENT";
 
                 $customData = array(
                     'notification_type' => 'session_request',

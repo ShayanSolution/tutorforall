@@ -806,23 +806,27 @@ class UserController extends Controller
             $updateUser->updateWhere(['id'=>$user->id], ['device_type'=>$inputs['device_type']]);
         }
 
-        if($user){
+        if($user) {
             $userRoleId = $user->role_id;
             $content = CMSContent::getHomePageNote($userRoleId);
+            $getSessionInstructions = CMSContent::getSessionInstructions($userRoleId);
             if ($content) {
                 $user['home_page_note'] = $content;
             } else {
                 $user['home_page_note'] = '';
             }
-
+            if ($getSessionInstructions) {
+                $user['session_instructions'] = $getSessionInstructions;
+            } else {
+                $user['session_instructions'] = '';
+            }
             return response()->json(
                 [
                     'status' => 'success',
                     'user' => $user,
                 ], 200
             );
-        }else{
-
+        } else {
             return response()->json(
                 [
                     'status' => 'error',
